@@ -4,8 +4,7 @@ import com.enums.Direction;
 
 /**
  * Represents a coordinate (row, column) on the terrain grid.
- * Enforces non-negative coordinates to ensure grid validity.
- * Provides utility methods for movement simulation and boundary checks.
+ * Provides utility methods for position manipulation and validation.
  */
 public class Position {
     private int row;
@@ -13,28 +12,26 @@ public class Position {
 
     /**
      * Constructor for Position.
-     * Validates that coordinates are non-negative.
+     * Initializes a position with given row and column.
+     * Note: Does not enforce boundary checks during instantiation to allow
+     * external logic (like IcyTerrain) to calculate potential off-grid positions.
      *
-     * @param row The row index (must be >= 0)
-     * @param column The column index (must be >= 0)
-     * @throws IllegalArgumentException if row or column is negative
+     * @param row The row index
+     * @param column The column index
      */
     public Position(int row, int column) {
-        if (row < 0 || column < 0) {
-            throw new IllegalArgumentException("Coordinates cannot be negative: (" + row + ", " + column + ")");
-        }
         this.row = row;
         this.column = column;
     }
 
     /**
      * Copy constructor for Position.
-     * Creates a new instance with the same coordinates.
      *
      * @param other The Position object to copy
      */
     public Position(Position other) {
-        this(other.row, other.column);
+        this.row = other.row;
+        this.column = other.column;
     }
 
     /**
@@ -58,26 +55,18 @@ public class Position {
     /**
      * Sets the row index.
      *
-     * @param row The new row index (must be >= 0)
-     * @throws IllegalArgumentException if row is negative
+     * @param row The new row index
      */
     public void setRow(int row) {
-        if (row < 0) {
-            throw new IllegalArgumentException("Row cannot be negative: " + row);
-        }
         this.row = row;
     }
 
     /**
      * Sets the column index.
      *
-     * @param column The new column index (must be >= 0)
-     * @throws IllegalArgumentException if column is negative
+     * @param column The new column index
      */
     public void setColumn(int column) {
-        if (column < 0) {
-            throw new IllegalArgumentException("Column cannot be negative: " + column);
-        }
         this.column = column;
     }
 
@@ -93,6 +82,7 @@ public class Position {
 
     /**
      * Checks if this position is within the valid bounds of the grid.
+     * This is the primary method for validating coordinates.
      *
      * @param gridSize The size of the grid
      * @return true if position is within bounds [0, gridSize-1], false otherwise
@@ -102,9 +92,9 @@ public class Position {
     }
 
     /**
-     * Returns the hypothetical next position in a given direction without modifying the current instance.
+     * Returns the next position in a given direction without modifying the current instance.
      *
-     * @param direction The direction to project movement
+     * @param direction The direction to move
      * @return A new Position object representing the target location
      */
     public Position getNextPosition(Direction direction) {
@@ -124,8 +114,6 @@ public class Position {
 
     /**
      * Modifies the current position by moving one step in the specified direction.
-     * Note: This method may result in negative coordinates if unchecked,
-     * but usually validated by isValid() before use in game logic.
      *
      * @param direction The direction to move
      */
