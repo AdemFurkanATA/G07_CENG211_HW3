@@ -1,8 +1,9 @@
 package com.enums;
 
 /**
- * Enum representing the four types of penguins in the game.
- * Each penguin type has unique abilities and characteristics.
+ * Enum representing the four distinct types of penguins in the game.
+ * Each type corresponds to specific game mechanics and abilities.
+ * Utilizes caching for efficient random generation.
  */
 public enum PenguinType {
     KING("King Penguin"),                    // Can stop at 5th square
@@ -11,6 +12,9 @@ public enum PenguinType {
     ROCKHOPPER("Rockhopper Penguin");        // Can jump over one hazard
 
     private final String displayName;
+
+    // Cache values to avoid array cloning overhead
+    private static final PenguinType[] VALUES = values();
 
     /**
      * Constructor for PenguinType enum.
@@ -22,7 +26,7 @@ public enum PenguinType {
     }
 
     /**
-     * Gets the display name of the penguin type.
+     * Gets the user-friendly display name of the penguin type.
      *
      * @return The full name (e.g., "King Penguin")
      */
@@ -32,14 +36,13 @@ public enum PenguinType {
 
     /**
      * Returns a random PenguinType with equal probability for each type.
-     * Used when generating penguins at the start of the game.
+     * Used for initializing the game state.
      *
      * @return A randomly selected PenguinType
      */
     public static PenguinType getRandomType() {
-        PenguinType[] types = PenguinType.values();
-        int randomIndex = (int) (Math.random() * types.length);
-        return types[randomIndex];
+        int randomIndex = (int) (Math.random() * VALUES.length);
+        return VALUES[randomIndex];
     }
 
     /**

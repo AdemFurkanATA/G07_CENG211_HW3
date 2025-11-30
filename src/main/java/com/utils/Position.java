@@ -3,8 +3,9 @@ package com.utils;
 import com.enums.Direction;
 
 /**
- * Represents a position (coordinates) on the icy terrain grid.
- * Uses row and column indices to identify locations.
+ * Represents a coordinate (row, column) on the terrain grid.
+ * Enforces non-negative coordinates to ensure grid validity.
+ * Provides utility methods for movement simulation and boundary checks.
  */
 public class Position {
     private int row;
@@ -12,23 +13,28 @@ public class Position {
 
     /**
      * Constructor for Position.
+     * Validates that coordinates are non-negative.
      *
-     * @param row The row index (0-9 for a 10x10 grid)
-     * @param column The column index (0-9 for a 10x10 grid)
+     * @param row The row index (must be >= 0)
+     * @param column The column index (must be >= 0)
+     * @throws IllegalArgumentException if row or column is negative
      */
     public Position(int row, int column) {
+        if (row < 0 || column < 0) {
+            throw new IllegalArgumentException("Coordinates cannot be negative: (" + row + ", " + column + ")");
+        }
         this.row = row;
         this.column = column;
     }
 
     /**
      * Copy constructor for Position.
+     * Creates a new instance with the same coordinates.
      *
-     * @param other The Position to copy
+     * @param other The Position object to copy
      */
     public Position(Position other) {
-        this.row = other.row;
-        this.column = other.column;
+        this(other.row, other.column);
     }
 
     /**
@@ -52,47 +58,54 @@ public class Position {
     /**
      * Sets the row index.
      *
-     * @param row The new row index
+     * @param row The new row index (must be >= 0)
+     * @throws IllegalArgumentException if row is negative
      */
     public void setRow(int row) {
+        if (row < 0) {
+            throw new IllegalArgumentException("Row cannot be negative: " + row);
+        }
         this.row = row;
     }
 
     /**
      * Sets the column index.
      *
-     * @param column The new column index
+     * @param column The new column index (must be >= 0)
+     * @throws IllegalArgumentException if column is negative
      */
     public void setColumn(int column) {
+        if (column < 0) {
+            throw new IllegalArgumentException("Column cannot be negative: " + column);
+        }
         this.column = column;
     }
 
     /**
      * Checks if this position is on the edge of a grid with given size.
      *
-     * @param gridSize The size of the grid (e.g., 10 for 10x10)
-     * @return true if the position is on an edge, false otherwise
+     * @param gridSize The size of the grid
+     * @return true if the position is on any edge, false otherwise
      */
     public boolean isEdge(int gridSize) {
         return row == 0 || row == gridSize - 1 || column == 0 || column == gridSize - 1;
     }
 
     /**
-     * Checks if this position is valid within a grid of given size.
+     * Checks if this position is within the valid bounds of the grid.
      *
      * @param gridSize The size of the grid
-     * @return true if position is within bounds, false otherwise
+     * @return true if position is within bounds [0, gridSize-1], false otherwise
      */
     public boolean isValid(int gridSize) {
         return row >= 0 && row < gridSize && column >= 0 && column < gridSize;
     }
 
     /**
-     * Returns the next position in a given direction.
-     * Does not modify the current position.
+     * Returns the hypothetical next position in a given direction without modifying the current instance.
      *
-     * @param direction The direction to move
-     * @return A new Position representing the next location
+     * @param direction The direction to project movement
+     * @return A new Position object representing the target location
      */
     public Position getNextPosition(Direction direction) {
         switch (direction) {
@@ -110,8 +123,9 @@ public class Position {
     }
 
     /**
-     * Moves this position one step in the given direction.
-     * Modifies the current position.
+     * Modifies the current position by moving one step in the specified direction.
+     * Note: This method may result in negative coordinates if unchecked,
+     * but usually validated by isValid() before use in game logic.
      *
      * @param direction The direction to move
      */
@@ -133,10 +147,10 @@ public class Position {
     }
 
     /**
-     * Checks if this position equals another position.
+     * Checks if this position equals another object based on coordinates.
      *
      * @param obj The object to compare
-     * @return true if positions are equal, false otherwise
+     * @return true if positions are functionally identical
      */
     @Override
     public boolean equals(Object obj) {
@@ -149,7 +163,7 @@ public class Position {
     /**
      * Returns a hash code for this position.
      *
-     * @return Hash code based on row and column
+     * @return Hash code based on row and column values
      */
     @Override
     public int hashCode() {
@@ -157,7 +171,7 @@ public class Position {
     }
 
     /**
-     * Returns a string representation of the position.
+     * Returns a string representation of the position coordinates.
      *
      * @return String in format "(row, column)"
      */

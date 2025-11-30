@@ -3,6 +3,7 @@ package com.enums;
 /**
  * Enum representing the four possible movement directions in the game.
  * Used by penguins and sliding hazards to determine their movement on the icy terrain.
+ * Includes utility methods for parsing input and determining opposite directions.
  */
 public enum Direction {
     UP,      // Move upward (decrease row index)
@@ -12,7 +13,7 @@ public enum Direction {
 
     /**
      * Returns the opposite direction of the current direction.
-     * Used when penguins bounce off SeaLions.
+     * Essential for calculating bounce-back mechanics (e.g., SeaLion collision).
      *
      * @return The opposite Direction
      */
@@ -32,18 +33,18 @@ public enum Direction {
     }
 
     /**
-     * Converts user input string to Direction enum.
-     * Case-insensitive input handling.
+     * Converts user input string to Direction enum safely.
+     * Handles case-insensitivity and trims whitespace to prevent errors.
      *
-     * @param input The user input string (U, D, L, R)
-     * @return Corresponding Direction or null if invalid
+     * @param input The user input string (e.g., "U", " d ", "L")
+     * @return Corresponding Direction or null if input is invalid or empty
      */
     public static Direction fromString(String input) {
-        if (input == null) {
+        if (input == null || input.trim().isEmpty()) {
             return null;
         }
 
-        switch (input.toUpperCase()) {
+        switch (input.trim().toUpperCase()) {
             case "U":
                 return UP;
             case "D":

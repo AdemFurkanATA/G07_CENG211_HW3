@@ -2,7 +2,8 @@ package com.enums;
 
 /**
  * Enum representing the five types of food items available in the game.
- * Each food type can have a weight between 1-5 units.
+ * Each food type has a specific shorthand notation and serves as a collectible item.
+ * Utilizes caching for efficient random selection.
  */
 public enum FoodType {
     KRILL("Kr"),           // Small crustaceans
@@ -12,6 +13,9 @@ public enum FoodType {
     MACKEREL("Ma");        // Larger fish
 
     private final String shorthand;
+
+    // Cache values to avoid array cloning overhead on frequent random calls
+    private static final FoodType[] VALUES = values();
 
     /**
      * Constructor for FoodType enum.
@@ -24,7 +28,7 @@ public enum FoodType {
 
     /**
      * Gets the shorthand notation for the food type.
-     * Used for displaying food on the terrain grid.
+     * Used for rendering the map state.
      *
      * @return The two-letter shorthand (e.g., "Kr" for Krill)
      */
@@ -34,23 +38,22 @@ public enum FoodType {
 
     /**
      * Returns a random FoodType with equal probability for each type.
+     * Optimized to use cached values for better performance during generation.
      *
      * @return A randomly selected FoodType
      */
     public static FoodType getRandomType() {
-        FoodType[] types = FoodType.values();
-        int randomIndex = (int) (Math.random() * types.length);
-        return types[randomIndex];
+        int randomIndex = (int) (Math.random() * VALUES.length);
+        return VALUES[randomIndex];
     }
 
     /**
-     * Returns the full name of the food type.
+     * Returns the formatted full name of the food type.
      *
      * @return The food type name (e.g., "Krill")
      */
     @Override
     public String toString() {
-        // Capitalize first letter, lowercase the rest
         String name = this.name();
         return name.charAt(0) + name.substring(1).toLowerCase();
     }
