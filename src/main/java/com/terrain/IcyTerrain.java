@@ -29,13 +29,13 @@ public class IcyTerrain {
     private static final int NUM_TURNS = 4;
     private static final double AI_SPECIAL_ACTION_CHANCE = 0.30;
 
-    private TerrainGrid terrainGrid;          // The terrain grid
-    private List<Penguin> penguins;           // All penguins in the game
-    private List<Food> foodItems;             // All food items
-    private List<IHazard> hazards;            // All hazards
-    private Penguin playerPenguin;            // The player's penguin
-    private Scanner scanner;                  // For user input
-    private int currentTurn;                  // Current turn number (1-4)
+    private TerrainGrid terrainGrid;
+    private List<Penguin> penguins;
+    private List<Food> foodItems;
+    private List<IHazard> hazards;
+    private Penguin playerPenguin;
+    private Scanner scanner;
+    private int currentTurn;
 
     /**
      * Constructor for IcyTerrain.
@@ -59,19 +59,15 @@ public class IcyTerrain {
         System.out.println("Welcome to Sliding Penguins Puzzle Game App. An " + GRID_SIZE + "x" + GRID_SIZE + " icy terrain grid is being generated.");
         System.out.println("Penguins, Hazards, and Food items are also being generated. The initial icy terrain grid:");
 
-        // Generate game objects
         generatePenguins();
         generateHazards();
         generateFood();
 
-        // Display initial grid
         displayGrid();
         displayPenguinTypes();
 
-        // Play the game
         playGame();
 
-        // Display final results
         displayGameOver();
     }
 
@@ -90,7 +86,6 @@ public class IcyTerrain {
             terrainGrid.placeObject(penguin, pos);
         }
 
-        // Randomly assign one penguin to the player
         int playerIndex = GameHelper.randomInt(0, NUM_PENGUINS - 1);
         playerPenguin = penguins.get(playerIndex);
         playerPenguin.setPlayerPenguin(true);
@@ -98,11 +93,6 @@ public class IcyTerrain {
 
     /**
      * Creates a penguin of the specified type.
-     *
-     * @param name The penguin's name
-     * @param position The starting position
-     * @param type The penguin type
-     * @return The created Penguin object
      */
     private Penguin createPenguin(String name, Position position, PenguinType type) {
         switch (type) {
@@ -134,9 +124,6 @@ public class IcyTerrain {
 
     /**
      * Creates a random hazard at the specified position.
-     *
-     * @param position The position for the hazard
-     * @return A randomly created IHazard
      */
     private IHazard createRandomHazard(Position position) {
         int type = GameHelper.randomInt(0, 3);
@@ -170,8 +157,6 @@ public class IcyTerrain {
 
     /**
      * Finds an empty edge position for penguin placement.
-     *
-     * @return An empty edge Position
      */
     private Position findEmptyEdgePosition() {
         Position pos;
@@ -183,8 +168,6 @@ public class IcyTerrain {
 
     /**
      * Finds an empty position anywhere on the grid.
-     *
-     * @return An empty Position
      */
     private Position findEmptyPosition() {
         Position pos;
@@ -196,9 +179,6 @@ public class IcyTerrain {
 
     /**
      * Gets the object at the specified position.
-     *
-     * @param position The position to check
-     * @return The ITerrainObject at that position, or null if empty
      */
     private ITerrainObject getObjectAt(Position position) {
         return terrainGrid.getObjectAt(position);
@@ -238,96 +218,108 @@ public class IcyTerrain {
 
     /**
      * Plays a single turn for the specified penguin.
-     *
-     * @param penguin The penguin taking their turn
      */
     private void playTurn(Penguin penguin) {
         System.out.println("\n*** Turn " + currentTurn + " – " + penguin.getName() +
                 (penguin.isPlayerPenguin() ? " (Your Penguin):" : ":"));
 
-        // Check if stunned
         if (penguin.isStunned()) {
             System.out.println(penguin.getName() + " is stunned and skips this turn!");
             penguin.setStunned(false);
             return;
         }
 
-        // Handle special action and movement
         if (penguin.isPlayerPenguin()) {
             handlePlayerTurn(penguin);
         } else {
             handleAITurn(penguin);
         }
 
-        // Display updated grid
         System.out.println("New state of the grid:");
         displayGrid();
     }
 
     /**
      * Handles a turn for the player's penguin.
-     *
-     * @param penguin The player's penguin
      */
     private void handlePlayerTurn(Penguin penguin) {
-        // Ask about special action
         boolean useSpecial = false;
         if (!penguin.hasUsedSpecialAction()) {
             useSpecial = askYesNo("Will " + penguin.getName() + " use its special action? Answer with Y or N");
         }
 
-        // Handle Royal Penguin special move
         if (useSpecial && penguin instanceof RoyalPenguin) {
+            penguin.useSpecialAction();
             Direction specialDir = askDirection("Which direction for the special single-step move? Answer with U (Up), D (Down), L (Left), R (Right)");
             ((RoyalPenguin) penguin).setSpecialMoveDirection(specialDir);
-            penguin.useSpecialAction();
+            System.out.println(penguin.getName() + " moves one square to the " + specialDir + ".");
             executeRoyalSpecialMove((RoyalPenguin) penguin, specialDir);
 
             if (penguin.isRemoved()) {
-                return;  // Penguin fell during special move
+                return;
             }
         } else if (useSpecial) {
             penguin.useSpecialAction();
-            if (penguin instanceof RockhopperPenguin) {
-                System.out.println(penguin.getName() + " is prepared to jump over a hazard.");
-            }
         }
 
-        // Ask for movement direction
         Direction direction = askDirection("Which direction will " + penguin.getName() + " move? Answer with U (Up), D (Down), L (Left), R (Right)");
 
-        // Execute movement
-        executePenguinMovement(penguin, direction);
-    }
-
-    /**
-     * Handles a turn for an AI-controlled penguin.
-     *
-     * @param penguin The AI penguin
-     */
-    private void handleAITurn(Penguin penguin) {
-        // Decide whether to use special action (30% chance)
-        boolean useSpecial = !penguin.hasUsedSpecialAction() &&
-                GameHelper.randomChance(AI_SPECIAL_ACTION_CHANCE);
-
-        // Special handling for Rockhopper - auto-use when moving toward hazard
         if (penguin instanceof RockhopperPenguin && !penguin.hasUsedSpecialAction()) {
-            Direction chosenDir = chooseAIDirection(penguin);
-            Position nextPos = penguin.getPosition().getNextPosition(chosenDir);
-            ITerrainObject nextObj = getObjectAt(nextPos);
-
-            if (nextObj instanceof IHazard) {
-                useSpecial = true;
+            if (shouldRockhopperAutoUse((RockhopperPenguin) penguin, direction)) {
                 System.out.println(penguin.getName() + " will automatically USE its special action.");
                 penguin.useSpecialAction();
             }
         }
 
-        if (useSpecial && !(penguin instanceof RockhopperPenguin)) {
+        executePenguinMovement(penguin, direction);
+    }
+
+    /**
+     * Checks if Rockhopper should automatically use its ability.
+     */
+    private boolean shouldRockhopperAutoUse(RockhopperPenguin penguin, Direction direction) {
+        Position checkPos = new Position(penguin.getPosition());
+
+        for (int i = 0; i < GRID_SIZE; i++) {
+            checkPos = checkPos.getNextPosition(direction);
+
+            if (!checkPos.isValid(GRID_SIZE)) {
+                return false;
+            }
+
+            ITerrainObject obj = getObjectAt(checkPos);
+
+            if (obj instanceof IHazard) {
+                return true;
+            }
+
+            if (obj instanceof Penguin) {
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Handles a turn for an AI-controlled penguin.
+     */
+    private void handleAITurn(Penguin penguin) {
+        boolean useSpecial = !penguin.hasUsedSpecialAction() &&
+                GameHelper.randomChance(AI_SPECIAL_ACTION_CHANCE);
+
+        Direction chosenDir = chooseAIDirection(penguin);
+
+        if (penguin instanceof RockhopperPenguin && !penguin.hasUsedSpecialAction()) {
+            if (shouldRockhopperAutoUse((RockhopperPenguin) penguin, chosenDir)) {
+                useSpecial = true;
+            }
+        }
+
+        if (useSpecial) {
             System.out.println(penguin.getName() + " chooses to USE its special action.");
             penguin.useSpecialAction();
 
-            // Handle Royal Penguin special move
             if (penguin instanceof RoyalPenguin) {
                 Direction specialDir = chooseRoyalSpecialDirection((RoyalPenguin) penguin);
                 System.out.println(penguin.getName() + " moves one square to the " + specialDir + ".");
@@ -337,23 +329,19 @@ public class IcyTerrain {
                 if (penguin.isRemoved()) {
                     return;
                 }
+
+                chosenDir = chooseAIDirection(penguin);
             }
-        } else if (!useSpecial) {
+        } else {
             System.out.println(penguin.getName() + " does NOT to use its special action.");
         }
 
-        // Choose and execute movement
-        Direction direction = chooseAIDirection(penguin);
-        System.out.println(penguin.getName() + " chooses to move to the " + direction + ".");
-        executePenguinMovement(penguin, direction);
+        System.out.println(penguin.getName() + " chooses to move " + chosenDir + ".");
+        executePenguinMovement(penguin, chosenDir);
     }
 
     /**
      * Chooses a direction for AI penguin based on priorities.
-     * Priority: 1) Food, 2) Hazards (except HoleInIce), 3) Water (last resort)
-     *
-     * @param penguin The AI penguin
-     * @return The chosen Direction
      */
     private Direction chooseAIDirection(Penguin penguin) {
         Direction[] directions = Direction.values();
@@ -380,7 +368,6 @@ public class IcyTerrain {
                 if (!(obj instanceof HoleInIce && ((HoleInIce) obj).isActive())) {
                     hazardDirections.add(dir);
                 } else {
-                    // Active HoleInIce is treated like water
                     waterDirections.add(dir);
                 }
             } else {
@@ -388,7 +375,6 @@ public class IcyTerrain {
             }
         }
 
-        // Priority selection
         if (!foodDirections.isEmpty()) {
             return foodDirections.get(GameHelper.randomInt(0, foodDirections.size() - 1));
         } else if (!hazardDirections.isEmpty()) {
@@ -396,16 +382,12 @@ public class IcyTerrain {
         } else if (!safeDirections.isEmpty()) {
             return safeDirections.get(GameHelper.randomInt(0, safeDirections.size() - 1));
         } else {
-            // No choice but water
             return waterDirections.get(GameHelper.randomInt(0, waterDirections.size() - 1));
         }
     }
 
     /**
      * Chooses a safe direction for Royal Penguin's special move.
-     *
-     * @param penguin The Royal Penguin
-     * @return A safe Direction for the special move
      */
     private Direction chooseRoyalSpecialDirection(RoyalPenguin penguin) {
         Direction[] directions = Direction.values();
@@ -415,7 +397,7 @@ public class IcyTerrain {
             Position nextPos = penguin.getPosition().getNextPosition(dir);
 
             if (!nextPos.isValid(GRID_SIZE)) {
-                continue;  // Avoid water
+                continue;
             }
 
             ITerrainObject obj = getObjectAt(nextPos);
@@ -428,22 +410,17 @@ public class IcyTerrain {
         if (!safeDirections.isEmpty()) {
             return safeDirections.get(GameHelper.randomInt(0, safeDirections.size() - 1));
         } else {
-            // No safe option, choose randomly
             return directions[GameHelper.randomInt(0, directions.length - 1)];
         }
     }
 
     /**
      * Executes the Royal Penguin's special single-step move.
-     *
-     * @param penguin The Royal Penguin
-     * @param direction The direction to move
      */
     private void executeRoyalSpecialMove(RoyalPenguin penguin, Direction direction) {
         Position currentPos = penguin.getPosition();
         Position nextPos = currentPos.getNextPosition(direction);
 
-        // Check if moving out of bounds
         if (!nextPos.isValid(GRID_SIZE)) {
             System.out.println(penguin.getName() + " accidentally stepped out of the grid and fell into the water!");
             System.out.println("*** " + penguin.getName() + " IS REMOVED FROM THE GAME!");
@@ -453,7 +430,6 @@ public class IcyTerrain {
 
         ITerrainObject targetObj = getObjectAt(nextPos);
 
-        // Handle collisions during special move
         if (targetObj instanceof IHazard) {
             IHazard hazard = (IHazard) targetObj;
             if (hazard instanceof HoleInIce && ((HoleInIce) hazard).isActive()) {
@@ -467,15 +443,13 @@ public class IcyTerrain {
                 if (lost != null) {
                     System.out.println(penguin.getName() + " lost their lightest food item: " + lost);
                 }
-                return;  // Don't move
+                return;
             }
         }
 
-        // Move penguin
         removeObject(currentPos);
         penguin.setPosition(nextPos);
 
-        // Handle food collection
         if (targetObj instanceof Food) {
             Food food = (Food) targetObj;
             penguin.collectFood(food);
@@ -484,17 +458,12 @@ public class IcyTerrain {
         }
 
         terrainGrid.placeObject(penguin, nextPos);
-        System.out.println(penguin.getName() + " stops at an empty square using its special action.");
 
         penguin.resetSpecialMove();
     }
 
     /**
      * Executes penguin movement with sliding mechanics.
-     * This is the main method that handles all movement logic.
-     *
-     * @param penguin The penguin to move
-     * @param direction The direction to move
      */
     private void executePenguinMovement(Penguin penguin, Direction direction) {
         penguin.slide(direction);
@@ -503,7 +472,6 @@ public class IcyTerrain {
         int squareCount = 0;
         boolean shouldStop = false;
 
-        // Determine stop square for King/Emperor penguins
         int stopSquare = -1;
         if (penguin.hasUsedSpecialAction()) {
             if (penguin instanceof KingPenguin) {
@@ -513,12 +481,10 @@ public class IcyTerrain {
             }
         }
 
-        // Slide until stopped
         while (!shouldStop) {
             Position nextPos = currentPos.getNextPosition(direction);
             squareCount++;
 
-            // Check if falling off the grid
             if (!nextPos.isValid(GRID_SIZE)) {
                 System.out.println(penguin.getName() + " falls into the water!");
                 System.out.println("*** " + penguin.getName() + " IS REMOVED FROM THE GAME!");
@@ -528,10 +494,8 @@ public class IcyTerrain {
 
             ITerrainObject targetObj = getObjectAt(nextPos);
 
-            // Check for stop at specific square (King/Emperor ability)
             if (stopSquare > 0 && squareCount == stopSquare) {
                 if (targetObj == null) {
-                    // Move to this square and stop
                     removeObject(currentPos);
                     penguin.setPosition(nextPos);
                     terrainGrid.placeObject(penguin, nextPos);
@@ -539,7 +503,6 @@ public class IcyTerrain {
                     shouldStop = true;
                     continue;
                 } else if (targetObj instanceof Food) {
-                    // Collect food and stop
                     removeObject(currentPos);
                     penguin.setPosition(nextPos);
                     Food food = (Food) targetObj;
@@ -552,10 +515,8 @@ public class IcyTerrain {
                     shouldStop = true;
                     continue;
                 }
-                // If there's an obstacle, continue sliding past stop square
             }
 
-            // Handle empty square
             if (targetObj == null) {
                 removeObject(currentPos);
                 currentPos = nextPos;
@@ -564,7 +525,6 @@ public class IcyTerrain {
                 continue;
             }
 
-            // Handle food
             if (targetObj instanceof Food) {
                 removeObject(currentPos);
                 Food food = (Food) targetObj;
@@ -578,28 +538,23 @@ public class IcyTerrain {
                 continue;
             }
 
-            // Handle penguin collision
             if (targetObj instanceof Penguin) {
                 Penguin otherPenguin = (Penguin) targetObj;
                 System.out.println(penguin.getName() + " collides with " + otherPenguin.getName() + "!");
 
-                // Current penguin stops
                 penguin.setSliding(false);
 
-                // Other penguin starts sliding
                 removeObject(otherPenguin.getPosition());
                 executePenguinMovement(otherPenguin, direction);
                 shouldStop = true;
                 continue;
             }
 
-            // Handle hazard collision
             if (targetObj instanceof IHazard) {
                 shouldStop = handleHazardCollision(penguin, (IHazard) targetObj, direction, currentPos);
                 continue;
             }
 
-            // Unknown object - stop
             shouldStop = true;
         }
 
@@ -608,29 +563,20 @@ public class IcyTerrain {
 
     /**
      * Handles collision between a penguin and a hazard.
-     *
-     * @param penguin The colliding penguin
-     * @param hazard The hazard being hit
-     * @param direction The direction of movement
-     * @param currentPos The current position before collision
-     * @return true if penguin should stop, false to continue
      */
     private boolean handleHazardCollision(Penguin penguin, IHazard hazard, Direction direction, Position currentPos) {
-        // Rockhopper jump ability
         if (penguin instanceof RockhopperPenguin) {
             RockhopperPenguin rockhopper = (RockhopperPenguin) penguin;
             if (rockhopper.isPreparedToJump()) {
                 Position hazardPos = hazard.getPosition();
                 Position landingPos = hazardPos.getNextPosition(direction);
 
-                // Check if landing square is empty
                 if (landingPos.isValid(GRID_SIZE)) {
                     ITerrainObject landingObj = getObjectAt(landingPos);
                     if (landingObj == null || landingObj instanceof Food) {
-                        System.out.println(penguin.getName() + " jumps over " + hazard.getDisplayName() + " in its path.");
+                        System.out.println(penguin.getName() + " jumps over " + hazard.getShorthand() + " in its path.");
                         rockhopper.executeJump();
 
-                        // Move to landing position
                         removeObject(currentPos);
                         penguin.setPosition(landingPos);
 
@@ -640,32 +586,30 @@ public class IcyTerrain {
                             foodItems.remove(food);
                             System.out.println(penguin.getName() + " takes the " + food.getDisplayName() +
                                     " on the ground. (Weight=" + food.getWeight() + " units)");
+                            terrainGrid.placeObject(penguin, landingPos);
+                            return true;
                         }
 
                         terrainGrid.placeObject(penguin, landingPos);
-                        return true;  // Stop after jumping
+
+                        return false;
                     }
                 }
 
-                // Failed to jump
-                System.out.println(penguin.getName() + " fails to jump over " + hazard.getDisplayName() + "!");
+                System.out.println(penguin.getName() + " fails to jump and collides with the hazard!");
                 rockhopper.executeJump();
-                // Continue to handle collision normally
             }
         }
 
-        // Handle specific hazard types
         if (hazard instanceof HoleInIce) {
             HoleInIce hole = (HoleInIce) hazard;
             if (hole.isPlugged()) {
-                // Can pass through plugged hole
                 removeObject(currentPos);
                 penguin.setPosition(hole.getPosition());
                 terrainGrid.placeObject(penguin, hole.getPosition());
-                return false;  // Continue sliding
+                return false;
             } else {
-                // Fall into hole
-                System.out.println(penguin.getName() + " falls into a HoleInIce!");
+                System.out.println(penguin.getName() + " falls into the water due to " + hazard.getShorthand() + " in its path.");
                 System.out.println("*** " + penguin.getName() + " IS REMOVED FROM THE GAME!");
                 removePenguin(penguin);
                 return true;
@@ -676,60 +620,50 @@ public class IcyTerrain {
             LightIceBlock iceBlock = (LightIceBlock) hazard;
             System.out.println(penguin.getName() + " collides with a LightIceBlock!");
 
-            // Penguin is stunned
             penguin.setStunned(true);
             System.out.println(penguin.getName() + " is stunned and will skip the next turn!");
 
-            // Ice block starts sliding
             removeObject(iceBlock.getPosition());
             executeSlidableMovement(iceBlock, direction);
 
-            return true;  // Penguin stops
+            return true;
         }
 
         if (hazard instanceof HeavyIceBlock) {
             System.out.println(penguin.getName() + " collides with a HeavyIceBlock!");
 
-            // Penguin loses lightest food
             Food lost = penguin.removeLightestFood();
             if (lost != null) {
                 System.out.println(penguin.getName() + " loses their lightest food item: " + lost);
             }
 
-            return true;  // Penguin stops
+            return true;
         }
 
         if (hazard instanceof SeaLion) {
             SeaLion seaLion = (SeaLion) hazard;
             System.out.println(penguin.getName() + " bounces off a SeaLion!");
 
-            // Penguin bounces in opposite direction
             Direction oppositeDir = direction.getOpposite();
             System.out.println(penguin.getName() + " starts sliding in the opposite direction.");
 
-            // Remove penguin from current position
             removeObject(currentPos);
 
-            // SeaLion starts sliding in original direction
             removeObject(seaLion.getPosition());
             executeSlidableMovement(seaLion, direction);
 
-            // Penguin slides in opposite direction
             penguin.setPosition(currentPos);
             terrainGrid.placeObject(penguin, currentPos);
             executePenguinMovement(penguin, oppositeDir);
 
-            return true;  // Already handled
+            return true;
         }
 
-        return true;  // Default: stop
+        return true;
     }
 
     /**
-     * Executes sliding movement for slidable hazards (LightIceBlock, SeaLion).
-     *
-     * @param slidable The slidable object
-     * @param direction The direction to slide
+     * Executes sliding movement for slidable hazards.
      */
     private void executeSlidableMovement(ISlidable slidable, Direction direction) {
         slidable.slide(direction);
@@ -741,7 +675,6 @@ public class IcyTerrain {
         while (!shouldStop) {
             Position nextPos = currentPos.getNextPosition(direction);
 
-            // Check if falling off grid
             if (!nextPos.isValid(GRID_SIZE)) {
                 System.out.println(obj.getDisplayName() + " falls off the edge!");
                 if (slidable instanceof LightIceBlock) {
@@ -754,7 +687,6 @@ public class IcyTerrain {
 
             ITerrainObject targetObj = getObjectAt(nextPos);
 
-            // Empty square - continue sliding
             if (targetObj == null) {
                 removeObject(currentPos);
                 currentPos = nextPos;
@@ -763,7 +695,6 @@ public class IcyTerrain {
                 continue;
             }
 
-            // Hit food - remove food and continue
             if (targetObj instanceof Food) {
                 Food food = (Food) targetObj;
                 System.out.println(obj.getDisplayName() + " destroys " + food.getDisplayName() + "!");
@@ -775,7 +706,6 @@ public class IcyTerrain {
                 continue;
             }
 
-            // Hit penguin (not current turn penguin) - stop
             if (targetObj instanceof Penguin) {
                 Penguin otherPenguin = (Penguin) targetObj;
                 System.out.println(obj.getDisplayName() + " is stopped by " + otherPenguin.getName() + "!");
@@ -783,7 +713,6 @@ public class IcyTerrain {
                 continue;
             }
 
-            // Hit HoleInIce - plug it
             if (targetObj instanceof HoleInIce) {
                 HoleInIce hole = (HoleInIce) targetObj;
                 if (hole.isActive()) {
@@ -795,7 +724,6 @@ public class IcyTerrain {
                 }
             }
 
-            // Hit any other obstacle - stop
             shouldStop = true;
         }
 
@@ -804,8 +732,6 @@ public class IcyTerrain {
 
     /**
      * Removes a penguin from the game.
-     *
-     * @param penguin The penguin to remove
      */
     private void removePenguin(Penguin penguin) {
         penguin.setRemoved(true);
@@ -814,8 +740,6 @@ public class IcyTerrain {
 
     /**
      * Removes an object from the grid at the specified position.
-     *
-     * @param position The position to clear
      */
     private void removeObject(Position position) {
         terrainGrid.removeObject(position);
@@ -823,9 +747,6 @@ public class IcyTerrain {
 
     /**
      * Asks the user a yes/no question.
-     *
-     * @param question The question to ask
-     * @return true for yes, false for no
      */
     private boolean askYesNo(String question) {
         while (true) {
@@ -844,9 +765,6 @@ public class IcyTerrain {
 
     /**
      * Asks the user for a direction.
-     *
-     * @param question The question to ask
-     * @return The chosen Direction
      */
     private Direction askDirection(String question) {
         while (true) {
@@ -869,10 +787,8 @@ public class IcyTerrain {
         System.out.println("\n***** GAME OVER *****");
         System.out.println("***** SCOREBOARD FOR THE PENGUINS *****");
 
-        // Sort penguins by total food weight (descending)
         penguins.sort((p1, p2) -> p2.getTotalFoodWeight() - p1.getTotalFoodWeight());
 
-        // Display rankings
         for (int i = 0; i < penguins.size(); i++) {
             Penguin p = penguins.get(i);
             String place = getPlaceSuffix(i + 1);
@@ -899,10 +815,7 @@ public class IcyTerrain {
     }
 
     /**
-     * Gets the ordinal suffix for a place number (1st, 2nd, 3rd, etc.)
-     *
-     * @param place The place number
-     * @return The place with suffix (e.g., "1st")
+     * Gets the ordinal suffix for a place number.
      */
     private String getPlaceSuffix(int place) {
         switch (place) {
