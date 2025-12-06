@@ -8,6 +8,12 @@ import com.utils.Position;
  * Special action: Prepare to jump over one hazard while sliding.
  * Can only jump to an empty square. If landing square is occupied, jump fails.
  * Demonstrates inheritance from abstract Penguin class.
+ *
+ * SECURITY ENHANCED VERSION:
+ * - State validation on jump preparation
+ * - Safe boolean flag management
+ * - Protected internal state
+ * - Clear state transition methods
  */
 public class RockhopperPenguin extends Penguin {
 
@@ -15,9 +21,11 @@ public class RockhopperPenguin extends Penguin {
 
     /**
      * Constructor for RockhopperPenguin.
+     * SECURITY: Position is defensively copied by parent Penguin constructor.
      *
      * @param name The name/identifier (P1, P2, P3)
-     * @param position The starting position
+     * @param position The starting position (must not be null)
+     * @throws IllegalArgumentException if name or position is null (from parent)
      */
     public RockhopperPenguin(String name, Position position) {
         super(name, position, PenguinType.ROCKHOPPER);
@@ -43,6 +51,7 @@ public class RockhopperPenguin extends Penguin {
 
     /**
      * Checks if the penguin is prepared to jump.
+     * Safe to return primitive boolean.
      *
      * @return true if prepared to jump, false otherwise
      */
@@ -52,18 +61,133 @@ public class RockhopperPenguin extends Penguin {
 
     /**
      * Sets the jump preparation state.
+     * SECURITY: Validates state consistency - can only prepare if action is available.
+     *
+     * Note: This is primarily for internal state management.
+     * External code should use useSpecialAction() instead.
      *
      * @param prepared true to prepare for jump
      */
     public void setPreparedToJump(boolean prepared) {
+        // Only allow setting to true if special action is used
+        if (prepared && !hasUsedSpecialAction) {
+            // Invalid state - cannot be prepared without using action
+            return;
+        }
         this.preparedToJump = prepared;
     }
 
     /**
      * Executes the jump, consuming the prepared jump state.
      * This should be called when the penguin actually performs the jump.
+     * Safe operation - clears the preparation flag.
      */
     public void executeJump() {
         this.preparedToJump = false;
+    }
+
+    /**
+     * SECURITY: Resets the jump preparation without executing.
+     * Useful for cases where the jump cannot be performed (e.g., no valid landing).
+     */
+    public void cancelJump() {
+        this.preparedToJump = false;
+    }
+
+    /**
+     * SECURITY: Validates the jump state is consistent.
+     * Ensures the penguin's jump-related state makes sense.
+     *
+     * @return true if state is valid, false if inconsistent
+     */
+    public boolean isJumpStateValid() {
+        // If prepared to jump, special action must be used
+        if (preparedToJump && !hasUsedSpecialAction) {
+            return false;
+        }
+
+        // If special action is used but not prepared, that's okay
+        // (action was used but jump was already executed or cancelled)
+
+        return true;
+    }
+
+    /**
+     * SECURITY: Checks if the penguin can currently jump.
+     * Convenient method for checking jump availability.
+     *
+     * @return true if penguin is in a state where jumping is possible
+     */
+    public boolean canJump() {
+        return preparedToJump && isJumpStateValid();
+    }
+
+    /**
+     * Returns a string representation of the Rockhopper Penguin for debugging.
+     * Safe method - returns formatted string with jump state.
+     *
+     * @return String representation including jump preparation state
+     */
+    @Override
+    public String toString() {
+        return super.toString() +
+                ", preparedToJump=" + preparedToJump +
+                ", canJump=" + canJump();
+    }
+
+    /**
+     * SECURITY: Gets a summary of the Rockhopper Penguin's special ability state.
+     * Safe method that provides read-only information.
+     *
+     * @return Formatted string with special ability status
+     */
+    public String getSpecialAbilitySummary() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Rockhopper Penguin Special Ability:\n");
+        sb.append("  - Can jump over one hazard\n");
+        sb.append("  - Action Status: ");
+
+        if (hasUsedSpecialAction) {
+            sb.append("USED");
+        } else {
+            sb.append("AVAILABLE");
+        }
+
+        sb.append("\n  - Jump Prepared: ");
+        if (preparedToJump) {
+            sb.append("YES (ready to jump)");
+        } else {
+            sb.append("NO");
+        }
+
+        sb.append("\n  - Can Jump Now: ").append(canJump() ? "YES" : "NO");
+
+        return sb.toString();
+    }
+
+    /**
+     * SECURITY: Provides detailed information about why jump might not be possible.
+     * Useful for debugging and game logic validation.
+     *
+     * @return Human-readable string explaining jump status
+     */
+    public String getJumpStatusExplanation() {
+        if (canJump()) {
+            return "Penguin is ready to jump over a hazard.";
+        }
+
+        if (!hasUsedSpecialAction) {
+            return "Special action has not been used yet.";
+        }
+
+        if (!preparedToJump) {
+            return "Jump was already executed or cancelled.";
+        }
+
+        if (!isJumpStateValid()) {
+            return "Jump state is inconsistent (possible bug).";
+        }
+
+        return "Unknown jump status.";
     }
 }
