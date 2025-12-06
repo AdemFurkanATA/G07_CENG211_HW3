@@ -1,539 +1,485 @@
 package com.utils;
 
-import java.util.Random;
+import org.junit.jupiter.api.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Utility class providing helper methods for game operations.
- * Contains random number generation and other utility functions.
+ * GameHelper Utility Class Tests
  *
- * MAXIMUM SECURITY VERSION:
- * - Thread-safe random number generation
- * - Comprehensive input validation on all methods
- * - Protected against edge cases and invalid inputs
- * - Defensive position copying on all returns
- * - Range validation with detailed error messages
- * - Null safety throughout
- * - No state mutation possible from outside
- * - Immutable design pattern where applicable
+ * Location: src/test/java/com/utils/GameHelperTest.java
  *
- * DESIGN NOTES:
- * - All methods are static (utility class pattern)
- * - Random instance is private and final (encapsulation)
- * - All position returns are NEW objects (defensive copying)
- * - All numeric inputs are validated before use
- * - Edge cases handled gracefully with safe defaults
+ * Testing utility/helper classes with static methods
  */
-public class GameHelper {
+@DisplayName("GameHelper Utility Tests 🎲")
+class GameHelperTest {
 
-    // SECURITY: Private final Random instance - cannot be accessed or modified externally
-    // Thread-safe for game operations
-    private static final Random random = new Random();
+    // ========================================
+    // randomInt() TESTS
+    // ========================================
 
-    /**
-     * SECURITY: Private constructor prevents instantiation.
-     * This is a utility class and should never be instantiated.
-     * Throws exception if someone tries to use reflection.
-     */
-    private GameHelper() {
-        throw new AssertionError("GameHelper is a utility class and cannot be instantiated");
+    @Test
+    @DisplayName("randomInt should return value within range")
+    void testRandomInt_WithinRange() {
+        // ARRANGE
+        int min = 1;
+        int max = 10;
+
+        // ACT & ASSERT - Try multiple times
+        for (int i = 0; i < 100; i++) {
+            int result = GameHelper.randomInt(min, max);
+
+            assertTrue(result >= min, "Result should be >= min: " + result);
+            assertTrue(result <= max, "Result should be <= max: " + result);
+        }
+
+        System.out.println("✓ randomInt stays within range");
     }
 
-    /**
-     * Generates a random integer between min (inclusive) and max (inclusive).
-     * SECURITY: Comprehensive validation of input parameters.
-     * Handles edge cases where min > max, min == max, and negative values.
-     *
-     * @param min The minimum value (inclusive)
-     * @param max The maximum value (inclusive)
-     * @return A random integer in the range [min, max]
-     * @throws IllegalArgumentException if min > max
-     */
-    public static int randomInt(int min, int max) {
-        // SECURITY: Validate that min <= max
-        if (min > max) {
-            throw new IllegalArgumentException(
-                    String.format("Invalid range: min (%d) cannot be greater than max (%d)", min, max)
-            );
-        }
+    @Test
+    @DisplayName("randomInt with min == max should return that value")
+    void testRandomInt_MinEqualsMax() {
+        // ARRANGE
+        int value = 5;
 
-        // SECURITY: Handle edge case where min == max
-        if (min == max) {
-            return min;
-        }
+        // ACT
+        int result = GameHelper.randomInt(value, value);
 
-        try {
-            // SECURITY: Check for integer overflow in range calculation
-            // This prevents issues when (max - min + 1) overflows
-            long range = (long) max - (long) min + 1;
+        // ASSERT
+        assertEquals(value, result, "Should return the only possible value");
+    }
 
-            if (range > Integer.MAX_VALUE) {
-                // Fallback to safe method for very large ranges
-                return random.nextInt(Integer.MAX_VALUE) % (int) range + min;
+    @Test
+    @DisplayName("randomInt with min > max should throw exception")
+    void testRandomInt_MinGreaterThanMax() {
+        // ACT & ASSERT
+        assertThrows(IllegalArgumentException.class, () -> {
+            GameHelper.randomInt(10, 5);
+        }, "min > max should throw exception");
+    }
+
+    @Test
+    @DisplayName("randomInt should produce variety")
+    void testRandomInt_ProducesVariety() {
+        // ACT - Generate many random numbers
+        boolean foundDifferent = false;
+        int first = GameHelper.randomInt(1, 100);
+
+        for (int i = 0; i < 100; i++) {
+            int result = GameHelper.randomInt(1, 100);
+            if (result != first) {
+                foundDifferent = true;
+                break;
             }
-
-            // Normal case: use standard random generation
-            return random.nextInt((int) range) + min;
-
-        } catch (Exception e) {
-            // SECURITY: Fallback on any unexpected error
-            System.err.println("ERROR in randomInt: " + e.getMessage());
-            // Return the minimum value as safe fallback
-            return min;
         }
+
+        // ASSERT
+        assertTrue(foundDifferent, "Should produce different values");
     }
 
-    /**
-     * Returns a random boolean with the specified probability of being true.
-     * SECURITY: Validates probability is in valid range [0.0, 1.0].
-     * Handles edge cases and invalid probabilities gracefully.
-     *
-     * @param probability The probability (0.0 to 1.0) of returning true
-     * @return true with the given probability, false otherwise
-     * @throws IllegalArgumentException if probability is not in [0.0, 1.0]
-     */
-    public static boolean randomChance(double probability) {
-        // SECURITY: Validate probability is in valid range
-        if (probability < 0.0 || probability > 1.0) {
-            throw new IllegalArgumentException(
-                    String.format("Invalid probability: %.4f (must be between 0.0 and 1.0)", probability)
-            );
+    @Test
+    @DisplayName("randomInt should handle negative numbers")
+    void testRandomInt_NegativeNumbers() {
+        // ACT & ASSERT
+        for (int i = 0; i < 50; i++) {
+            int result = GameHelper.randomInt(-10, -1);
+            assertTrue(result >= -10 && result <= -1,
+                    "Should handle negative range: " + result);
         }
 
-        // SECURITY: Handle edge cases
-        if (probability == 0.0) {
-            return false;  // 0% chance always returns false
-        }
-        if (probability == 1.0) {
-            return true;   // 100% chance always returns true
-        }
-
-        try {
-            // Normal case: generate random double and compare
-            return random.nextDouble() < probability;
-        } catch (Exception e) {
-            // SECURITY: Fallback on any unexpected error
-            System.err.println("ERROR in randomChance: " + e.getMessage());
-            // Return false as safe fallback (safer to underestimate than overestimate)
-            return false;
-        }
+        System.out.println("✓ randomInt handles negative numbers");
     }
 
-    /**
-     * Generates a random Position on the edge of a grid.
-     * Edge positions are those where row or column is 0 or gridSize-1.
-     * SECURITY: Comprehensive validation, defensive copying, null safety.
-     * Always returns a NEW Position object.
-     *
-     * @param gridSize The size of the grid (must be > 0)
-     * @return A random edge Position (NEW object, never null)
-     * @throws IllegalArgumentException if gridSize <= 0
-     */
-    public static PositionTest randomEdgePosition(int gridSize) {
-        // SECURITY: Validate grid size
-        if (gridSize <= 0) {
-            throw new IllegalArgumentException(
-                    String.format("Invalid grid size: %d (must be > 0)", gridSize)
-            );
+    @Test
+    @DisplayName("randomInt should handle zero")
+    void testRandomInt_WithZero() {
+        // ACT & ASSERT
+        for (int i = 0; i < 50; i++) {
+            int result = GameHelper.randomInt(0, 5);
+            assertTrue(result >= 0 && result <= 5,
+                    "Should handle zero in range: " + result);
         }
 
-        // SECURITY: Handle edge case of 1x1 grid (only one position possible)
-        if (gridSize == 1) {
-            return new PositionTest(0, 0);
+        int result2 = GameHelper.randomInt(-5, 5);
+        assertTrue(result2 >= -5 && result2 <= 5);
+
+        System.out.println("✓ randomInt handles zero");
+    }
+
+    // ========================================
+    // randomChance() TESTS
+    // ========================================
+
+    @Test
+    @DisplayName("randomChance with 0.0 should always return false")
+    void testRandomChance_Zero() {
+        // ACT & ASSERT
+        for (int i = 0; i < 50; i++) {
+            assertFalse(GameHelper.randomChance(0.0),
+                    "0.0 probability should always return false");
         }
 
-        try {
-            // Generate random side: 0=top, 1=bottom, 2=left, 3=right
-            int side = randomInt(0, 3);
+        System.out.println("✓ randomChance(0.0) always false");
+    }
 
-            switch (side) {
-                case 0:  // Top edge (row = 0, column = random)
-                    return new PositionTest(0, randomInt(0, gridSize - 1));
+    @Test
+    @DisplayName("randomChance with 1.0 should always return true")
+    void testRandomChance_One() {
+        // ACT & ASSERT
+        for (int i = 0; i < 50; i++) {
+            assertTrue(GameHelper.randomChance(1.0),
+                    "1.0 probability should always return true");
+        }
 
-                case 1:  // Bottom edge (row = gridSize-1, column = random)
-                    return new PositionTest(gridSize - 1, randomInt(0, gridSize - 1));
+        System.out.println("✓ randomChance(1.0) always true");
+    }
 
-                case 2:  // Left edge (row = random, column = 0)
-                    return new PositionTest(randomInt(0, gridSize - 1), 0);
+    @Test
+    @DisplayName("randomChance with 0.5 should return mix of true/false")
+    void testRandomChance_Half() {
+        // ACT - Try many times
+        int trueCount = 0;
+        int totalTries = 1000;
 
-                case 3:  // Right edge (row = random, column = gridSize-1)
-                    return new PositionTest(randomInt(0, gridSize - 1), gridSize - 1);
-
-                default:
-                    // SECURITY: Fallback to top-left corner
-                    return new PositionTest(0, 0);
+        for (int i = 0; i < totalTries; i++) {
+            if (GameHelper.randomChance(0.5)) {
+                trueCount++;
             }
-        } catch (Exception e) {
-            // SECURITY: Fallback on any unexpected error
-            System.err.println("ERROR in randomEdgePosition: " + e.getMessage());
-            // Return top-left corner as safe fallback
-            return new PositionTest(0, 0);
         }
+
+        // ASSERT - Should be roughly 50% (allow 40-60%)
+        double percentage = (trueCount * 100.0) / totalTries;
+        assertTrue(percentage >= 40 && percentage <= 60,
+                "0.5 probability should give ~50%, got: " + percentage + "%");
+
+        System.out.printf("✓ randomChance(0.5) gave %.1f%% true%n", percentage);
     }
 
-    /**
-     * Generates a random Position anywhere on the grid.
-     * SECURITY: Comprehensive validation, defensive copying, null safety.
-     * Always returns a NEW Position object.
-     *
-     * @param gridSize The size of the grid (must be > 0)
-     * @return A random Position (NEW object, never null)
-     * @throws IllegalArgumentException if gridSize <= 0
-     */
-    public static PositionTest randomPosition(int gridSize) {
-        // SECURITY: Validate grid size
-        if (gridSize <= 0) {
-            throw new IllegalArgumentException(
-                    String.format("Invalid grid size: %d (must be > 0)", gridSize)
-            );
-        }
+    @Test
+    @DisplayName("randomChance with invalid probability should throw exception")
+    void testRandomChance_InvalidProbability() {
+        // ACT & ASSERT
+        assertThrows(IllegalArgumentException.class, () -> {
+            GameHelper.randomChance(-0.1);
+        }, "Negative probability should throw exception");
 
-        // SECURITY: Handle edge case of 1x1 grid
-        if (gridSize == 1) {
-            return new PositionTest(0, 0);
-        }
-
-        try {
-            int row = randomInt(0, gridSize - 1);
-            int column = randomInt(0, gridSize - 1);
-
-            // SECURITY: Always return NEW Position object
-            return new PositionTest(row, column);
-
-        } catch (Exception e) {
-            // SECURITY: Fallback on any unexpected error
-            System.err.println("ERROR in randomPosition: " + e.getMessage());
-            // Return center position as safe fallback
-            int center = gridSize / 2;
-            return new PositionTest(center, center);
-        }
+        assertThrows(IllegalArgumentException.class, () -> {
+            GameHelper.randomChance(1.1);
+        }, "Probability > 1.0 should throw exception");
     }
 
-    // ===== ADDITIONAL SECURITY & UTILITY METHODS =====
+    // ========================================
+    // randomPosition() TESTS
+    // ========================================
 
-    /**
-     * SECURITY: Generates a random integer in range with guaranteed non-negative result.
-     * Useful for array indices and other scenarios where negative values are invalid.
-     *
-     * @param max The maximum value (inclusive, must be >= 0)
-     * @return A random integer in the range [0, max]
-     * @throws IllegalArgumentException if max < 0
-     */
-    public static int randomNonNegativeInt(int max) {
-        if (max < 0) {
-            throw new IllegalArgumentException(
-                    String.format("Invalid max value: %d (must be >= 0)", max)
-            );
+    @Test
+    @DisplayName("randomPosition should return valid position")
+    void testRandomPosition_Valid() {
+        // ARRANGE
+        int gridSize = 10;
+
+        // ACT & ASSERT
+        for (int i = 0; i < 100; i++) {
+            Position pos = GameHelper.randomPosition(gridSize);
+
+            assertNotNull(pos, "Position should not be null");
+            assertTrue(pos.isValid(gridSize),
+                    "Position should be valid: " + pos);
         }
-        return randomInt(0, max);
+
+        System.out.println("✓ randomPosition generates valid positions");
     }
 
-    /**
-     * SECURITY: Generates a random integer with a minimum guaranteed value.
-     * Ensures result is always at least minValue.
-     *
-     * @param minValue The minimum guaranteed value
-     * @param range The range above minimum (must be >= 0)
-     * @return A random integer >= minValue
-     * @throws IllegalArgumentException if range < 0
-     */
-    public static int randomIntWithMin(int minValue, int range) {
-        if (range < 0) {
-            throw new IllegalArgumentException(
-                    String.format("Invalid range: %d (must be >= 0)", range)
-            );
-        }
-        return minValue + randomInt(0, range);
-    }
+    @Test
+    @DisplayName("randomPosition should produce variety")
+    void testRandomPosition_Variety() {
+        // ARRANGE
+        int gridSize = 10;
 
-    /**
-     * SECURITY: Validates that a position is within grid bounds.
-     * Useful for checking positions before using them.
-     *
-     * @param position The position to validate (must not be null)
-     * @param gridSize The grid size (must be > 0)
-     * @return true if position is valid, false otherwise
-     * @throws IllegalArgumentException if position is null or gridSize <= 0
-     */
-    public static boolean isValidPosition(PositionTest position, int gridSize) {
-        if (position == null) {
-            throw new IllegalArgumentException("Position cannot be null");
-        }
-        if (gridSize <= 0) {
-            throw new IllegalArgumentException(
-                    String.format("Invalid grid size: %d (must be > 0)", gridSize)
-            );
-        }
+        // ACT - Generate positions
+        boolean foundDifferent = false;
+        Position first = GameHelper.randomPosition(gridSize);
 
-        return position.isValid(gridSize);
-    }
-
-    /**
-     * SECURITY: Validates that a position is on the edge of the grid.
-     * Useful for penguin placement validation.
-     *
-     * @param position The position to check (must not be null)
-     * @param gridSize The grid size (must be > 0)
-     * @return true if position is on an edge, false otherwise
-     * @throws IllegalArgumentException if position is null or gridSize <= 0
-     */
-    public static boolean isEdgePosition(PositionTest position, int gridSize) {
-        if (position == null) {
-            throw new IllegalArgumentException("Position cannot be null");
-        }
-        if (gridSize <= 0) {
-            throw new IllegalArgumentException(
-                    String.format("Invalid grid size: %d (must be > 0)", gridSize)
-            );
-        }
-
-        return position.isEdge(gridSize);
-    }
-
-    /**
-     * SECURITY: Clamps an integer value to a specified range.
-     * Ensures value stays within [min, max] bounds.
-     *
-     * @param value The value to clamp
-     * @param min The minimum allowed value
-     * @param max The maximum allowed value
-     * @return The clamped value
-     * @throws IllegalArgumentException if min > max
-     */
-    public static int clamp(int value, int min, int max) {
-        if (min > max) {
-            throw new IllegalArgumentException(
-                    String.format("Invalid range: min (%d) > max (%d)", min, max)
-            );
-        }
-
-        if (value < min) return min;
-        if (value > max) return max;
-        return value;
-    }
-
-    /**
-     * SECURITY: Clamps a double value to a specified range.
-     * Ensures value stays within [min, max] bounds.
-     *
-     * @param value The value to clamp
-     * @param min The minimum allowed value
-     * @param max The maximum allowed value
-     * @return The clamped value
-     * @throws IllegalArgumentException if min > max
-     */
-    public static double clamp(double value, double min, double max) {
-        if (min > max) {
-            throw new IllegalArgumentException(
-                    String.format("Invalid range: min (%.4f) > max (%.4f)", min, max)
-            );
-        }
-
-        if (value < min) return min;
-        if (value > max) return max;
-        return value;
-    }
-
-    /**
-     * SECURITY: Generates a random Position within a specific rectangular region.
-     * Useful for spawning objects in specific areas.
-     *
-     * @param minRow Minimum row (inclusive)
-     * @param maxRow Maximum row (inclusive)
-     * @param minCol Minimum column (inclusive)
-     * @param maxCol Maximum column (inclusive)
-     * @return A random Position within the specified region (NEW object)
-     * @throws IllegalArgumentException if any min > max or if values are negative
-     */
-    public static PositionTest randomPositionInRegion(int minRow, int maxRow, int minCol, int maxCol) {
-        if (minRow < 0 || minCol < 0) {
-            throw new IllegalArgumentException("Row and column minimums must be non-negative");
-        }
-        if (minRow > maxRow) {
-            throw new IllegalArgumentException(
-                    String.format("Invalid row range: min (%d) > max (%d)", minRow, maxRow)
-            );
-        }
-        if (minCol > maxCol) {
-            throw new IllegalArgumentException(
-                    String.format("Invalid column range: min (%d) > max (%d)", minCol, maxCol)
-            );
-        }
-
-        try {
-            int row = randomInt(minRow, maxRow);
-            int col = randomInt(minCol, maxCol);
-            return new PositionTest(row, col);
-        } catch (Exception e) {
-            System.err.println("ERROR in randomPositionInRegion: " + e.getMessage());
-            // Fallback to the minimum position in the region
-            return new PositionTest(minRow, minCol);
-        }
-    }
-
-    /**
-     * SECURITY: Calculates the Manhattan distance between two positions.
-     * Useful for AI decision making and proximity checks.
-     *
-     * @param pos1 First position (must not be null)
-     * @param pos2 Second position (must not be null)
-     * @return The Manhattan distance (always non-negative)
-     * @throws IllegalArgumentException if either position is null
-     */
-    public static int manhattanDistance(PositionTest pos1, PositionTest pos2) {
-        if (pos1 == null || pos2 == null) {
-            throw new IllegalArgumentException("Positions cannot be null");
-        }
-
-        try {
-            int rowDiff = Math.abs(pos1.getRow() - pos2.getRow());
-            int colDiff = Math.abs(pos1.getColumn() - pos2.getColumn());
-            return rowDiff + colDiff;
-        } catch (Exception e) {
-            System.err.println("ERROR in manhattanDistance: " + e.getMessage());
-            return Integer.MAX_VALUE; // Safe fallback (maximum distance)
-        }
-    }
-
-    /**
-     * SECURITY: Checks if two positions are adjacent (horizontally or vertically).
-     * Useful for Royal Penguin special move validation.
-     *
-     * @param pos1 First position (must not be null)
-     * @param pos2 Second position (must not be null)
-     * @return true if positions are adjacent, false otherwise
-     * @throws IllegalArgumentException if either position is null
-     */
-    public static boolean areAdjacent(PositionTest pos1, PositionTest pos2) {
-        if (pos1 == null || pos2 == null) {
-            throw new IllegalArgumentException("Positions cannot be null");
-        }
-
-        try {
-            return manhattanDistance(pos1, pos2) == 1;
-        } catch (Exception e) {
-            System.err.println("ERROR in areAdjacent: " + e.getMessage());
-            return false; // Safe fallback
-        }
-    }
-
-    /**
-     * SECURITY: Generates a random double within a specified range.
-     * Useful for probability calculations and continuous distributions.
-     *
-     * @param min Minimum value (inclusive)
-     * @param max Maximum value (inclusive)
-     * @return A random double in [min, max]
-     * @throws IllegalArgumentException if min > max
-     */
-    public static double randomDouble(double min, double max) {
-        if (min > max) {
-            throw new IllegalArgumentException(
-                    String.format("Invalid range: min (%.4f) > max (%.4f)", min, max)
-            );
-        }
-
-        if (min == max) {
-            return min;
-        }
-
-        try {
-            return min + (random.nextDouble() * (max - min));
-        } catch (Exception e) {
-            System.err.println("ERROR in randomDouble: " + e.getMessage());
-            return min; // Safe fallback
-        }
-    }
-
-    /**
-     * SECURITY: Randomly shuffles an array in place using Fisher-Yates algorithm.
-     * Useful for randomizing game elements.
-     *
-     * @param array The array to shuffle (must not be null)
-     * @throws IllegalArgumentException if array is null
-     */
-    public static void shuffle(Object[] array) {
-        if (array == null) {
-            throw new IllegalArgumentException("Array cannot be null");
-        }
-
-        if (array.length <= 1) {
-            return; // Nothing to shuffle
-        }
-
-        try {
-            // Fisher-Yates shuffle algorithm
-            for (int i = array.length - 1; i > 0; i--) {
-                int j = randomInt(0, i);
-                // Swap array[i] and array[j]
-                Object temp = array[i];
-                array[i] = array[j];
-                array[j] = temp;
+        for (int i = 0; i < 100; i++) {
+            Position pos = GameHelper.randomPosition(gridSize);
+            if (!pos.equals(first)) {
+                foundDifferent = true;
+                break;
             }
-        } catch (Exception e) {
-            System.err.println("ERROR in shuffle: " + e.getMessage());
-            // Array remains in original order on error (safe fallback)
         }
+
+        // ASSERT
+        assertTrue(foundDifferent, "Should generate different positions");
     }
 
-    /**
-     * SECURITY: Returns a random element from an array.
-     * Useful for random selection operations.
-     *
-     * @param array The array to select from (must not be null or empty)
-     * @param <T> The type of elements in the array
-     * @return A random element from the array
-     * @throws IllegalArgumentException if array is null or empty
-     */
-    public static <T> T randomElement(T[] array) {
-        if (array == null) {
-            throw new IllegalArgumentException("Array cannot be null");
+    @Test
+    @DisplayName("randomPosition with invalid grid size should throw exception")
+    void testRandomPosition_InvalidGridSize() {
+        // ACT & ASSERT
+        assertThrows(IllegalArgumentException.class, () -> {
+            GameHelper.randomPosition(0);
+        });
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            GameHelper.randomPosition(-1);
+        });
+    }
+
+    @Test
+    @DisplayName("randomPosition with size 1 should return (0,0)")
+    void testRandomPosition_Size1() {
+        // ACT
+        Position pos = GameHelper.randomPosition(1);
+
+        // ASSERT
+        assertEquals(new Position(0, 0), pos,
+                "1x1 grid should only have (0,0)");
+    }
+
+    // ========================================
+    // randomEdgePosition() TESTS
+    // ========================================
+
+    @Test
+    @DisplayName("randomEdgePosition should return edge position")
+    void testRandomEdgePosition_IsEdge() {
+        // ARRANGE
+        int gridSize = 10;
+
+        // ACT & ASSERT
+        for (int i = 0; i < 100; i++) {
+            Position pos = GameHelper.randomEdgePosition(gridSize);
+
+            assertNotNull(pos, "Position should not be null");
+            assertTrue(pos.isEdge(gridSize),
+                    "Position should be on edge: " + pos);
         }
-        if (array.length == 0) {
-            throw new IllegalArgumentException("Array cannot be empty");
+
+        System.out.println("✓ randomEdgePosition generates edge positions");
+    }
+
+    @Test
+    @DisplayName("randomEdgePosition should produce variety")
+    void testRandomEdgePosition_Variety() {
+        // ARRANGE
+        int gridSize = 10;
+
+        // ACT - Generate positions
+        boolean foundDifferent = false;
+        Position first = GameHelper.randomEdgePosition(gridSize);
+
+        for (int i = 0; i < 100; i++) {
+            Position pos = GameHelper.randomEdgePosition(gridSize);
+            if (!pos.equals(first)) {
+                foundDifferent = true;
+                break;
+            }
         }
+
+        // ASSERT
+        assertTrue(foundDifferent, "Should generate different edge positions");
+    }
+
+    @Test
+    @DisplayName("randomEdgePosition with invalid grid size should throw exception")
+    void testRandomEdgePosition_InvalidGridSize() {
+        // ACT & ASSERT
+        assertThrows(IllegalArgumentException.class, () -> {
+            GameHelper.randomEdgePosition(0);
+        });
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            GameHelper.randomEdgePosition(-1);
+        });
+    }
+
+    @Test
+    @DisplayName("randomEdgePosition with size 1 should return (0,0)")
+    void testRandomEdgePosition_Size1() {
+        // ACT
+        Position pos = GameHelper.randomEdgePosition(1);
+
+        // ASSERT
+        assertEquals(new Position(0, 0), pos,
+                "1x1 grid has only one position which is edge");
+    }
+
+    @Test
+    @DisplayName("randomEdgePosition should cover all edges")
+    void testRandomEdgePosition_CoverageAllEdges() {
+        // ARRANGE
+        int gridSize = 10;
+        boolean foundTop = false;
+        boolean foundBottom = false;
+        boolean foundLeft = false;
+        boolean foundRight = false;
+
+        // ACT - Generate many positions
+        for (int i = 0; i < 1000 && !(foundTop && foundBottom && foundLeft && foundRight); i++) {
+            Position pos = GameHelper.randomEdgePosition(gridSize);
+
+            if (pos.getRow() == 0) foundTop = true;
+            if (pos.getRow() == gridSize - 1) foundBottom = true;
+            if (pos.getColumn() == 0) foundLeft = true;
+            if (pos.getColumn() == gridSize - 1) foundRight = true;
+        }
+
+        // ASSERT
+        assertTrue(foundTop, "Should generate positions on top edge");
+        assertTrue(foundBottom, "Should generate positions on bottom edge");
+        assertTrue(foundLeft, "Should generate positions on left edge");
+        assertTrue(foundRight, "Should generate positions on right edge");
+
+        System.out.println("✓ All edges covered");
+    }
+
+    // ========================================
+    // MANHATTAN DISTANCE TESTS
+    // ========================================
+
+    @Test
+    @DisplayName("manhattanDistance should calculate correct distance")
+    void testManhattanDistance() {
+        // ARRANGE
+        Position pos1 = new Position(2, 3);
+        Position pos2 = new Position(5, 7);
+        // Distance = |5-2| + |7-3| = 3 + 4 = 7
+
+        // ACT
+        int distance = GameHelper.manhattanDistance(pos1, pos2);
+
+        // ASSERT
+        assertEquals(7, distance);
+    }
+
+    @Test
+    @DisplayName("manhattanDistance should be symmetric")
+    void testManhattanDistance_Symmetric() {
+        // ARRANGE
+        Position pos1 = new Position(1, 1);
+        Position pos2 = new Position(5, 5);
+
+        // ACT
+        int dist1to2 = GameHelper.manhattanDistance(pos1, pos2);
+        int dist2to1 = GameHelper.manhattanDistance(pos2, pos1);
+
+        // ASSERT
+        assertEquals(dist1to2, dist2to1, "Distance should be symmetric");
+    }
+
+    @Test
+    @DisplayName("manhattanDistance to same position should be 0")
+    void testManhattanDistance_SamePosition() {
+        // ARRANGE
+        Position pos = new Position(5, 5);
+
+        // ACT
+        int distance = GameHelper.manhattanDistance(pos, pos);
+
+        // ASSERT
+        assertEquals(0, distance, "Distance to same position should be 0");
+    }
+
+    @Test
+    @DisplayName("manhattanDistance with null should throw exception")
+    void testManhattanDistance_NullPosition() {
+        // ARRANGE
+        Position pos = new Position(5, 5);
+
+        // ACT & ASSERT
+        assertThrows(IllegalArgumentException.class, () -> {
+            GameHelper.manhattanDistance(pos, null);
+        });
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            GameHelper.manhattanDistance(null, pos);
+        });
+    }
+
+    // ========================================
+    // ADJACENT POSITIONS TESTS
+    // ========================================
+
+    @Test
+    @DisplayName("areAdjacent should detect adjacent positions")
+    void testAreAdjacent_True() {
+        // ARRANGE & ACT & ASSERT
+        assertTrue(GameHelper.areAdjacent(
+                new Position(5, 5), new Position(5, 6)), "Horizontally adjacent");
+        assertTrue(GameHelper.areAdjacent(
+                new Position(5, 5), new Position(6, 5)), "Vertically adjacent");
+        assertTrue(GameHelper.areAdjacent(
+                new Position(5, 6), new Position(5, 5)), "Symmetric");
+    }
+
+    @Test
+    @DisplayName("areAdjacent should return false for non-adjacent")
+    void testAreAdjacent_False() {
+        // ARRANGE & ACT & ASSERT
+        assertFalse(GameHelper.areAdjacent(
+                new Position(5, 5), new Position(7, 7)), "Diagonal not adjacent");
+        assertFalse(GameHelper.areAdjacent(
+                new Position(5, 5), new Position(5, 5)), "Same position not adjacent");
+        assertFalse(GameHelper.areAdjacent(
+                new Position(0, 0), new Position(9, 9)), "Far apart");
+    }
+
+    // ========================================
+    // INTEGRATION TESTS
+    // ========================================
+
+    @Test
+    @DisplayName("Integration: Random position generation workflow")
+    void testIntegration_RandomWorkflow() {
+        System.out.println("\n=== Random Position Generation Workflow ===");
+
+        int gridSize = 10;
+
+        // Generate random position
+        Position anyPos = GameHelper.randomPosition(gridSize);
+        System.out.println("Random position: " + anyPos);
+        assertTrue(anyPos.isValid(gridSize));
+
+        // Generate edge position
+        Position edgePos = GameHelper.randomEdgePosition(gridSize);
+        System.out.println("Edge position: " + edgePos);
+        assertTrue(edgePos.isEdge(gridSize));
+
+        // Calculate distance
+        int distance = GameHelper.manhattanDistance(anyPos, edgePos);
+        System.out.println("Distance: " + distance);
+        assertTrue(distance >= 0);
+
+        // Check if adjacent
+        boolean adjacent = GameHelper.areAdjacent(anyPos, edgePos);
+        System.out.println("Adjacent: " + adjacent);
+
+        System.out.println("✓ Random workflow complete");
+    }
+
+    // ========================================
+    // CONSTRUCTOR TEST (Utility Class)
+    // ========================================
+
+    @Test
+    @DisplayName("GameHelper constructor should throw AssertionError")
+    void testConstructor_ShouldThrow() {
+        // Utility classes should not be instantiable
+        // This tests the private constructor with AssertionError
 
         try {
-            int index = randomInt(0, array.length - 1);
-            return array[index];
-        } catch (Exception e) {
-            System.err.println("ERROR in randomElement: " + e.getMessage());
-            return array[0]; // Safe fallback (first element)
+            // We need reflection to test private constructor
+            java.lang.reflect.Constructor<GameHelper> constructor =
+                    GameHelper.class.getDeclaredConstructor();
+            constructor.setAccessible(true);
+
+            // ACT & ASSERT
+            assertThrows(java.lang.reflect.InvocationTargetException.class, () -> {
+                constructor.newInstance();
+            }, "Private constructor should throw exception");
+
+        } catch (NoSuchMethodException e) {
+            fail("GameHelper should have a private constructor");
         }
-    }
-
-    /**
-     * SECURITY: Validates that a percentage value is in valid range [0, 100].
-     *
-     * @param percentage The percentage to validate
-     * @return true if valid, false otherwise
-     */
-    public static boolean isValidPercentage(int percentage) {
-        return percentage >= 0 && percentage <= 100;
-    }
-
-    /**
-     * SECURITY: Converts a percentage (0-100) to a probability (0.0-1.0).
-     *
-     * @param percentage The percentage value (must be in [0, 100])
-     * @return The probability value
-     * @throws IllegalArgumentException if percentage is invalid
-     */
-    public static double percentageToProbability(int percentage) {
-        if (!isValidPercentage(percentage)) {
-            throw new IllegalArgumentException(
-                    String.format("Invalid percentage: %d (must be in [0, 100])", percentage)
-            );
-        }
-        return percentage / 100.0;
-    }
-
-    /**
-     * SECURITY: Gets information about the Random instance state.
-     * For debugging purposes only - does not expose the Random object itself.
-     *
-     * @return A string describing the Random generator state
-     */
-    public static String getRandomGeneratorInfo() {
-        return "Random generator initialized and operational";
     }
 }

@@ -1,631 +1,482 @@
 package com.utils;
 
 import com.enums.Direction;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Represents a position (coordinates) on the icy terrain grid.
- * Uses row and column indices to identify locations.
+ * LEARNING TO WRITE TESTS - Position Class Test File
  *
- * MAXIMUM SECURITY VERSION:
- * - Immutable design preferred (fields can be modified but discouraged)
- * - Defensive copying in copy constructor
- * - All methods validate inputs rigorously
- * - Safe null handling throughout
- * - Protected against invalid coordinates
- * - Thread-safe (no shared mutable state)
- * - Range validation on all operations
- * - Comprehensive error messages
+ * Location: src/test/java/com/utils/PositionTest.java
  *
- * DESIGN PHILOSOPHY:
- * While row and column can be modified via setters (for compatibility),
- * it's strongly recommended to treat Position objects as immutable
- * and create new instances when coordinates need to change.
- * All methods that return Position objects return NEW instances.
+ * This file demonstrates all fundamental test concepts:
+ * 1. @Test annotation - Basic test method
+ * 2. Assertions (assertEquals, assertTrue, assertFalse, assertThrows)
+ * 3. @BeforeEach / @AfterEach - Setup and cleanup before/after each test
+ * 4. @ParameterizedTest - Running same test with different parameters
+ * 5. Test naming conventions
+ * 6. Edge case testing
+ *
+ * HOW TO RUN:
+ * - IntelliJ: Right-click on this file → Run 'PositionTest'
+ * - Terminal: mvn test
  */
-public class Position {
-    private int row;
-    private int column;
+@DisplayName("Position Class Tests 🎯")
+class PositionTest {
+
+    // Test data that will be used across multiple tests
+    private Position origin;
+    private Position middle;
+    private Position edge;
 
     /**
-     * Constructor for Position.
-     * SECURITY: Validates that coordinates are non-negative.
-     * Note: Grid bounds validation is context-dependent (done at usage site).
-     *
-     * @param row The row index (should be >= 0)
-     * @param column The column index (should be >= 0)
+     * @BeforeEach runs BEFORE each test method
+     * Used to prepare test data (Setup/Arrange phase)
      */
-    public Position(int row, int column) {
-        // SECURITY: Store coordinates (validation happens at usage)
-        // We don't validate against grid size here because Position
-        // can be created before knowing the grid context
-        this.row = row;
-        this.column = column;
+    @BeforeEach
+    void setUp() {
+        System.out.println("🔧 Setting up test...");
+        origin = new Position(0, 0);     // Origin point
+        middle = new Position(5, 5);     // Middle point
+        edge = new Position(9, 9);       // Edge point (for 10x10 grid)
     }
 
     /**
-     * Copy constructor for Position.
-     * SECURITY: Creates a true defensive copy of the position.
-     * This is the RECOMMENDED way to copy positions.
-     *
-     * @param other The Position to copy (must not be null)
-     * @throws IllegalArgumentException if other is null
+     * @AfterEach runs AFTER each test method
+     * Used for cleanup operations
      */
-    public Position(Position other) {
-        if (other == null) {
-            throw new IllegalArgumentException("Cannot copy null position");
-        }
-        this.row = other.row;
-        this.column = other.column;
+    @AfterEach
+    void tearDown() {
+        System.out.println("✅ Test completed!\n");
+        // Nothing to clean up in this example, but you would close
+        // database connections, files, etc. here
     }
 
+    // ========================================
+    // BASIC TESTS - Constructor and Getters/Setters
+    // ========================================
+
     /**
-     * Gets the row index.
-     * Safe to return - primitive int is immutable.
-     *
-     * @return The row index
+     * THE ANATOMY OF A TEST:
+     * 1. ARRANGE: Prepare test data
+     * 2. ACT: Execute the code being tested
+     * 3. ASSERT: Verify the result
      */
-    public int getRow() {
-        return row;
+    @Test
+    @DisplayName("Constructor should create position with given coordinates")
+    void testConstructor() {
+        // ARRANGE (Prepare test data)
+        int expectedRow = 3;
+        int expectedColumn = 7;
+
+        // ACT (Execute the code being tested)
+        Position position = new Position(expectedRow, expectedColumn);
+
+        // ASSERT (Verify the result)
+        assertEquals(expectedRow, position.getRow(),
+                "Row should match the value provided to constructor");
+        assertEquals(expectedColumn, position.getColumn(),
+                "Column should match the value provided to constructor");
+
+        System.out.println("✓ Constructor test passed: " + position);
     }
 
-    /**
-     * Gets the column index.
-     * Safe to return - primitive int is immutable.
-     *
-     * @return The column index
-     */
-    public int getColumn() {
-        return column;
+    @Test
+    @DisplayName("Copy constructor should create a copy of position")
+    void testCopyConstructor() {
+        // ARRANGE
+        Position original = new Position(4, 6);
+
+        // ACT
+        Position copy = new Position(original);
+
+        // ASSERT
+        assertEquals(original.getRow(), copy.getRow());
+        assertEquals(original.getColumn(), copy.getColumn());
+
+        // Verify they are different objects (deep copy)
+        assertNotSame(original, copy,
+                "Copy constructor should create a new object (different reference)");
+
+        System.out.println("✓ Copy constructor test passed");
     }
 
-    /**
-     * Sets the row index.
-     * SECURITY: While this allows mutation, it's discouraged.
-     * Prefer creating new Position objects instead of modifying existing ones.
-     *
-     * @param row The new row index
-     */
-    public void setRow(int row) {
-        this.row = row;
+    @Test
+    @DisplayName("Copying null position should throw exception")
+    void testCopyConstructorWithNull() {
+        // ACT & ASSERT combined
+        // assertThrows: Verifies that a method throws an exception
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Position(null);
+        }, "Copying null position should throw IllegalArgumentException");
+
+        System.out.println("✓ Null check test passed");
     }
 
-    /**
-     * Sets the column index.
-     * SECURITY: While this allows mutation, it's discouraged.
-     * Prefer creating new Position objects instead of modifying existing ones.
-     *
-     * @param column The new column index
-     */
-    public void setColumn(int column) {
-        this.column = column;
+    @Test
+    @DisplayName("Getter methods should return correct values")
+    void testGetters() {
+        // ASSERT
+        assertEquals(0, origin.getRow());
+        assertEquals(0, origin.getColumn());
+        assertEquals(5, middle.getRow());
+        assertEquals(5, middle.getColumn());
+
+        System.out.println("✓ Getter tests passed");
     }
 
-    /**
-     * SECURITY: Sets both coordinates atomically.
-     * Better than calling setRow() and setColumn() separately.
-     *
-     * @param row The new row index
-     * @param column The new column index
-     */
-    public void setCoordinates(int row, int column) {
-        this.row = row;
-        this.column = column;
+    @Test
+    @DisplayName("Setter methods should update values")
+    void testSetters() {
+        // ARRANGE
+        Position pos = new Position(0, 0);
+
+        // ACT
+        pos.setRow(7);
+        pos.setColumn(3);
+
+        // ASSERT
+        assertEquals(7, pos.getRow());
+        assertEquals(3, pos.getColumn());
+
+        System.out.println("✓ Setter tests passed");
     }
 
-    /**
-     * Checks if this position is on the edge of a grid with given size.
-     * SECURITY: Validates gridSize parameter.
-     *
-     * @param gridSize The size of the grid (e.g., 10 for 10x10) (must be > 0)
-     * @return true if the position is on an edge, false otherwise
-     * @throws IllegalArgumentException if gridSize <= 0
-     */
-    public boolean isEdge(int gridSize) {
-        if (gridSize <= 0) {
-            throw new IllegalArgumentException(
-                    String.format("Invalid grid size: %d (must be > 0)", gridSize)
-            );
-        }
+    // ========================================
+    // FUNCTIONAL TESTS - Business Logic
+    // ========================================
 
-        try {
-            return row == 0 || row == gridSize - 1 ||
-                    column == 0 || column == gridSize - 1;
-        } catch (Exception e) {
-            System.err.println("ERROR in isEdge: " + e.getMessage());
-            return false; // Safe fallback
-        }
+    @Test
+    @DisplayName("isValid should return true for positions inside grid")
+    void testIsValid_ValidPosition() {
+        // ARRANGE
+        int gridSize = 10;
+
+        // ASSERT
+        assertTrue(origin.isValid(gridSize), "Origin (0,0) should be valid");
+        assertTrue(middle.isValid(gridSize), "Middle (5,5) should be valid");
+        assertTrue(edge.isValid(gridSize), "Edge (9,9) should be valid");
+
+        System.out.println("✓ Valid position test passed");
     }
 
-    /**
-     * Checks if this position is valid within a grid of given size.
-     * SECURITY: Comprehensive validation of both position and gridSize.
-     *
-     * @param gridSize The size of the grid (must be > 0)
-     * @return true if position is within bounds, false otherwise
-     * @throws IllegalArgumentException if gridSize <= 0
-     */
-    public boolean isValid(int gridSize) {
-        if (gridSize <= 0) {
-            throw new IllegalArgumentException(
-                    String.format("Invalid grid size: %d (must be > 0)", gridSize)
-            );
-        }
+    @Test
+    @DisplayName("isValid should return false for positions outside grid")
+    void testIsValid_InvalidPosition() {
+        // ARRANGE
+        int gridSize = 10;
+        Position outOfBounds = new Position(10, 10); // Outside grid
+        Position negative = new Position(-1, 5);      // Negative coordinate
 
-        try {
-            return row >= 0 && row < gridSize &&
-                    column >= 0 && column < gridSize;
-        } catch (Exception e) {
-            System.err.println("ERROR in isValid: " + e.getMessage());
-            return false; // Safe fallback
-        }
+        // ASSERT
+        assertFalse(outOfBounds.isValid(gridSize),
+                "Position outside grid should be invalid");
+        assertFalse(negative.isValid(gridSize),
+                "Negative coordinate should be invalid");
+
+        System.out.println("✓ Invalid position test passed");
     }
 
-    /**
-     * Returns the next position in a given direction.
-     * SECURITY: Does not modify the current position (immutable operation).
-     * Always returns a NEW Position object (defensive copying).
-     * Handles null direction gracefully.
-     *
-     * @param direction The direction to move (can be null)
-     * @return A new Position representing the next location (never null)
-     */
-    public Position getNextPosition(Direction direction) {
-        // SECURITY: Handle null direction
-        if (direction == null) {
-            System.err.println("WARNING: getNextPosition called with null direction");
-            return new Position(this); // Return copy of current position
-        }
+    @Test
+    @DisplayName("isEdge should correctly detect edge positions")
+    void testIsEdge() {
+        // ARRANGE
+        int gridSize = 10;
+        Position topEdge = new Position(0, 5);
+        Position bottomEdge = new Position(9, 5);
+        Position leftEdge = new Position(5, 0);
+        Position rightEdge = new Position(5, 9);
+        Position center = new Position(5, 5);
 
-        try {
-            switch (direction) {
-                case UP:
-                    return new Position(row - 1, column);
-                case DOWN:
-                    return new Position(row + 1, column);
-                case LEFT:
-                    return new Position(row, column - 1);
-                case RIGHT:
-                    return new Position(row, column + 1);
-                default:
-                    // SECURITY: Unexpected direction value
-                    System.err.println("WARNING: Unexpected direction in getNextPosition: " + direction);
-                    return new Position(this);
-            }
-        } catch (Exception e) {
-            System.err.println("ERROR in getNextPosition: " + e.getMessage());
-            return new Position(this); // Safe fallback (current position)
-        }
+        // ASSERT
+        assertTrue(topEdge.isEdge(gridSize), "Top edge should be detected");
+        assertTrue(bottomEdge.isEdge(gridSize), "Bottom edge should be detected");
+        assertTrue(leftEdge.isEdge(gridSize), "Left edge should be detected");
+        assertTrue(rightEdge.isEdge(gridSize), "Right edge should be detected");
+        assertTrue(edge.isEdge(gridSize), "Corner is also an edge");
+        assertFalse(center.isEdge(gridSize), "Center is not an edge");
+
+        System.out.println("✓ Edge detection test passed");
     }
 
-    /**
-     * Moves this position one step in the given direction.
-     * SECURITY: Modifies the current position (mutable operation).
-     * Use with caution - prefer getNextPosition() for immutable operations.
-     * Handles null direction gracefully.
-     *
-     * @param direction The direction to move (can be null)
-     */
-    public void move(Direction direction) {
-        // SECURITY: Handle null direction
-        if (direction == null) {
-            System.err.println("WARNING: move called with null direction");
-            return; // Don't move if direction is null
-        }
+    @Test
+    @DisplayName("isCorner should correctly detect corner positions")
+    void testIsCorner() {
+        // ARRANGE
+        int gridSize = 10;
+        Position topLeft = new Position(0, 0);
+        Position topRight = new Position(0, 9);
+        Position bottomLeft = new Position(9, 0);
+        Position bottomRight = new Position(9, 9);
+        Position notCorner = new Position(0, 5);
 
-        try {
-            switch (direction) {
-                case UP:
-                    row--;
-                    break;
-                case DOWN:
-                    row++;
-                    break;
-                case LEFT:
-                    column--;
-                    break;
-                case RIGHT:
-                    column++;
-                    break;
-                default:
-                    System.err.println("WARNING: Unexpected direction in move: " + direction);
-                    break;
-            }
-        } catch (Exception e) {
-            System.err.println("ERROR in move: " + e.getMessage());
-            // Position remains unchanged on error
-        }
+        // ASSERT
+        assertTrue(topLeft.isCorner(gridSize), "Top-left corner");
+        assertTrue(topRight.isCorner(gridSize), "Top-right corner");
+        assertTrue(bottomLeft.isCorner(gridSize), "Bottom-left corner");
+        assertTrue(bottomRight.isCorner(gridSize), "Bottom-right corner");
+        assertFalse(notCorner.isCorner(gridSize), "Edge but not corner");
+
+        System.out.println("✓ Corner detection test passed");
     }
 
-    /**
-     * SECURITY: Gets multiple next positions (useful for lookahead).
-     * Returns positions for all directions.
-     * All returned positions are NEW objects (defensive copying).
-     *
-     * @return Array of 4 positions [UP, DOWN, LEFT, RIGHT] (never null, no null elements)
-     */
-    public Position[] getAllAdjacentPositions() {
-        try {
-            return new Position[] {
-                    new Position(row - 1, column),  // UP
-                    new Position(row + 1, column),  // DOWN
-                    new Position(row, column - 1),  // LEFT
-                    new Position(row, column + 1)   // RIGHT
-            };
-        } catch (Exception e) {
-            System.err.println("ERROR in getAllAdjacentPositions: " + e.getMessage());
-            // Return array with copies of current position as safe fallback
-            Position current = new Position(this);
-            return new Position[] {current, current, current, current};
-        }
+    @Test
+    @DisplayName("getNextPosition should return correct next position")
+    void testGetNextPosition() {
+        // ARRANGE
+        Position start = new Position(5, 5);
+
+        // ACT & ASSERT
+        Position up = start.getNextPosition(Direction.UP);
+        assertEquals(4, up.getRow(), "UP: row should decrease");
+        assertEquals(5, up.getColumn(), "UP: column should stay same");
+
+        Position down = start.getNextPosition(Direction.DOWN);
+        assertEquals(6, down.getRow(), "DOWN: row should increase");
+        assertEquals(5, down.getColumn(), "DOWN: column should stay same");
+
+        Position left = start.getNextPosition(Direction.LEFT);
+        assertEquals(5, left.getRow(), "LEFT: row should stay same");
+        assertEquals(4, left.getColumn(), "LEFT: column should decrease");
+
+        Position right = start.getNextPosition(Direction.RIGHT);
+        assertEquals(5, right.getRow(), "RIGHT: row should stay same");
+        assertEquals(6, right.getColumn(), "RIGHT: column should increase");
+
+        // Original position should not change (immutability test)
+        assertEquals(5, start.getRow(), "Original position should not change");
+        assertEquals(5, start.getColumn(), "Original position should not change");
+
+        System.out.println("✓ GetNextPosition test passed");
     }
 
-    /**
-     * SECURITY: Gets all valid adjacent positions within grid bounds.
-     * Filters out positions that would be outside the grid.
-     *
-     * @param gridSize The size of the grid (must be > 0)
-     * @return Array of valid adjacent positions (never null, may be empty)
-     * @throws IllegalArgumentException if gridSize <= 0
-     */
-    public Position[] getValidAdjacentPositions(int gridSize) {
-        if (gridSize <= 0) {
-            throw new IllegalArgumentException(
-                    String.format("Invalid grid size: %d (must be > 0)", gridSize)
-            );
-        }
+    @Test
+    @DisplayName("distanceTo should calculate Manhattan distance correctly")
+    void testDistanceTo() {
+        // ARRANGE
+        Position pos1 = new Position(2, 3);
+        Position pos2 = new Position(5, 7);
+        // Manhattan distance = |5-2| + |7-3| = 3 + 4 = 7
 
-        try {
-            Position[] allAdjacent = getAllAdjacentPositions();
-            int validCount = 0;
+        // ACT
+        int distance = pos1.distanceTo(pos2);
 
-            // Count valid positions
-            for (Position pos : allAdjacent) {
-                if (pos != null && pos.isValid(gridSize)) {
-                    validCount++;
-                }
-            }
+        // ASSERT
+        assertEquals(7, distance, "Manhattan distance should be calculated correctly");
 
-            // Create array with only valid positions
-            Position[] valid = new Position[validCount];
-            int index = 0;
-            for (Position pos : allAdjacent) {
-                if (pos != null && pos.isValid(gridSize)) {
-                    valid[index++] = pos;
-                }
-            }
+        // Distance should be symmetric
+        assertEquals(distance, pos2.distanceTo(pos1),
+                "Distance should be symmetric (A->B == B->A)");
 
-            return valid;
-        } catch (Exception e) {
-            System.err.println("ERROR in getValidAdjacentPositions: " + e.getMessage());
-            return new Position[0]; // Return empty array on error
-        }
+        System.out.println("✓ Distance calculation test passed");
     }
 
-    /**
-     * SECURITY: Calculates Manhattan distance to another position.
-     * Safe method that doesn't modify state.
-     *
-     * @param other The other position (must not be null)
-     * @return The Manhattan distance (always non-negative)
-     * @throws IllegalArgumentException if other is null
-     */
-    public int distanceTo(Position other) {
-        if (other == null) {
-            throw new IllegalArgumentException("Cannot calculate distance to null position");
-        }
+    // ========================================
+    // PARAMETERIZED TESTS - Multiple Scenarios
+    // ========================================
 
-        try {
-            int rowDiff = Math.abs(this.row - other.row);
-            int colDiff = Math.abs(this.column - other.column);
-            return rowDiff + colDiff;
-        } catch (Exception e) {
-            System.err.println("ERROR in distanceTo: " + e.getMessage());
-            return Integer.MAX_VALUE; // Safe fallback (maximum distance)
-        }
+    /**
+     * @ParameterizedTest - Runs the same test with different parameters
+     * Instead of writing many similar tests, we use parameterized tests
+     */
+    @ParameterizedTest
+    @DisplayName("Validation for different grid sizes")
+    @CsvSource({
+            "0, 0, 5, true",     // Origin, 5x5 grid
+            "4, 4, 5, true",     // Edge, 5x5 grid
+            "5, 5, 5, false",    // Out of bounds, 5x5 grid
+            "-1, 0, 5, false",   // Negative row
+            "0, -1, 5, false",   // Negative column
+            "0, 0, 10, true",    // Origin, 10x10 grid
+            "9, 9, 10, true",    // Edge, 10x10 grid
+            "10, 10, 10, false"  // Out of bounds, 10x10 grid
+    })
+    void testIsValidWithMultipleScenarios(int row, int col, int gridSize, boolean expected) {
+        // ARRANGE
+        Position pos = new Position(row, col);
+
+        // ACT
+        boolean result = pos.isValid(gridSize);
+
+        // ASSERT
+        assertEquals(expected, result,
+                String.format("Position(%d,%d) for grid(%d) should be %s",
+                        row, col, gridSize, expected ? "valid" : "invalid"));
     }
 
-    /**
-     * SECURITY: Checks if this position is adjacent to another (horizontally or vertically).
-     * Diagonal adjacency is NOT considered adjacent.
-     *
-     * @param other The other position (must not be null)
-     * @return true if positions are adjacent, false otherwise
-     * @throws IllegalArgumentException if other is null
-     */
-    public boolean isAdjacentTo(Position other) {
-        if (other == null) {
-            throw new IllegalArgumentException("Cannot check adjacency with null position");
-        }
-
-        try {
-            return distanceTo(other) == 1;
-        } catch (Exception e) {
-            System.err.println("ERROR in isAdjacentTo: " + e.getMessage());
-            return false; // Safe fallback
-        }
+    @ParameterizedTest
+    @DisplayName("Invalid grid sizes should throw exception")
+    @ValueSource(ints = {0, -1, -10, -100})
+    void testInvalidGridSizes(int invalidSize) {
+        // ACT & ASSERT
+        assertThrows(IllegalArgumentException.class, () -> {
+            origin.isValid(invalidSize);
+        }, "Invalid grid size should throw exception: " + invalidSize);
     }
 
-    /**
-     * SECURITY: Checks if this position is diagonally adjacent to another.
-     *
-     * @param other The other position (must not be null)
-     * @return true if positions are diagonally adjacent, false otherwise
-     * @throws IllegalArgumentException if other is null
-     */
-    public boolean isDiagonallyAdjacentTo(Position other) {
-        if (other == null) {
-            throw new IllegalArgumentException("Cannot check diagonal adjacency with null position");
-        }
+    // ========================================
+    // EDGE CASE TESTS - Boundary Conditions
+    // ========================================
 
-        try {
-            int rowDiff = Math.abs(this.row - other.row);
-            int colDiff = Math.abs(this.column - other.column);
-            // Diagonally adjacent means both differences are exactly 1
-            return rowDiff == 1 && colDiff == 1;
-        } catch (Exception e) {
-            System.err.println("ERROR in isDiagonallyAdjacentTo: " + e.getMessage());
-            return false; // Safe fallback
-        }
+    @Test
+    @DisplayName("Same positions should be equal (equals)")
+    void testEquals_SamePosition() {
+        // ARRANGE
+        Position pos1 = new Position(3, 4);
+        Position pos2 = new Position(3, 4);
+        Position pos3 = pos1; // Same reference
+
+        // ASSERT
+        assertEquals(pos1, pos2, "Same coordinates should be equal");
+        assertEquals(pos1, pos3, "Same reference should be equal");
+        assertEquals(pos1, pos1, "Should equal itself");
+
+        System.out.println("✓ Equals test passed");
     }
 
-    /**
-     * SECURITY: Checks if this position is in the same row as another.
-     *
-     * @param other The other position (must not be null)
-     * @return true if same row, false otherwise
-     * @throws IllegalArgumentException if other is null
-     */
-    public boolean isSameRow(Position other) {
-        if (other == null) {
-            throw new IllegalArgumentException("Cannot compare with null position");
-        }
-        return this.row == other.row;
+    @Test
+    @DisplayName("Different positions should not be equal")
+    void testEquals_DifferentPosition() {
+        // ARRANGE
+        Position pos1 = new Position(3, 4);
+        Position pos2 = new Position(3, 5); // Different column
+        Position pos3 = new Position(4, 4); // Different row
+
+        // ASSERT
+        assertNotEquals(pos1, pos2, "Different column should not be equal");
+        assertNotEquals(pos1, pos3, "Different row should not be equal");
+        assertNotEquals(pos1, null, "Should not equal null");
+
+        System.out.println("✓ Not equals test passed");
     }
 
-    /**
-     * SECURITY: Checks if this position is in the same column as another.
-     *
-     * @param other The other position (must not be null)
-     * @return true if same column, false otherwise
-     * @throws IllegalArgumentException if other is null
-     */
-    public boolean isSameColumn(Position other) {
-        if (other == null) {
-            throw new IllegalArgumentException("Cannot compare with null position");
-        }
-        return this.column == other.column;
+    @Test
+    @DisplayName("hashCode should be consistent with equals")
+    void testHashCode_ConsistentWithEquals() {
+        // ARRANGE
+        Position pos1 = new Position(5, 7);
+        Position pos2 = new Position(5, 7);
+        Position pos3 = new Position(5, 8);
+
+        // ASSERT
+        // Equal objects should have same hashCode
+        assertEquals(pos1.hashCode(), pos2.hashCode(),
+                "Equal objects should have same hashCode");
+
+        // Different objects should (usually) have different hashCode
+        // Note: This is not guaranteed but a good hash function provides this
+        assertNotEquals(pos1.hashCode(), pos3.hashCode(),
+                "Different objects should have different hashCode (usually)");
+
+        System.out.println("✓ HashCode test passed");
     }
 
-    /**
-     * SECURITY: Gets the direction from this position to another position.
-     * Only works for positions in the same row or column.
-     *
-     * @param other The target position (must not be null)
-     * @return The Direction to other, or null if not in same row/column
-     * @throws IllegalArgumentException if other is null
-     */
-    public Direction getDirectionTo(Position other) {
-        if (other == null) {
-            throw new IllegalArgumentException("Cannot get direction to null position");
-        }
+    @Test
+    @DisplayName("Null parameters should be handled defensively")
+    void testNullParameters() {
+        // ASSERT - Various null scenarios
+        assertThrows(IllegalArgumentException.class, () ->
+                origin.distanceTo(null), "distanceTo(null) should throw exception");
 
-        try {
-            if (this.equals(other)) {
-                return null; // Same position, no direction
-            }
+        assertThrows(IllegalArgumentException.class, () ->
+                origin.isAdjacentTo(null), "isAdjacentTo(null) should throw exception");
 
-            // Check if in same row (horizontal movement)
-            if (this.row == other.row) {
-                return (other.column > this.column) ? Direction.RIGHT : Direction.LEFT;
-            }
+        // getNextPosition with null direction returns copy (defensive)
+        Position result = origin.getNextPosition(null);
+        assertNotNull(result, "Should return a result even with null direction");
 
-            // Check if in same column (vertical movement)
-            if (this.column == other.column) {
-                return (other.row > this.row) ? Direction.DOWN : Direction.UP;
-            }
-
-            // Not in same row or column (diagonal or complex path)
-            return null;
-        } catch (Exception e) {
-            System.err.println("ERROR in getDirectionTo: " + e.getMessage());
-            return null; // Safe fallback
-        }
+        System.out.println("✓ Null parameter tests passed");
     }
 
-    /**
-     * SECURITY: Creates a copy of this position offset by given amounts.
-     * Returns NEW Position object (defensive copying).
-     *
-     * @param rowOffset The row offset (can be negative)
-     * @param colOffset The column offset (can be negative)
-     * @return A new Position with applied offsets (never null)
-     */
-    public Position offset(int rowOffset, int colOffset) {
-        try {
-            return new Position(this.row + rowOffset, this.column + colOffset);
-        } catch (Exception e) {
-            System.err.println("ERROR in offset: " + e.getMessage());
-            return new Position(this); // Safe fallback (copy of current)
+    // ========================================
+    // NESTED TESTS - Grouped Tests
+    // ========================================
+
+    @Nested
+    @DisplayName("Direction Related Tests 🧭")
+    class DirectionTests {
+
+        @Test
+        @DisplayName("getDirectionTo should return correct direction for same row")
+        void testGetDirectionTo_SameRow() {
+            // ARRANGE
+            Position pos1 = new Position(5, 3);
+            Position pos2 = new Position(5, 7);
+
+            // ACT & ASSERT
+            assertEquals(Direction.RIGHT, pos1.getDirectionTo(pos2));
+            assertEquals(Direction.LEFT, pos2.getDirectionTo(pos1));
+
+            System.out.println("✓ Same row direction test passed");
+        }
+
+        @Test
+        @DisplayName("getDirectionTo should return correct direction for same column")
+        void testGetDirectionTo_SameColumn() {
+            // ARRANGE
+            Position pos1 = new Position(3, 5);
+            Position pos2 = new Position(7, 5);
+
+            // ACT & ASSERT
+            assertEquals(Direction.DOWN, pos1.getDirectionTo(pos2));
+            assertEquals(Direction.UP, pos2.getDirectionTo(pos1));
+
+            System.out.println("✓ Same column direction test passed");
+        }
+
+        @Test
+        @DisplayName("getDirectionTo should return null for diagonal positions")
+        void testGetDirectionTo_Diagonal() {
+            // ARRANGE
+            Position pos1 = new Position(3, 3);
+            Position pos2 = new Position(5, 7); // Diagonal
+
+            // ACT
+            Direction result = pos1.getDirectionTo(pos2);
+
+            // ASSERT
+            assertNull(result, "Should return null for diagonal positions");
+
+            System.out.println("✓ Diagonal direction test passed");
         }
     }
 
-    /**
-     * SECURITY: Clamps this position to grid bounds.
-     * Ensures position is within [0, gridSize-1] for both row and column.
-     * Returns NEW Position (does not modify current).
-     *
-     * @param gridSize The grid size (must be > 0)
-     * @return A new Position clamped to grid bounds (never null)
-     * @throws IllegalArgumentException if gridSize <= 0
-     */
-    public Position clampToGrid(int gridSize) {
-        if (gridSize <= 0) {
-            throw new IllegalArgumentException(
-                    String.format("Invalid grid size: %d (must be > 0)", gridSize)
-            );
-        }
+    // ========================================
+    // INTEGRATION TEST
+    // ========================================
 
-        try {
-            int clampedRow = Math.max(0, Math.min(row, gridSize - 1));
-            int clampedCol = Math.max(0, Math.min(column, gridSize - 1));
-            return new Position(clampedRow, clampedCol);
-        } catch (Exception e) {
-            System.err.println("ERROR in clampToGrid: " + e.getMessage());
-            return new Position(0, 0); // Safe fallback (top-left corner)
-        }
-    }
+    @Test
+    @DisplayName("Integration: Penguin movement scenario")
+    void testIntegration_MovementScenario() {
+        System.out.println("\n=== Penguin Movement Scenario ===");
 
-    /**
-     * SECURITY: Checks if this position is a corner of the grid.
-     *
-     * @param gridSize The grid size (must be > 0)
-     * @return true if position is a corner, false otherwise
-     * @throws IllegalArgumentException if gridSize <= 0
-     */
-    public boolean isCorner(int gridSize) {
-        if (gridSize <= 0) {
-            throw new IllegalArgumentException(
-                    String.format("Invalid grid size: %d (must be > 0)", gridSize)
-            );
-        }
+        // ARRANGE
+        Position penguinPos = new Position(0, 0); // Starting position
+        int gridSize = 10;
 
-        try {
-            boolean isTopOrBottom = (row == 0 || row == gridSize - 1);
-            boolean isLeftOrRight = (column == 0 || column == gridSize - 1);
-            return isTopOrBottom && isLeftOrRight;
-        } catch (Exception e) {
-            System.err.println("ERROR in isCorner: " + e.getMessage());
-            return false; // Safe fallback
-        }
-    }
+        System.out.println("Start: " + penguinPos);
 
-    /**
-     * SECURITY: Gets the corner type if this is a corner position.
-     *
-     * @param gridSize The grid size (must be > 0)
-     * @return String describing corner ("TOP_LEFT", "TOP_RIGHT", etc.) or null if not a corner
-     * @throws IllegalArgumentException if gridSize <= 0
-     */
-    public String getCornerType(int gridSize) {
-        if (!isCorner(gridSize)) {
-            return null;
-        }
+        // ACT & ASSERT - Movement scenario
+        // 1. Move right
+        penguinPos = penguinPos.getNextPosition(Direction.RIGHT);
+        assertEquals(new Position(0, 1), penguinPos);
+        assertTrue(penguinPos.isValid(gridSize));
+        System.out.println("Right: " + penguinPos);
 
-        try {
-            if (row == 0 && column == 0) return "TOP_LEFT";
-            if (row == 0 && column == gridSize - 1) return "TOP_RIGHT";
-            if (row == gridSize - 1 && column == 0) return "BOTTOM_LEFT";
-            if (row == gridSize - 1 && column == gridSize - 1) return "BOTTOM_RIGHT";
-            return null;
-        } catch (Exception e) {
-            System.err.println("ERROR in getCornerType: " + e.getMessage());
-            return null;
-        }
-    }
+        // 2. Move down
+        penguinPos = penguinPos.getNextPosition(Direction.DOWN);
+        assertEquals(new Position(1, 1), penguinPos);
+        assertTrue(penguinPos.isValid(gridSize));
+        System.out.println("Down: " + penguinPos);
 
-    /**
-     * Checks if this position equals another position.
-     * SECURITY: Null-safe comparison.
-     *
-     * @param obj The object to compare
-     * @return true if positions are equal, false otherwise
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+        // 3. Check edge status
+        assertTrue(penguinPos.isValid(gridSize), "Still inside grid");
+        assertFalse(penguinPos.isEdge(gridSize), "No longer on edge");
 
-        try {
-            Position position = (Position) obj;
-            return row == position.row && column == position.column;
-        } catch (Exception e) {
-            System.err.println("ERROR in equals: " + e.getMessage());
-            return false; // Safe fallback
-        }
-    }
-
-    /**
-     * Returns a hash code for this position.
-     * SECURITY: Consistent with equals method.
-     *
-     * @return Hash code based on row and column
-     */
-    @Override
-    public int hashCode() {
-        try {
-            return 31 * row + column;
-        } catch (Exception e) {
-            System.err.println("ERROR in hashCode: " + e.getMessage());
-            return 0; // Safe fallback
-        }
-    }
-
-    /**
-     * Returns a string representation of the position.
-     * SECURITY: Safe method, creates new string.
-     *
-     * @return String in format "(row, column)"
-     */
-    @Override
-    public String toString() {
-        try {
-            return "(" + row + ", " + column + ")";
-        } catch (Exception e) {
-            System.err.println("ERROR in toString: " + e.getMessage());
-            return "(?, ?)"; // Safe fallback
-        }
-    }
-
-    /**
-     * SECURITY: Gets a detailed string representation.
-     * Includes validation status for a given grid size.
-     *
-     * @param gridSize The grid size to validate against (must be > 0)
-     * @return Detailed string representation
-     * @throws IllegalArgumentException if gridSize <= 0
-     */
-    public String toDetailedString(int gridSize) {
-        if (gridSize <= 0) {
-            throw new IllegalArgumentException(
-                    String.format("Invalid grid size: %d (must be > 0)", gridSize)
-            );
-        }
-
-        try {
-            StringBuilder sb = new StringBuilder();
-            sb.append("Position[row=").append(row);
-            sb.append(", col=").append(column);
-            sb.append(", valid=").append(isValid(gridSize));
-            sb.append(", edge=").append(isEdge(gridSize));
-            sb.append(", corner=").append(isCorner(gridSize));
-            sb.append("]");
-            return sb.toString();
-        } catch (Exception e) {
-            System.err.println("ERROR in toDetailedString: " + e.getMessage());
-            return toString(); // Fallback to simple toString
-        }
-    }
-
-    /**
-     * SECURITY: Validates the internal state of this Position.
-     * Checks for any corruption or invalid state.
-     *
-     * @return true if state is valid, false if corrupted
-     */
-    public boolean validateState() {
-        // Position can have any integer values (even negative)
-        // Validation against grid bounds happens at usage site
-        // This method mainly exists for consistency with other classes
-        return true;
-    }
-
-    /**
-     * SECURITY: Creates an exact copy of this position.
-     * Convenience method that uses copy constructor.
-     *
-     * @return A new Position with same coordinates (never null)
-     */
-    public Position copy() {
-        return new Position(this);
+        System.out.println("✓ Movement scenario passed");
     }
 }

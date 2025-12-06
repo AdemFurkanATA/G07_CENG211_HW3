@@ -1,315 +1,602 @@
 package com.hazards;
 
-import com.interfaces.IHazard;
-import com.interfaces.ISlidable;
-import com.utils.PositionTest;
+import com.enums.Direction;
+import com.utils.Position;
+import org.junit.jupiter.api.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Abstract base class for all hazards on the icy terrain.
- * Implements IHazard interface and provides common functionality.
- * Some hazards also implement ISlidable (LightIceBlock, SeaLion).
- * Demonstrates inheritance, polymorphism, and abstract classes.
+ * Hazard Classes Tests
  *
- * SECURITY ENHANCED VERSION:
- * - All position parameters and returns use defensive copying
- * - Protected fields with validation
- * - Null safety checks throughout
- * - State validation methods
- * - No direct exposure of mutable internal state
+ * Location: src/test/java/com/hazards/HazardTest.java
+ *
+ * Testing all hazard types and their behaviors
  */
-public abstract class Hazard implements IHazard {
-    protected PositionTest position;         // Current position on terrain
-    protected boolean isActive;          // Whether hazard is currently active/dangerous
-    protected final String shorthand;    // Shorthand notation for display (immutable)
-    protected final String displayName;  // Full name for messages (immutable)
+@DisplayName("Hazard Classes Tests 🧊")
+class HazardTest {
 
-    /**
-     * Constructor for Hazard.
-     * SECURITY: Position parameter is defensively copied.
-     * Shorthand and displayName are validated and made final.
-     *
-     * @param position The position of the hazard (must not be null)
-     * @param shorthand The shorthand notation (e.g., "HB", "LB") (must not be null)
-     * @param displayName The full display name (must not be null)
-     * @throws IllegalArgumentException if any parameter is null or invalid
-     */
-    public Hazard(PositionTest position, String shorthand, String displayName) {
-        if (position == null) {
-            throw new IllegalArgumentException("Hazard position cannot be null");
-        }
-        if (shorthand == null || shorthand.trim().isEmpty()) {
-            throw new IllegalArgumentException("Hazard shorthand cannot be null or empty");
-        }
-        if (displayName == null || displayName.trim().isEmpty()) {
-            throw new IllegalArgumentException("Hazard displayName cannot be null or empty");
+    private Position testPosition;
+
+    @BeforeEach
+    void setUp() {
+        testPosition = new Position(5, 5);
+    }
+
+    // ========================================
+    // LIGHT ICE BLOCK TESTS
+    // ========================================
+
+    @Nested
+    @DisplayName("LightIceBlock Tests")
+    class LightIceBlockTests {
+
+        private LightIceBlock lightIceBlock;
+
+        @BeforeEach
+        void setUp() {
+            lightIceBlock = new LightIceBlock(testPosition);
         }
 
-        this.position = new PositionTest(position);  // 🔒 DEFENSIVE COPY!
-        this.shorthand = shorthand;
-        this.displayName = displayName;
-        this.isActive = true;  // Most hazards start active
-    }
-
-    // ===== ITerrainObject Methods =====
-
-    /**
-     * Gets the position of the hazard.
-     * SECURITY: Returns a defensive copy to prevent external modification.
-     *
-     * @return A new Position object (defensive copy)
-     */
-    @Override
-    public PositionTest getPosition() {
-        if (position == null) {
-            return null;  // Safety check (should never happen)
-        }
-        return new PositionTest(position);  // 🔒 DEFENSIVE COPY!
-    }
-
-    /**
-     * Sets the position of the hazard.
-     * SECURITY: Position parameter is defensively copied.
-     *
-     * @param position The new Position (must not be null)
-     * @throws IllegalArgumentException if position is null
-     */
-    @Override
-    public void setPosition(PositionTest position) {
-        if (position == null) {
-            throw new IllegalArgumentException("Position cannot be null");
-        }
-        this.position = new PositionTest(position);  // 🔒 DEFENSIVE COPY!
-    }
-
-    /**
-     * Gets the shorthand notation for displaying on the grid.
-     * Safe to return - String is immutable and field is final.
-     *
-     * @return The shorthand string (e.g., "HB", "LB")
-     */
-    @Override
-    public String getShorthand() {
-        return shorthand;
-    }
-
-    /**
-     * Gets the display name of the hazard.
-     * Safe to return - String is immutable and field is final.
-     *
-     * @return The full display name
-     */
-    @Override
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    // ===== IHazard Methods =====
-
-    /**
-     * Checks if the hazard is currently active/dangerous.
-     * Safe to return - primitive boolean.
-     *
-     * @return true if hazard is active, false otherwise
-     */
-    @Override
-    public boolean isActive() {
-        return isActive;
-    }
-
-    /**
-     * Sets the active status of the hazard.
-     * Safe method - only modifies internal boolean.
-     *
-     * @param active true if hazard should be active
-     */
-    public void setActive(boolean active) {
-        this.isActive = active;
-    }
-
-    /**
-     * Abstract method for handling collisions.
-     * Each hazard type implements this differently.
-     *
-     * @param penguinName The name of the colliding penguin (must not be null)
-     * @return A message describing the collision result
-     */
-    @Override
-    public abstract String handleCollision(String penguinName);
-
-    /**
-     * Abstract method to check if hazard can slide.
-     * LightIceBlock and SeaLion return true, others return false.
-     *
-     * @return true if hazard can slide, false otherwise
-     */
-    @Override
-    public abstract boolean canSlide();
-
-    // ===== Security & Utility Methods =====
-
-    /**
-     * SECURITY: Checks if this hazard is at the specified position.
-     * Useful for position-based queries without exposing the position object.
-     *
-     * @param position The position to check (must not be null)
-     * @return true if hazard is at this position, false otherwise
-     * @throws IllegalArgumentException if position is null
-     */
-    public boolean isAtPosition(PositionTest position) {
-        if (position == null) {
-            throw new IllegalArgumentException("Position cannot be null");
-        }
-        return this.position.equals(position);
-    }
-
-    /**
-     * SECURITY: Validates the hazard's state integrity.
-     * Useful for debugging and ensuring the hazard is in a valid state.
-     *
-     * @return true if hazard state is valid, false if corrupted
-     */
-    public boolean validateState() {
-        if (position == null) {
-            return false;
-        }
-        if (shorthand == null || shorthand.trim().isEmpty()) {
-            return false;
-        }
-        if (displayName == null || displayName.trim().isEmpty()) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * SECURITY: Gets a safe summary of the hazard's state.
-     * Returns formatted information without exposing mutable objects.
-     *
-     * @return Formatted string with hazard details
-     */
-    public String getStateSummary() {
-        return String.format("Hazard[type=%s, shorthand=%s, position=%s, active=%b, canSlide=%b]",
-                displayName, shorthand, position, isActive, canSlide());
-    }
-
-    /**
-     * Returns a string representation of the hazard for debugging.
-     * Safe method - returns formatted string with safe information.
-     *
-     * @return String representation of the hazard
-     */
-    @Override
-    public String toString() {
-        return displayName + " at " + (position != null ? position.toString() : "null") +
-                " (active=" + isActive + ", canSlide=" + canSlide() + ")";
-    }
-
-    /**
-     * Compares this hazard with another object for equality.
-     * Two hazards are equal if they are the same type and at the same position.
-     * SECURITY: Safe comparison method.
-     *
-     * @param obj The object to compare with
-     * @return true if objects are equal, false otherwise
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
+        @Test
+        @DisplayName("LightIceBlock should be created successfully")
+        void testConstructor() {
+            assertNotNull(lightIceBlock);
+            assertEquals("LB", lightIceBlock.getShorthand());
+            assertEquals("LightIceBlock", lightIceBlock.getDisplayName());
+            assertTrue(lightIceBlock.isActive());
         }
 
-        Hazard other = (Hazard) obj;
-
-        if (isActive != other.isActive) {
-            return false;
-        }
-        if (!shorthand.equals(other.shorthand)) {
-            return false;
-        }
-        if (!displayName.equals(other.displayName)) {
-            return false;
+        @Test
+        @DisplayName("LightIceBlock should be slidable")
+        void testCanSlide() {
+            assertTrue(lightIceBlock.canSlide());
         }
 
-        // Use equals for position comparison (defensive)
-        return position != null ? position.equals(other.position) : other.position == null;
+        @Test
+        @DisplayName("LightIceBlock should not be sliding initially")
+        void testInitialSlidingState() {
+            assertFalse(lightIceBlock.isSliding());
+            assertNull(lightIceBlock.getSlidingDirection());
+        }
+
+        @Test
+        @DisplayName("slide() should set sliding state")
+        void testSlide() {
+            // ACT
+            lightIceBlock.slide(Direction.RIGHT);
+
+            // ASSERT
+            assertTrue(lightIceBlock.isSliding());
+            assertEquals(Direction.RIGHT, lightIceBlock.getSlidingDirection());
+        }
+
+        @Test
+        @DisplayName("stopSliding() should clear sliding state")
+        void testStopSliding() {
+            // ARRANGE
+            lightIceBlock.slide(Direction.UP);
+
+            // ACT
+            lightIceBlock.stopSliding();
+
+            // ASSERT
+            assertFalse(lightIceBlock.isSliding());
+            assertNull(lightIceBlock.getSlidingDirection());
+        }
+
+        @Test
+        @DisplayName("handleCollision should return stun message")
+        void testHandleCollision() {
+            // ACT
+            String message = lightIceBlock.handleCollision("P1");
+
+            // ASSERT
+            assertNotNull(message);
+            assertTrue(message.contains("P1"));
+            assertTrue(message.contains("stunned") || message.contains("LightIceBlock"));
+        }
+
+        @Test
+        @DisplayName("Position should use defensive copy")
+        void testDefensiveCopy() {
+            // ACT
+            Position pos1 = lightIceBlock.getPosition();
+            Position pos2 = lightIceBlock.getPosition();
+
+            // ASSERT
+            assertNotSame(pos1, pos2);
+            assertEquals(pos1, pos2);
+        }
+
+        @Test
+        @DisplayName("validateState should return true for valid block")
+        void testValidateState() {
+            assertTrue(lightIceBlock.validateState());
+        }
+
+        @Test
+        @DisplayName("causesStun should return true")
+        void testCausesStun() {
+            assertTrue(lightIceBlock.causesStun());
+        }
+
+        @Test
+        @DisplayName("isMovable should return true")
+        void testIsMovable() {
+            assertTrue(lightIceBlock.isMovable());
+        }
+
+        @Test
+        @DisplayName("getWeightCategory should return LIGHT")
+        void testWeightCategory() {
+            assertEquals("LIGHT", lightIceBlock.getWeightCategory());
+        }
     }
 
-    /**
-     * Returns a hash code for this hazard.
-     * SECURITY: Safe method using immutable or primitively-based fields.
-     *
-     * @return Hash code value
-     */
-    @Override
-    public int hashCode() {
-        int result = position != null ? position.hashCode() : 0;
-        result = 31 * result + (isActive ? 1 : 0);
-        result = 31 * result + shorthand.hashCode();
-        result = 31 * result + displayName.hashCode();
-        return result;
+    // ========================================
+    // HEAVY ICE BLOCK TESTS
+    // ========================================
+
+    @Nested
+    @DisplayName("HeavyIceBlock Tests")
+    class HeavyIceBlockTests {
+
+        private HeavyIceBlock heavyIceBlock;
+
+        @BeforeEach
+        void setUp() {
+            heavyIceBlock = new HeavyIceBlock(testPosition);
+        }
+
+        @Test
+        @DisplayName("HeavyIceBlock should be created successfully")
+        void testConstructor() {
+            assertNotNull(heavyIceBlock);
+            assertEquals("HB", heavyIceBlock.getShorthand());
+            assertEquals("HeavyIceBlock", heavyIceBlock.getDisplayName());
+            assertTrue(heavyIceBlock.isActive());
+        }
+
+        @Test
+        @DisplayName("HeavyIceBlock should not be slidable")
+        void testCanSlide() {
+            assertFalse(heavyIceBlock.canSlide());
+        }
+
+        @Test
+        @DisplayName("handleCollision should return food loss message")
+        void testHandleCollision() {
+            // ACT
+            String message = heavyIceBlock.handleCollision("P1");
+
+            // ASSERT
+            assertNotNull(message);
+            assertTrue(message.contains("P1"));
+            assertTrue(message.contains("lightest") || message.contains("food"));
+        }
+
+        @Test
+        @DisplayName("isImmovable should return true")
+        void testIsImmovable() {
+            assertTrue(heavyIceBlock.isImmovable());
+        }
+
+        @Test
+        @DisplayName("causesFoodLoss should return true")
+        void testCausesFoodLoss() {
+            assertTrue(heavyIceBlock.causesFoodLoss());
+        }
+
+        @Test
+        @DisplayName("getPenaltyType should describe penalty")
+        void testGetPenaltyType() {
+            String penalty = heavyIceBlock.getPenaltyType();
+            assertNotNull(penalty);
+            assertTrue(penalty.contains("lightest") || penalty.contains("food"));
+        }
+
+        @Test
+        @DisplayName("blocksMovement should return true")
+        void testBlocksMovement() {
+            assertTrue(heavyIceBlock.blocksMovement());
+        }
+
+        @Test
+        @DisplayName("getWeightCategory should return HEAVY")
+        void testWeightCategory() {
+            assertEquals("HEAVY", heavyIceBlock.getWeightCategory());
+        }
+
+        @Test
+        @DisplayName("validateState should return true for valid block")
+        void testValidateState() {
+            assertTrue(heavyIceBlock.validateState());
+        }
     }
 
-    /**
-     * SECURITY: Activates the hazard.
-     * Convenience method with clear naming.
-     */
-    public void activate() {
-        this.isActive = true;
+    // ========================================
+    // SEA LION TESTS
+    // ========================================
+
+    @Nested
+    @DisplayName("SeaLion Tests")
+    class SeaLionTests {
+
+        private SeaLion seaLion;
+
+        @BeforeEach
+        void setUp() {
+            seaLion = new SeaLion(testPosition);
+        }
+
+        @Test
+        @DisplayName("SeaLion should be created successfully")
+        void testConstructor() {
+            assertNotNull(seaLion);
+            assertEquals("SL", seaLion.getShorthand());
+            assertEquals("SeaLion", seaLion.getDisplayName());
+            assertTrue(seaLion.isActive());
+        }
+
+        @Test
+        @DisplayName("SeaLion should be slidable")
+        void testCanSlide() {
+            assertTrue(seaLion.canSlide());
+        }
+
+        @Test
+        @DisplayName("SeaLion should not be sliding initially")
+        void testInitialSlidingState() {
+            assertFalse(seaLion.isSliding());
+            assertNull(seaLion.getSlidingDirection());
+        }
+
+        @Test
+        @DisplayName("slide() should set sliding state")
+        void testSlide() {
+            // ACT
+            seaLion.slide(Direction.LEFT);
+
+            // ASSERT
+            assertTrue(seaLion.isSliding());
+            assertEquals(Direction.LEFT, seaLion.getSlidingDirection());
+        }
+
+        @Test
+        @DisplayName("canBounce should return true when stationary")
+        void testCanBounce_Stationary() {
+            assertTrue(seaLion.canBounce());
+        }
+
+        @Test
+        @DisplayName("canBounce should return false when sliding")
+        void testCanBounce_Sliding() {
+            // ARRANGE
+            seaLion.slide(Direction.UP);
+
+            // ASSERT
+            assertFalse(seaLion.canBounce());
+        }
+
+        @Test
+        @DisplayName("handleCollision should return bounce message")
+        void testHandleCollision() {
+            // ACT
+            String message = seaLion.handleCollision("P1");
+
+            // ASSERT
+            assertNotNull(message);
+            assertTrue(message.contains("P1"));
+            assertTrue(message.contains("bounce") || message.contains("SeaLion"));
+        }
+
+        @Test
+        @DisplayName("transfersMomentum should return true")
+        void testTransfersMomentum() {
+            assertTrue(seaLion.transfersMomentum());
+        }
+
+        @Test
+        @DisplayName("getInteractionType should return BOUNCE")
+        void testInteractionType() {
+            assertEquals("BOUNCE", seaLion.getInteractionType());
+        }
+
+        @Test
+        @DisplayName("validateState should return true for valid SeaLion")
+        void testValidateState() {
+            assertTrue(seaLion.validateState());
+        }
+
+        @Test
+        @DisplayName("stopSliding should clear sliding state")
+        void testStopSliding() {
+            // ARRANGE
+            seaLion.slide(Direction.DOWN);
+
+            // ACT
+            seaLion.stopSliding();
+
+            // ASSERT
+            assertFalse(seaLion.isSliding());
+            assertNull(seaLion.getSlidingDirection());
+        }
     }
 
-    /**
-     * SECURITY: Deactivates the hazard.
-     * Convenience method with clear naming.
-     */
-    public void deactivate() {
-        this.isActive = false;
+    // ========================================
+    // HOLE IN ICE TESTS
+    // ========================================
+
+    @Nested
+    @DisplayName("HoleInIce Tests")
+    class HoleInIceTests {
+
+        private HoleInIce holeInIce;
+
+        @BeforeEach
+        void setUp() {
+            holeInIce = new HoleInIce(testPosition);
+        }
+
+        @Test
+        @DisplayName("HoleInIce should be created successfully")
+        void testConstructor() {
+            assertNotNull(holeInIce);
+            assertEquals("HI", holeInIce.getShorthand());
+            assertEquals("HoleInIce", holeInIce.getDisplayName());
+            assertTrue(holeInIce.isActive());
+            assertFalse(holeInIce.isPlugged());
+        }
+
+        @Test
+        @DisplayName("HoleInIce should not be slidable")
+        void testCanSlide() {
+            assertFalse(holeInIce.canSlide());
+        }
+
+        @Test
+        @DisplayName("Active hole should be dangerous")
+        void testIsDangerous_Active() {
+            assertTrue(holeInIce.isDangerous());
+            assertTrue(holeInIce.isActive());
+        }
+
+        @Test
+        @DisplayName("plug() should plug the hole")
+        void testPlug() {
+            // ACT
+            holeInIce.plug();
+
+            // ASSERT
+            assertTrue(holeInIce.isPlugged());
+            assertFalse(holeInIce.isActive());
+            assertFalse(holeInIce.isDangerous());
+            assertEquals("PH", holeInIce.getShorthand());
+        }
+
+        @Test
+        @DisplayName("Plugged hole should allow passage")
+        void testAllowsPassage_Plugged() {
+            // ARRANGE
+            holeInIce.plug();
+
+            // ASSERT
+            assertTrue(holeInIce.allowsPassage());
+        }
+
+        @Test
+        @DisplayName("Active hole should not allow passage")
+        void testAllowsPassage_Active() {
+            assertFalse(holeInIce.allowsPassage());
+        }
+
+        @Test
+        @DisplayName("unplug() should unplug the hole")
+        void testUnplug() {
+            // ARRANGE
+            holeInIce.plug();
+
+            // ACT
+            holeInIce.unplug();
+
+            // ASSERT
+            assertFalse(holeInIce.isPlugged());
+            assertTrue(holeInIce.isActive());
+            assertTrue(holeInIce.isDangerous());
+            assertEquals("HI", holeInIce.getShorthand());
+        }
+
+        @Test
+        @DisplayName("handleCollision should return fall message")
+        void testHandleCollision() {
+            // ACT
+            String message = holeInIce.handleCollision("P1");
+
+            // ASSERT
+            assertNotNull(message);
+            assertTrue(message.contains("P1"));
+            assertTrue(message.contains("fell") || message.contains("HoleInIce"));
+        }
+
+        @Test
+        @DisplayName("Shorthand should change when plugged")
+        void testShorthandChanges() {
+            // Initially HI
+            assertEquals("HI", holeInIce.getShorthand());
+
+            // After plugging: PH
+            holeInIce.plug();
+            assertEquals("PH", holeInIce.getShorthand());
+        }
+
+        @Test
+        @DisplayName("validateState should return true for valid hole")
+        void testValidateState_Active() {
+            assertTrue(holeInIce.validateState());
+        }
+
+        @Test
+        @DisplayName("validateState should return true for plugged hole")
+        void testValidateState_Plugged() {
+            holeInIce.plug();
+            assertTrue(holeInIce.validateState());
+        }
+
+        @Test
+        @DisplayName("getStatusCategory should reflect state")
+        void testGetStatusCategory() {
+            assertEquals("ACTIVE", holeInIce.getStatusCategory());
+
+            holeInIce.plug();
+            assertEquals("PLUGGED", holeInIce.getStatusCategory());
+        }
+
+        @Test
+        @DisplayName("hasStatus should check state correctly")
+        void testHasStatus() {
+            assertTrue(holeInIce.hasStatus(false)); // Not plugged
+            assertFalse(holeInIce.hasStatus(true)); // Not plugged
+
+            holeInIce.plug();
+            assertTrue(holeInIce.hasStatus(true)); // Plugged
+            assertFalse(holeInIce.hasStatus(false)); // Plugged
+        }
+
+        @Test
+        @DisplayName("copyAtPosition should preserve plugged state")
+        void testCopyAtPosition_PreservesState() {
+            // ARRANGE
+            holeInIce.plug();
+            Position newPos = new Position(7, 7);
+
+            // ACT
+            HoleInIce copy = holeInIce.copyAtPosition(newPos);
+
+            // ASSERT
+            assertTrue(copy.isPlugged());
+            assertEquals(newPos, copy.getPosition());
+        }
+
+        @Test
+        @DisplayName("createFreshCopy should return unplugged hole")
+        void testCreateFreshCopy() {
+            // ARRANGE
+            holeInIce.plug();
+            Position newPos = new Position(8, 8);
+
+            // ACT
+            HoleInIce fresh = holeInIce.createFreshCopy(newPos);
+
+            // ASSERT
+            assertFalse(fresh.isPlugged());
+            assertTrue(fresh.isActive());
+            assertEquals(newPos, fresh.getPosition());
+        }
     }
 
-    /**
-     * SECURITY: Toggles the active state.
-     * Useful for certain game mechanics.
-     */
-    public void toggleActive() {
-        this.isActive = !this.isActive;
+    // ========================================
+    // INTEGRATION TESTS
+    // ========================================
+
+    @Test
+    @DisplayName("Integration: All hazard types should be creatable")
+    void testIntegration_AllHazardTypes() {
+        System.out.println("\n=== All Hazard Types ===");
+
+        LightIceBlock lb = new LightIceBlock(new Position(1, 1));
+        HeavyIceBlock hb = new HeavyIceBlock(new Position(2, 2));
+        SeaLion sl = new SeaLion(new Position(3, 3));
+        HoleInIce hi = new HoleInIce(new Position(4, 4));
+
+        System.out.println("LightIceBlock: " + lb.getShorthand() + " - Can slide: " + lb.canSlide());
+        System.out.println("HeavyIceBlock: " + hb.getShorthand() + " - Can slide: " + hb.canSlide());
+        System.out.println("SeaLion: " + sl.getShorthand() + " - Can slide: " + sl.canSlide());
+        System.out.println("HoleInIce: " + hi.getShorthand() + " - Can slide: " + hi.canSlide());
+
+        assertNotNull(lb);
+        assertNotNull(hb);
+        assertNotNull(sl);
+        assertNotNull(hi);
+
+        System.out.println("✓ All hazard types created successfully");
     }
 
-    /**
-     * SECURITY: Checks if this is a slidable hazard.
-     * Convenience method that calls the abstract canSlide().
-     *
-     * @return true if this hazard implements ISlidable
-     */
-    public boolean isSlidable() {
-        return this instanceof ISlidable;
+    @Test
+    @DisplayName("Integration: Slidable vs non-slidable hazards")
+    void testIntegration_SlidableClassification() {
+        // ARRANGE
+        LightIceBlock lb = new LightIceBlock(testPosition);
+        HeavyIceBlock hb = new HeavyIceBlock(testPosition);
+        SeaLion sl = new SeaLion(testPosition);
+        HoleInIce hi = new HoleInIce(testPosition);
+
+        // ASSERT - Slidable
+        assertTrue(lb.canSlide(), "LightIceBlock should slide");
+        assertTrue(sl.canSlide(), "SeaLion should slide");
+
+        // ASSERT - Not slidable
+        assertFalse(hb.canSlide(), "HeavyIceBlock should not slide");
+        assertFalse(hi.canSlide(), "HoleInIce should not slide");
+
+        System.out.println("✓ Slidable classification correct");
     }
 
-    /**
-     * SECURITY: Gets the type name of this hazard.
-     * Safe method that returns the simple class name.
-     *
-     * @return The class name (e.g., "LightIceBlock", "SeaLion")
-     */
-    public String getTypeName() {
-        return this.getClass().getSimpleName();
+    @Test
+    @DisplayName("Integration: Hazard state transitions")
+    void testIntegration_StateTransitions() {
+        System.out.println("\n=== Hazard State Transitions ===");
+
+        // LightIceBlock: stationary → sliding
+        LightIceBlock lb = new LightIceBlock(testPosition);
+        assertFalse(lb.isSliding());
+        lb.slide(Direction.UP);
+        assertTrue(lb.isSliding());
+        System.out.println("✓ LightIceBlock state transition");
+
+        // HoleInIce: active → plugged
+        HoleInIce hi = new HoleInIce(testPosition);
+        assertTrue(hi.isActive());
+        hi.plug();
+        assertFalse(hi.isActive());
+        assertTrue(hi.isPlugged());
+        System.out.println("✓ HoleInIce state transition");
+
+        // SeaLion: stationary → sliding
+        SeaLion sl = new SeaLion(testPosition);
+        assertTrue(sl.canBounce());
+        sl.slide(Direction.DOWN);
+        assertFalse(sl.canBounce());
+        System.out.println("✓ SeaLion state transition");
+
+        System.out.println("✓ All state transitions work correctly");
     }
 
-    /**
-     * SECURITY: Creates a detailed description of the hazard.
-     * Safe method that returns formatted string without exposing mutable state.
-     *
-     * @return Detailed string with hazard information
-     */
-    public String getDetailedDescription() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(displayName);
-        sb.append(" (").append(shorthand).append(")");
-        sb.append("\n  Position: ").append(position);
-        sb.append("\n  Status: ").append(isActive ? "ACTIVE" : "INACTIVE");
-        sb.append("\n  Can Slide: ").append(canSlide() ? "YES" : "NO");
-        sb.append("\n  Type: ").append(getTypeName());
-        return sb.toString();
+    @Test
+    @DisplayName("Integration: Collision messages for all hazards")
+    void testIntegration_CollisionMessages() {
+        System.out.println("\n=== Collision Messages ===");
+
+        LightIceBlock lb = new LightIceBlock(testPosition);
+        HeavyIceBlock hb = new HeavyIceBlock(testPosition);
+        SeaLion sl = new SeaLion(testPosition);
+        HoleInIce hi = new HoleInIce(testPosition);
+
+        String lbMsg = lb.handleCollision("TestPenguin");
+        String hbMsg = hb.handleCollision("TestPenguin");
+        String slMsg = sl.handleCollision("TestPenguin");
+        String hiMsg = hi.handleCollision("TestPenguin");
+
+        System.out.println("LightIceBlock: " + lbMsg);
+        System.out.println("HeavyIceBlock: " + hbMsg);
+        System.out.println("SeaLion: " + slMsg);
+        System.out.println("HoleInIce: " + hiMsg);
+
+        assertNotNull(lbMsg);
+        assertNotNull(hbMsg);
+        assertNotNull(slMsg);
+        assertNotNull(hiMsg);
+
+        System.out.println("✓ All collision messages work");
     }
 }
