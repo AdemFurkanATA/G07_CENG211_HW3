@@ -21,7 +21,7 @@ import java.util.Scanner;
  * Contains the terrain grid, game objects, and orchestrates the game flow.
  * Demonstrates the use of Lists, ArrayLists, and object-oriented design.
  *
- * MAXIMUM SECURITY VERSION:
+ * MAXIMUM SECURITY VERSION + LOGIC FIXES:
  * - ALL position parameters use defensive copying (never trust external data)
  * - ALL position returns are defensive copies (never expose internal state)
  * - ALL list returns are deep copied AND unmodifiable (double protection)
@@ -30,6 +30,12 @@ import java.util.Scanner;
  * - No direct access to internal collections
  * - State validation after critical operations
  * - Protected against all common security vulnerabilities
+ *
+ * LOGIC FIXES:
+ * ✅ RockhopperPenguin can only jump to COMPLETELY EMPTY squares (no food allowed)
+ * ✅ RockhopperPenguin continues sliding after successful jump
+ * ✅ Cleaner AI Rockhopper messages
+ * ✅ King/Emperor stop messages clarified
  */
 public class IcyTerrain {
 
@@ -462,7 +468,7 @@ public class IcyTerrain {
                 useSpecial = askYesNo("Will " + penguin.getName() + " use its special action? Answer with Y or N");
             }
 
-            // ✅ FIX 2: Handle Royal Penguin special move
+            // Handle Royal Penguin special move
             if (useSpecial && penguin instanceof RoyalPenguin) {
                 Direction specialDir = askDirection("Which direction for the special single-step move? Answer with U (Up), D (Down), L (Left), R (Right)");
                 if (specialDir != null) {
@@ -472,17 +478,17 @@ public class IcyTerrain {
                     System.out.println(penguin.getName() + " moves one square " + getDirectionText(specialDir) + ".");
                     executeRoyalSpecialMove((RoyalPenguin) penguin, specialDir);
 
-                    // ✅ SECURITY: Check if penguin was removed during special move
+                    // SECURITY: Check if penguin was removed during special move
                     if (penguin.isRemoved()) {
                         return;  // Penguin fell during special move
                     }
                 }
             } else if (useSpecial && penguin instanceof RockhopperPenguin) {
-                // ✅ FIX 3: Rockhopper prepares to jump (doesn't show message yet)
+                // Rockhopper prepares to jump (doesn't show message yet)
                 penguin.useSpecialAction();
                 System.out.println(penguin.getName() + " is prepared to jump over a hazard.");
             } else if (useSpecial) {
-                // ✅ FIX 4: King/Emperor just use action, message comes during slide
+                // King/Emperor just use action, message comes during slide
                 penguin.useSpecialAction();
                 // NO MESSAGE HERE - Message will appear when they actually stop at the square
             }
@@ -504,6 +510,7 @@ public class IcyTerrain {
     /**
      * Handles a turn for an AI-controlled penguin.
      * SECURITY: Protected AI logic with error handling.
+     * LOGIC FIX: Cleaner Rockhopper auto-use messaging.
      *
      * @param penguin The AI penguin (must not be null)
      */
@@ -531,7 +538,8 @@ public class IcyTerrain {
                             ITerrainObject nextObj = getObjectAt(new Position(nextPos));
                             if (nextObj instanceof IHazard) {
                                 useSpecial = true;
-                                System.out.println(penguin.getName() + " will automatically USE its special action.");
+                                // ✅ LOGIC FIX: Remove confusing "will automatically USE" message
+                                // Jump message will appear when actually jumping
                                 penguin.useSpecialAction();
                             }
                         }
@@ -805,6 +813,7 @@ public class IcyTerrain {
     /**
      * Executes penguin movement with sliding mechanics.
      * SECURITY: All positions defensively copied throughout, comprehensive error handling.
+     * LOGIC FIX: King/Emperor stop messages clarified.
      *
      * @param penguin The penguin to move (must not be null)
      * @param direction The direction to move (must not be null)
@@ -858,10 +867,10 @@ public class IcyTerrain {
                 // SECURITY: Defensive copy
                 ITerrainObject targetObj = getObjectAt(new Position(nextPos));
 
-                // ✅ FIX 1: Check for stop at specific square (King/Emperor ability)
+                // ✅ LOGIC FIX: Check for stop at specific square (King/Emperor ability)
                 if (stopSquare > 0 && squareCount == stopSquare) {
                     if (targetObj == null) {
-                        // ✅ ADDED: Message for stopping at empty square
+                        // ✅ CLARIFIED: Message for stopping at empty square
                         removeObject(new Position(currentPos));
                         penguin.setPosition(new Position(nextPos));
                         terrainGrid.placeObject(penguin, new Position(nextPos));
@@ -869,7 +878,7 @@ public class IcyTerrain {
                         shouldStop = true;
                         continue;
                     } else if (targetObj instanceof Food) {
-                        // Collect food and stop
+                        // ✅ CLARIFIED: Collect food and stop with message
                         removeObject(new Position(currentPos));
                         penguin.setPosition(new Position(nextPos));
                         Food food = (Food) targetObj;
@@ -946,6 +955,9 @@ public class IcyTerrain {
     /**
      * Handles collision between a penguin and a hazard.
      * SECURITY: All positions defensively copied, comprehensive null checks.
+     * 🔴 CRITICAL LOGIC FIXES:
+     * ✅ RockhopperPenguin can ONLY jump to COMPLETELY EMPTY squares (no food)
+     * ✅ RockhopperPenguin CONTINUES SLIDING after successful jump (returns false)
      *
      * @param penguin The colliding penguin (must not be null)
      * @param hazard The hazard being hit (must not be null)
@@ -959,7 +971,7 @@ public class IcyTerrain {
         }
 
         try {
-            // ✅ FIX 5: Rockhopper jump ability - IMPROVED LOGIC
+            // ✅ CRITICAL LOGIC FIX: Rockhopper jump ability
             if (penguin instanceof RockhopperPenguin) {
                 RockhopperPenguin rockhopper = (RockhopperPenguin) penguin;
 
@@ -979,7 +991,7 @@ public class IcyTerrain {
                         return true; // Stop at hazard
                     }
 
-                    // ✅ IMPROVED: Check if landing position is valid (not out of bounds)
+                    // ✅ Check if landing position is valid (not out of bounds)
                     if (!landingPos.isValid(GRID_SIZE)) {
                         System.out.println(penguin.getName() + " jumps over " + hazard.getDisplayName() + " in its path.");
                         System.out.println(penguin.getName() + " falls into the water!");
@@ -992,40 +1004,30 @@ public class IcyTerrain {
                     // SECURITY: Defensive copy
                     ITerrainObject landingObj = getObjectAt(new Position(landingPos));
 
-                    // ✅ IMPROVED: Check if landing square is empty or has food (can land)
-                    if (landingObj == null || landingObj instanceof Food) {
+                    // ✅ CRITICAL FIX: Can ONLY jump to COMPLETELY EMPTY square
+                    // PDF says: "they can only jump to an empty square"
+                    if (landingObj == null) {
                         System.out.println(penguin.getName() + " jumps over " + hazard.getDisplayName() + " in its path.");
                         rockhopper.executeJump();
 
                         // SECURITY: All defensive copies
                         removeObject(new Position(currentPos));
                         penguin.setPosition(new Position(landingPos));
-
-                        if (landingObj instanceof Food) {
-                            Food food = (Food) landingObj;
-                            penguin.collectFood(food);
-                            foodItems.remove(food);
-                            System.out.println(penguin.getName() + " takes the " + food.getDisplayName() +
-                                    " on the ground. (Weight=" + food.getWeight() + " units)");
-                        }
-
                         terrainGrid.placeObject(penguin, new Position(landingPos));
 
-                        // ✅ IMPROVED: After successful jump, continue sliding from landing position
-                        // Check if there's another hazard ahead
-                        Position nextAfterLanding = landingPos.getNextPosition(direction);
-                        if (nextAfterLanding != null && nextAfterLanding.isValid(GRID_SIZE)) {
-                            ITerrainObject nextObj = getObjectAt(new Position(nextAfterLanding));
-                            if (nextObj instanceof IHazard) {
-                                // ✅ Handle the next hazard (e.g., HoleInIce after HeavyIceBlock)
-                                return handleHazardCollision(penguin, (IHazard) nextObj, direction, new Position(landingPos));
-                            }
-                        }
+                        // ✅ CRITICAL FIX: Continue sliding after successful jump (return false)
+                        // PDF example shows P1 jumping HB then hitting HI - meaning it continued sliding
+                        return false;
 
-                        return true; // Stop at landing position
+                    } else if (landingObj instanceof Food) {
+                        // ❌ CANNOT jump if food is on landing square
+                        System.out.println(penguin.getName() + " fails to jump over " + hazard.getDisplayName() + " - landing square has food!");
+                        rockhopper.executeJump(); // Consume the jump anyway
+                        // Fall through to normal hazard collision
+
                     } else {
                         // Landing square is occupied by penguin or another hazard
-                        System.out.println(penguin.getName() + " fails to jump over " + hazard.getDisplayName() + "!");
+                        System.out.println(penguin.getName() + " fails to jump over " + hazard.getDisplayName() + " - landing square is occupied!");
                         rockhopper.executeJump();
                         // Fall through to normal hazard collision
                     }
