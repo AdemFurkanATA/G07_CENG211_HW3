@@ -43,7 +43,7 @@ public enum Direction {
             return null;
         }
 
-        switch (input.toUpperCase()) {
+        switch (input.trim().toUpperCase()) {
             case "U":
                 return UP;
             case "D":

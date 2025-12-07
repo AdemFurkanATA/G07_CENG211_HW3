@@ -5,21 +5,23 @@ package com.enums;
  * Each food type can have a weight between 1-5 units.
  */
 public enum FoodType {
-    KRILL("Kr"),           // Small crustaceans
-    CRUSTACEAN("Cr"),      // Shell creatures
-    ANCHOVY("An"),         // Small fish
-    SQUID("Sq"),           // Cephalopods
-    MACKEREL("Ma");        // Larger fish
+    KRILL("Kr", "Krill"),           // Small crustaceans
+    CRUSTACEAN("Cr", "Crustacean"), // Shell creatures
+    ANCHOVY("An", "Anchovy"),       // Small fish
+    SQUID("Sq", "Squid"),           // Cephalopods
+    MACKEREL("Ma", "Mackerel");     // Larger fish
 
     private final String shorthand;
+    private final String displayName;
 
     /**
      * Constructor for FoodType enum.
      *
      * @param shorthand The two-letter abbreviation for display on the grid
      */
-    FoodType(String shorthand) {
+    FoodType(String shorthand, String displayName) {
         this.shorthand = shorthand;
+        this.displayName = displayName;
     }
 
     /**
@@ -50,8 +52,6 @@ public enum FoodType {
      */
     @Override
     public String toString() {
-        // Capitalize first letter, lowercase the rest
-        String name = this.name();
-        return name.charAt(0) + name.substring(1).toLowerCase();
+        return displayName;
     }
 }
