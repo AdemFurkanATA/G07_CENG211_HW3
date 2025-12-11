@@ -518,9 +518,9 @@ public class IcyTerrain {
                 chosenDir = chooseAIDirection(penguin);
             }
 
-            if (chosenDir != null) {
-                System.out.println(penguin.getName() + " chooses to move " + getDirectionText(chosenDir) + ".");
-                executePenguinMovement(penguin, chosenDir);
+            if (chosenDirection != null) {
+                System.out.println(penguin.getName() + " chooses to move " + getDirectionText(chosenDirection) + ".");
+                executePenguinMovement(penguin, chosenDirection);
             }
 
         } catch (Exception e) {
