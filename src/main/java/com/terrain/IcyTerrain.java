@@ -92,8 +92,8 @@ public class IcyTerrain {
         String[] penguinNames = {"P1", "P2", "P3"};
 
         for (int i = 0; i < NUM_PENGUINS; i++) {
-            Position pos = findEmptyEdgePosition();
-            if (pos == null) {
+            Position position = findEmptyEdgePosition();
+            if (position == null) {
                 System.err.println("ERROR: Could not find empty edge position for penguin!");
                 continue;
             }
@@ -103,14 +103,14 @@ public class IcyTerrain {
                 type = PenguinType.KING;
             }
 
-            Penguin penguin = createPenguin(penguinNames[i], pos, type);
+            Penguin penguin = createPenguin(penguinNames[i], position, type);
             if (penguin == null) {
                 System.err.println("ERROR: Could not create penguin!");
                 continue;
             }
 
             penguins.add(penguin);
-            terrainGrid.placeObject(penguin, new Position(pos));
+            terrainGrid.placeObject(penguin, new Position(position));
         }
 
         // Randomly assign one penguin to the player
@@ -170,20 +170,20 @@ public class IcyTerrain {
      */
     private void generateHazards() {
         for (int i = 0; i < NUM_HAZARDS; i++) {
-            Position pos = findEmptyPosition();
-            if (pos == null) {
+            Position position = findEmptyPosition();
+            if (position == null) {
                 System.err.println("WARNING: Could not find empty position for hazard " + (i+1));
                 continue;
             }
 
-            IHazard hazard = createRandomHazard(pos);
+            IHazard hazard = createRandomHazard(position);
             if (hazard == null) {
                 System.err.println("WARNING: Could not create hazard " + (i+1));
                 continue;
             }
 
             hazards.add(hazard);
-            terrainGrid.placeObject((ITerrainObject) hazard, new Position(pos));
+            terrainGrid.placeObject((ITerrainObject) hazard, new Position(position));
         }
     }
 
@@ -226,21 +226,21 @@ public class IcyTerrain {
      */
     private void generateFood() {
         for (int i = 0; i < NUM_FOOD; i++) {
-            Position pos = findEmptyPosition();
-            if (pos == null) {
+            Position position = findEmptyPosition();
+            if (position == null) {
                 System.err.println("WARNING: Could not find empty position for food " + (i+1));
                 continue;
             }
 
             try {
-                Food food = Food.createRandom(pos);
+                Food food = Food.createRandom(position);
                 if (food == null) {
                     System.err.println("WARNING: Could not create food " + (i+1));
                     continue;
                 }
 
                 foodItems.add(food);
-                terrainGrid.placeObject(food, new Position(pos));
+                terrainGrid.placeObject(food, new Position(position));
             } catch (Exception e) {
                 System.err.println("ERROR: Exception creating food: " + e.getMessage());
             }
@@ -257,9 +257,9 @@ public class IcyTerrain {
 
         while (attempts < maxAttempts) {
             try {
-                Position pos = GameHelper.randomEdgePosition(GRID_SIZE);
-                if (pos != null && terrainGrid.getObjectAt(new Position(pos)) == null) {
-                    return new Position(pos); // SECURITY: Return defensive copy
+                Position position = GameHelper.randomEdgePosition(GRID_SIZE);
+                if (position != null && terrainGrid.getObjectAt(new Position(position)) == null) {
+                    return new Position(position); // SECURITY: Return defensive copy
                 }
             } catch (Exception e) {
                 System.err.println("ERROR: Exception finding edge position: " + e.getMessage());
@@ -281,9 +281,9 @@ public class IcyTerrain {
 
         while (attempts < maxAttempts) {
             try {
-                Position pos = GameHelper.randomPosition(GRID_SIZE);
-                if (pos != null && terrainGrid.getObjectAt(new Position(pos)) == null) {
-                    return new Position(pos); // SECURITY: Return defensive copy
+                Position position = GameHelper.randomPosition(GRID_SIZE);
+                if (position != null && terrainGrid.getObjectAt(new Position(position)) == null) {
+                    return new Position(position); // SECURITY: Return defensive copy
                 }
             } catch (Exception e) {
                 System.err.println("ERROR: Exception finding position: " + e.getMessage());
@@ -473,17 +473,17 @@ public class IcyTerrain {
                     GameHelper.randomChance(AI_SPECIAL_ACTION_CHANCE);
 
             // Special handling for Rockhopper - auto-use when moving toward hazard
-            Direction chosenDir = null;
+            Direction chosenDirection = null;
             if (penguin instanceof RockhopperPenguin && !penguin.hasUsedSpecialAction()) {
-                chosenDir = chooseAIDirection(penguin);
-                if (chosenDir != null) {
-                    Position currentPos = penguin.getPosition();
-                    if (currentPos != null) {
-                        Position nextPos = currentPos.getNextPosition(chosenDir);
+                chosenDirection = chooseAIDirection(penguin);
+                if (chosenDirection != null) {
+                    Position currentPosition = penguin.getPosition();
+                    if (currentPosition != null) {
+                        Position nextPosition = currentPosition.getNextPosition(chosenDirection);
 
-                        if (nextPos != null && nextPos.isValid(GRID_SIZE)) {
-                            ITerrainObject nextObj = getObjectAt(new Position(nextPos));
-                            if (nextObj instanceof IHazard) {
+                        if (nextPosition != null && nextPosition.isValid(GRID_SIZE)) {
+                            ITerrainObject nextObject = getObjectAt(new Position(nextPosition));
+                            if (nextObject instanceof IHazard) {
                                 useSpecial = true;
                                 penguin.useSpecialAction();
                             }

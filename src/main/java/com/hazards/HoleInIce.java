@@ -158,17 +158,17 @@ public class HoleInIce extends Hazard {
      */
     @Override
     public String getDetailedDescription() {
-        StringBuilder sb = new StringBuilder(super.getDetailedDescription());
-        sb.append("\n  Plugged Status: ").append(isPlugged ? "PLUGGED (PH)" : "ACTIVE (HI)");
-        sb.append("\n  Effect on Penguins: ").append(isDangerous() ? "REMOVES FROM GAME" : "Safe to pass");
-        sb.append("\n  Effect on Hazards: ").append(isPlugged ? "Pass through" : "Plugs the hole");
-        sb.append("\n  Behavior: ");
+        StringBuilder stringBuilder = new StringBuilder(super.getDetailedDescription());
+        stringBuilder.append("\n  Plugged Status: ").append(isPlugged ? "PLUGGED (PH)" : "ACTIVE (HI)");
+        stringBuilder.append("\n  Effect on Penguins: ").append(isDangerous() ? "REMOVES FROM GAME" : "Safe to pass");
+        stringBuilder.append("\n  Effect on Hazards: ").append(isPlugged ? "Pass through" : "Plugs the hole");
+        stringBuilder.append("\n  Behavior: ");
         if (isPlugged) {
-            sb.append("Hole is plugged, objects can pass safely");
+            stringBuilder.append("Hole is plugged, objects can pass safely");
         } else {
-            sb.append("Active hole, penguins fall and removed, hazards plug it");
+            stringBuilder.append("Active hole, penguins fall and removed, hazards plug it");
         }
-        return sb.toString();
+        return stringBuilder.toString();
     }
 
     /**

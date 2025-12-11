@@ -262,13 +262,13 @@ public class LightIceBlock extends Hazard implements ISlidable {
      */
     @Override
     public String getDetailedDescription() {
-        StringBuilder sb = new StringBuilder(super.getDetailedDescription());
-        sb.append("\n  Sliding Status: ").append(getSlidingStatus());
-        sb.append("\n  Weight Category: ").append(getWeightCategory());
-        sb.append("\n  Movable: YES (slides when hit)");
-        sb.append("\n  Causes Stun: YES (colliding penguin skips next turn)");
-        sb.append("\n  Behavior: Starts sliding when hit, stuns colliding penguin");
-        return sb.toString();
+        StringBuilder stringBuilder = new StringBuilder(super.getDetailedDescription());
+        stringBuilder.append("\n  Sliding Status: ").append(getSlidingStatus());
+        stringBuilder.append("\n  Weight Category: ").append(getWeightCategory());
+        stringBuilder.append("\n  Movable: YES (slides when hit)");
+        stringBuilder.append("\n  Causes Stun: YES (colliding penguin skips next turn)");
+        stringBuilder.append("\n  Behavior: Starts sliding when hit, stuns colliding penguin");
+        return stringBuilder.toString();
     }
 
     /**
@@ -393,19 +393,19 @@ public class LightIceBlock extends Hazard implements ISlidable {
      * @return Formatted status report string
      */
     public String getStatusReport() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("=== LightIceBlock Status Report ===\n");
-        sb.append("Position: ").append(getPosition()).append("\n");
-        sb.append("Active: ").append(isActive() ? "YES" : "NO").append("\n");
-        sb.append("Sliding: ").append(isSliding ? "YES" : "NO").append("\n");
-        sb.append("Direction: ").append(slidingDirection != null ? slidingDirection : "N/A").append("\n");
-        sb.append("Weight Category: ").append(getWeightCategory()).append("\n");
-        sb.append("Movable: ").append(isMovable() ? "YES" : "NO").append("\n");
-        sb.append("Causes Stun: ").append(causesStun() ? "YES" : "NO").append("\n");
-        sb.append("State Valid: ").append(validateState() ? "YES" : "NO").append("\n");
-        sb.append("Operational: ").append(isOperational() ? "YES" : "NO").append("\n");
-        sb.append("Shorthand: ").append(getShorthand()).append("\n");
-        return sb.toString();
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("=== LightIceBlock Status Report ===\n");
+        stringBuilder.append("Position: ").append(getPosition()).append("\n");
+        stringBuilder.append("Active: ").append(isActive() ? "YES" : "NO").append("\n");
+        stringBuilder.append("Sliding: ").append(isSliding ? "YES" : "NO").append("\n");
+        stringBuilder.append("Direction: ").append(slidingDirection != null ? slidingDirection : "N/A").append("\n");
+        stringBuilder.append("Weight Category: ").append(getWeightCategory()).append("\n");
+        stringBuilder.append("Movable: ").append(isMovable() ? "YES" : "NO").append("\n");
+        stringBuilder.append("Causes Stun: ").append(causesStun() ? "YES" : "NO").append("\n");
+        stringBuilder.append("State Valid: ").append(validateState() ? "YES" : "NO").append("\n");
+        stringBuilder.append("Operational: ").append(isOperational() ? "YES" : "NO").append("\n");
+        stringBuilder.append("Shorthand: ").append(getShorthand()).append("\n");
+        return stringBuilder.toString();
     }
 
     /**

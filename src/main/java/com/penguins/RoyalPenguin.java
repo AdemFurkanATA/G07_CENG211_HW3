@@ -96,21 +96,21 @@ public class RoyalPenguin extends Penguin {
      * @return Formatted string with special ability status
      */
     public String getSpecialAbilitySummary() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Royal Penguin Special Ability:\n");
-        sb.append("  - Can move one square before sliding\n");
-        sb.append("  - Status: ");
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Royal Penguin Special Ability:\n");
+        stringBuilder.append("  - Can move one square before sliding\n");
+        stringBuilder.append("  - Status: ");
 
         if (hasUsedSpecialAction) {
-            sb.append("USED");
+            stringBuilder.append("USED");
         } else {
-            sb.append("AVAILABLE");
+            stringBuilder.append("AVAILABLE");
         }
 
         if (specialMoveDirection != null) {
-            sb.append("\n  - Queued Direction: ").append(specialMoveDirection);
+            stringBuilder.append("\n  - Queued Direction: ").append(specialMoveDirection);
         }
 
-        return sb.toString();
+        return stringBuilder.toString();
     }
 }
