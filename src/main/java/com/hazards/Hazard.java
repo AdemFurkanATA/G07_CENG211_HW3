@@ -245,13 +245,13 @@ public abstract class Hazard implements IHazard {
      * @return Detailed string with hazard information
      */
     public String getDetailedDescription() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(displayName);
-        sb.append(" (").append(shorthand).append(")");
-        sb.append("\n  Position: ").append(position);
-        sb.append("\n  Status: ").append(isActive ? "ACTIVE" : "INACTIVE");
-        sb.append("\n  Can Slide: ").append(canSlide() ? "YES" : "NO");
-        sb.append("\n  Type: ").append(getTypeName());
-        return sb.toString();
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(displayName);
+        stringBuilder.append(" (").append(shorthand).append(")");
+        stringBuilder.append("\n  Position: ").append(position);
+        stringBuilder.append("\n  Status: ").append(isActive ? "ACTIVE" : "INACTIVE");
+        stringBuilder.append("\n  Can Slide: ").append(canSlide() ? "YES" : "NO");
+        stringBuilder.append("\n  Type: ").append(getTypeName());
+        return stringBuilder.toString();
     }
 }
