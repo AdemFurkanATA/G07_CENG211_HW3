@@ -529,15 +529,15 @@ public class IcyTerrain {
     }
 
     /**
-     * @param dir The direction (can be null)
+     * @param direction The direction (can be null)
      * @return Formatted direction text (never null)
      */
-    private String getDirectionText(Direction dir) {
-        if (dir == null) {
+    private String getDirectionText(Direction direction) {
+        if (direction == null) {
             return "UNKNOWN";
         }
 
-        switch (dir) {
+        switch (direction) {
             case UP:
                 return "UPWARDS";
             case DOWN:
@@ -547,7 +547,7 @@ public class IcyTerrain {
             case RIGHT:
                 return "to the RIGHT";
             default:
-                return dir.toString();
+                return direction.toString();
         }
     }
 
