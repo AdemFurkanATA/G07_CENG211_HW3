@@ -9,14 +9,6 @@ import com.utils.Position;
  * Abstract base class for all hazards on the icy terrain.
  * Implements IHazard interface and provides common functionality.
  * Some hazards also implement ISlidable (LightIceBlock, SeaLion).
- * Demonstrates inheritance, polymorphism, and abstract classes.
- *
- * SECURITY ENHANCED VERSION:
- * - All position parameters and returns use defensive copying
- * - Protected fields with validation
- * - Null safety checks throughout
- * - State validation methods
- * - No direct exposure of mutable internal state
  */
 public abstract class Hazard implements IHazard {
     protected Position position;         // Current position on terrain
@@ -26,9 +18,6 @@ public abstract class Hazard implements IHazard {
 
     /**
      * Constructor for Hazard.
-     * SECURITY: Position parameter is defensively copied.
-     * Shorthand and displayName are validated and made final.
-     *
      * @param position The position of the hazard (must not be null)
      * @param shorthand The shorthand notation (e.g., "HB", "LB") (must not be null)
      * @param displayName The full display name (must not be null)
@@ -51,12 +40,8 @@ public abstract class Hazard implements IHazard {
         this.isActive = true;  // Most hazards start active
     }
 
-    // ===== ITerrainObject Methods =====
-
     /**
      * Gets the position of the hazard.
-     * SECURITY: Returns a defensive copy to prevent external modification.
-     *
      * @return A new Position object (defensive copy)
      */
     @Override
@@ -69,8 +54,6 @@ public abstract class Hazard implements IHazard {
 
     /**
      * Sets the position of the hazard.
-     * SECURITY: Position parameter is defensively copied.
-     *
      * @param position The new Position (must not be null)
      * @throws IllegalArgumentException if position is null
      */
@@ -84,8 +67,6 @@ public abstract class Hazard implements IHazard {
 
     /**
      * Gets the shorthand notation for displaying on the grid.
-     * Safe to return - String is immutable and field is final.
-     *
      * @return The shorthand string (e.g., "HB", "LB")
      */
     @Override
@@ -95,8 +76,6 @@ public abstract class Hazard implements IHazard {
 
     /**
      * Gets the display name of the hazard.
-     * Safe to return - String is immutable and field is final.
-     *
      * @return The full display name
      */
     @Override
@@ -104,12 +83,8 @@ public abstract class Hazard implements IHazard {
         return displayName;
     }
 
-    // ===== IHazard Methods =====
-
     /**
      * Checks if the hazard is currently active/dangerous.
-     * Safe to return - primitive boolean.
-     *
      * @return true if hazard is active, false otherwise
      */
     @Override
@@ -119,8 +94,6 @@ public abstract class Hazard implements IHazard {
 
     /**
      * Sets the active status of the hazard.
-     * Safe method - only modifies internal boolean.
-     *
      * @param active true if hazard should be active
      */
     public void setActive(boolean active) {
@@ -130,7 +103,6 @@ public abstract class Hazard implements IHazard {
     /**
      * Abstract method for handling collisions.
      * Each hazard type implements this differently.
-     *
      * @param penguinName The name of the colliding penguin (must not be null)
      * @return A message describing the collision result
      */
@@ -140,18 +112,12 @@ public abstract class Hazard implements IHazard {
     /**
      * Abstract method to check if hazard can slide.
      * LightIceBlock and SeaLion return true, others return false.
-     *
      * @return true if hazard can slide, false otherwise
      */
     @Override
     public abstract boolean canSlide();
 
-    // ===== Security & Utility Methods =====
-
     /**
-     * SECURITY: Checks if this hazard is at the specified position.
-     * Useful for position-based queries without exposing the position object.
-     *
      * @param position The position to check (must not be null)
      * @return true if hazard is at this position, false otherwise
      * @throws IllegalArgumentException if position is null
@@ -164,9 +130,6 @@ public abstract class Hazard implements IHazard {
     }
 
     /**
-     * SECURITY: Validates the hazard's state integrity.
-     * Useful for debugging and ensuring the hazard is in a valid state.
-     *
      * @return true if hazard state is valid, false if corrupted
      */
     public boolean validateState() {
@@ -183,9 +146,6 @@ public abstract class Hazard implements IHazard {
     }
 
     /**
-     * SECURITY: Gets a safe summary of the hazard's state.
-     * Returns formatted information without exposing mutable objects.
-     *
      * @return Formatted string with hazard details
      */
     public String getStateSummary() {
@@ -194,9 +154,6 @@ public abstract class Hazard implements IHazard {
     }
 
     /**
-     * Returns a string representation of the hazard for debugging.
-     * Safe method - returns formatted string with safe information.
-     *
      * @return String representation of the hazard
      */
     @Override
@@ -207,9 +164,6 @@ public abstract class Hazard implements IHazard {
 
     /**
      * Compares this hazard with another object for equality.
-     * Two hazards are equal if they are the same type and at the same position.
-     * SECURITY: Safe comparison method.
-     *
      * @param obj The object to compare with
      * @return true if objects are equal, false otherwise
      */
@@ -240,8 +194,6 @@ public abstract class Hazard implements IHazard {
 
     /**
      * Returns a hash code for this hazard.
-     * SECURITY: Safe method using immutable or primitively-based fields.
-     *
      * @return Hash code value
      */
     @Override
@@ -254,7 +206,6 @@ public abstract class Hazard implements IHazard {
     }
 
     /**
-     * SECURITY: Activates the hazard.
      * Convenience method with clear naming.
      */
     public void activate() {
@@ -262,7 +213,6 @@ public abstract class Hazard implements IHazard {
     }
 
     /**
-     * SECURITY: Deactivates the hazard.
      * Convenience method with clear naming.
      */
     public void deactivate() {
@@ -270,7 +220,6 @@ public abstract class Hazard implements IHazard {
     }
 
     /**
-     * SECURITY: Toggles the active state.
      * Useful for certain game mechanics.
      */
     public void toggleActive() {
@@ -278,9 +227,7 @@ public abstract class Hazard implements IHazard {
     }
 
     /**
-     * SECURITY: Checks if this is a slidable hazard.
      * Convenience method that calls the abstract canSlide().
-     *
      * @return true if this hazard implements ISlidable
      */
     public boolean isSlidable() {
@@ -288,9 +235,6 @@ public abstract class Hazard implements IHazard {
     }
 
     /**
-     * SECURITY: Gets the type name of this hazard.
-     * Safe method that returns the simple class name.
-     *
      * @return The class name (e.g., "LightIceBlock", "SeaLion")
      */
     public String getTypeName() {
@@ -298,9 +242,6 @@ public abstract class Hazard implements IHazard {
     }
 
     /**
-     * SECURITY: Creates a detailed description of the hazard.
-     * Safe method that returns formatted string without exposing mutable state.
-     *
      * @return Detailed string with hazard information
      */
     public String getDetailedDescription() {

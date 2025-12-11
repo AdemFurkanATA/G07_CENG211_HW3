@@ -8,12 +8,6 @@ import com.utils.Position;
  * Special action: Prepare to jump over one hazard while sliding.
  * Can only jump to an empty square. If landing square is occupied, jump fails.
  * Demonstrates inheritance from abstract Penguin class.
- *
- * SECURITY ENHANCED VERSION:
- * - State validation on jump preparation
- * - Safe boolean flag management
- * - Protected internal state
- * - Clear state transition methods
  */
 public class RockhopperPenguin extends Penguin {
 
@@ -21,8 +15,6 @@ public class RockhopperPenguin extends Penguin {
 
     /**
      * Constructor for RockhopperPenguin.
-     * SECURITY: Position is defensively copied by parent Penguin constructor.
-     *
      * @param name The name/identifier (P1, P2, P3)
      * @param position The starting position (must not be null)
      * @throws IllegalArgumentException if name or position is null (from parent)
@@ -36,7 +28,6 @@ public class RockhopperPenguin extends Penguin {
      * Uses the Rockhopper Penguin's special action.
      * Prepares the penguin to jump over one hazard in their sliding path.
      * The action is automatically used the first time the penguin moves toward a hazard.
-     *
      * @return true if action is available to use, false if already used
      */
     @Override
@@ -51,8 +42,6 @@ public class RockhopperPenguin extends Penguin {
 
     /**
      * Checks if the penguin is prepared to jump.
-     * Safe to return primitive boolean.
-     *
      * @return true if prepared to jump, false otherwise
      */
     public boolean isPreparedToJump() {
@@ -61,11 +50,6 @@ public class RockhopperPenguin extends Penguin {
 
     /**
      * Sets the jump preparation state.
-     * SECURITY: Validates state consistency - can only prepare if action is available.
-     *
-     * Note: This is primarily for internal state management.
-     * External code should use useSpecialAction() instead.
-     *
      * @param prepared true to prepare for jump
      */
     public void setPreparedToJump(boolean prepared) {
@@ -80,14 +64,12 @@ public class RockhopperPenguin extends Penguin {
     /**
      * Executes the jump, consuming the prepared jump state.
      * This should be called when the penguin actually performs the jump.
-     * Safe operation - clears the preparation flag.
      */
     public void executeJump() {
         this.preparedToJump = false;
     }
 
     /**
-     * SECURITY: Resets the jump preparation without executing.
      * Useful for cases where the jump cannot be performed (e.g., no valid landing).
      */
     public void cancelJump() {
@@ -95,9 +77,6 @@ public class RockhopperPenguin extends Penguin {
     }
 
     /**
-     * SECURITY: Validates the jump state is consistent.
-     * Ensures the penguin's jump-related state makes sense.
-     *
      * @return true if state is valid, false if inconsistent
      */
     public boolean isJumpStateValid() {
@@ -113,9 +92,6 @@ public class RockhopperPenguin extends Penguin {
     }
 
     /**
-     * SECURITY: Checks if the penguin can currently jump.
-     * Convenient method for checking jump availability.
-     *
      * @return true if penguin is in a state where jumping is possible
      */
     public boolean canJump() {
@@ -124,8 +100,6 @@ public class RockhopperPenguin extends Penguin {
 
     /**
      * Returns a string representation of the Rockhopper Penguin for debugging.
-     * Safe method - returns formatted string with jump state.
-     *
      * @return String representation including jump preparation state
      */
     @Override
@@ -136,9 +110,6 @@ public class RockhopperPenguin extends Penguin {
     }
 
     /**
-     * SECURITY: Gets a summary of the Rockhopper Penguin's special ability state.
-     * Safe method that provides read-only information.
-     *
      * @return Formatted string with special ability status
      */
     public String getSpecialAbilitySummary() {
@@ -166,9 +137,6 @@ public class RockhopperPenguin extends Penguin {
     }
 
     /**
-     * SECURITY: Provides detailed information about why jump might not be possible.
-     * Useful for debugging and game logic validation.
-     *
      * @return Human-readable string explaining jump status
      */
     public String getJumpStatusExplanation() {

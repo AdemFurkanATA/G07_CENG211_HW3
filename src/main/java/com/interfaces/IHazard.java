@@ -10,7 +10,6 @@ public interface IHazard extends ITerrainObject {
     /**
      * Checks if this hazard can be moved or slid.
      * LightIceBlock and SeaLion can slide, others cannot.
-     *
      * @return true if the hazard can slide, false otherwise
      */
     boolean canSlide();
@@ -22,7 +21,6 @@ public interface IHazard extends ITerrainObject {
      * - HeavyIceBlock: Stops penguin, penguin loses lightest food
      * - SeaLion: Bounces penguin back, SeaLion starts sliding
      * - HoleInIce: Penguin falls into the hole
-     *
      * @param penguinName The name of the colliding penguin (for messages)
      * @return A message describing the collision result
      */
@@ -31,7 +29,6 @@ public interface IHazard extends ITerrainObject {
     /**
      * Checks if this hazard is currently active/dangerous.
      * For example, a plugged HoleInIce is not dangerous.
-     *
      * @return true if hazard is active, false otherwise
      */
     boolean isActive();

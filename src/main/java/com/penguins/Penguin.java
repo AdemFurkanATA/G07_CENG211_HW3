@@ -14,15 +14,6 @@ import java.util.List;
 /**
  * Abstract base class for all penguin types.
  * Implements ITerrainObject and ISlidable interfaces.
- * Demonstrates inheritance, polymorphism, and abstract classes.
- *
- * SECURITY ENHANCED VERSION:
- * - All position parameters and returns use defensive copying
- * - Food list is never directly exposed - always returns defensive copies
- * - All getters return safe copies or unmodifiable collections
- * - Comprehensive null safety checks
- * - Protected internal state from external manipulation
- * - Validation on all setter methods
  */
 public abstract class Penguin implements ITerrainObject, ISlidable {
     protected String name;                      // Penguin identifier (P1, P2, P3)
@@ -38,8 +29,6 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
 
     /**
      * Constructor for Penguin.
-     * SECURITY: Position parameter is defensively copied.
-     *
      * @param name The name/identifier of the penguin (P1, P2, P3)
      * @param position The starting position (must not be null)
      * @param type The type of penguin (must not be null)
@@ -68,12 +57,9 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
         this.isPlayerPenguin = false;
     }
 
-    // ===== ITerrainObject Methods =====
 
     /**
      * Gets the position of the penguin.
-     * SECURITY: Returns a defensive copy to prevent external modification.
-     *
      * @return A new Position object (defensive copy)
      */
     @Override
@@ -86,8 +72,6 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
 
     /**
      * Sets the position of the penguin.
-     * SECURITY: Position parameter is defensively copied.
-     *
      * @param position The new Position (must not be null)
      * @throws IllegalArgumentException if position is null
      */
@@ -101,8 +85,6 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
 
     /**
      * Gets the shorthand notation for displaying on the grid.
-     * Safe to return String as it's immutable.
-     *
      * @return The penguin name (P1, P2, P3)
      */
     @Override
@@ -112,8 +94,6 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
 
     /**
      * Gets the display name of the penguin.
-     * Safe to return String as it's immutable.
-     *
      * @return The full name with type (e.g., "P1 (King Penguin)")
      */
     @Override
@@ -121,12 +101,8 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
         return name + " (" + type.getDisplayName() + ")";
     }
 
-    // ===== ISlidable Methods =====
-
     /**
      * Initiates sliding in a direction.
-     * SECURITY: Direction is an enum (immutable), so safe to use directly.
-     *
      * @param direction The direction to slide
      */
     @Override
@@ -137,8 +113,6 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
 
     /**
      * Checks if the penguin is currently sliding.
-     * Safe to return primitive boolean.
-     *
      * @return true if currently sliding, false otherwise
      */
     @Override
@@ -148,8 +122,6 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
 
     /**
      * Sets the sliding state.
-     * Safe method - only modifies internal boolean.
-     *
      * @param sliding true to mark as sliding
      */
     @Override
@@ -159,8 +131,6 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
 
     /**
      * Gets the current sliding direction.
-     * Safe to return Direction enum (immutable).
-     *
      * @return The Direction of current sliding, or null if not sliding
      */
     @Override
@@ -170,8 +140,6 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
 
     /**
      * Sets the sliding direction.
-     * Safe method - Direction is an enum (immutable).
-     *
      * @param direction The Direction to slide
      */
     @Override
@@ -179,20 +147,16 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
         this.slidingDirection = direction;
     }
 
-    // ===== Penguin-specific Methods =====
 
     /**
      * Abstract method for using the penguin's special action.
      * Each penguin type implements this differently.
-     *
      * @return true if action was successfully used, false otherwise
      */
     public abstract boolean useSpecialAction();
 
     /**
      * Gets the name of the penguin.
-     * Safe to return String (immutable).
-     *
      * @return The penguin name (P1, P2, P3)
      */
     public String getName() {
@@ -201,8 +165,6 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
 
     /**
      * Gets the type of the penguin.
-     * Safe to return PenguinType enum (immutable).
-     *
      * @return The PenguinType
      */
     public PenguinType getType() {
@@ -211,9 +173,6 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
 
     /**
      * Adds a food item to the penguin's collection.
-     * SECURITY: Food is added directly but list itself is never exposed.
-     * Note: Food objects are meant to be shared references for game state tracking.
-     *
      * @param food The Food to add (must not be null)
      * @throws IllegalArgumentException if food is null
      */
@@ -226,9 +185,6 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
 
     /**
      * Gets all collected food items.
-     * SECURITY CRITICAL: Returns an unmodifiable defensive copy of the list.
-     * This prevents external code from modifying the penguin's food collection.
-     *
      * @return Unmodifiable list of collected Food (defensive copy)
      */
     public List<Food> getCollectedFood() {
@@ -240,8 +196,6 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
 
     /**
      * Calculates the total weight of collected food.
-     * Safe method - only reads internal state and returns primitive int.
-     *
      * @return Total weight in units
      */
     public int getTotalFoodWeight() {
@@ -257,8 +211,6 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
     /**
      * Removes the lightest food item from the penguin's collection.
      * Used as penalty when hitting HeavyIceBlock.
-     * SECURITY: Safe method - modifies internal state only.
-     *
      * @return The removed Food, or null if no food to remove
      */
     public Food removeLightestFood() {
@@ -279,8 +231,6 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
 
     /**
      * Checks if the penguin has used their special action.
-     * Safe to return primitive boolean.
-     *
      * @return true if action has been used, false otherwise
      */
     public boolean hasUsedSpecialAction() {
@@ -289,8 +239,6 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
 
     /**
      * Sets whether the penguin has used their special action.
-     * Safe method - only modifies internal boolean.
-     *
      * @param used true if action has been used
      */
     public void setHasUsedSpecialAction(boolean used) {
@@ -299,8 +247,6 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
 
     /**
      * Checks if the penguin is stunned.
-     * Safe to return primitive boolean.
-     *
      * @return true if stunned, false otherwise
      */
     public boolean isStunned() {
@@ -308,9 +254,6 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
     }
 
     /**
-     * Sets the stunned status of the penguin.
-     * Safe method - only modifies internal boolean.
-     *
      * @param stunned true to stun the penguin
      */
     public void setStunned(boolean stunned) {
@@ -318,9 +261,6 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
     }
 
     /**
-     * Checks if the penguin has been removed from the game.
-     * Safe to return primitive boolean.
-     *
      * @return true if removed, false otherwise
      */
     public boolean isRemoved() {
@@ -328,9 +268,6 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
     }
 
     /**
-     * Sets the removed status of the penguin.
-     * Safe method - only modifies internal boolean.
-     *
      * @param removed true to mark as removed
      */
     public void setRemoved(boolean removed) {
@@ -339,8 +276,6 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
 
     /**
      * Checks if this is the player's penguin.
-     * Safe to return primitive boolean.
-     *
      * @return true if player's penguin, false otherwise
      */
     public boolean isPlayerPenguin() {
@@ -348,9 +283,6 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
     }
 
     /**
-     * Sets whether this is the player's penguin.
-     * Safe method - only modifies internal boolean.
-     *
      * @param isPlayer true if this is the player's penguin
      */
     public void setPlayerPenguin(boolean isPlayer) {
@@ -358,9 +290,6 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
     }
 
     /**
-     * SECURITY: Gets the number of food items collected.
-     * Safe alternative to exposing the entire food list.
-     *
      * @return The number of food items collected
      */
     public int getFoodCount() {
@@ -368,9 +297,6 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
     }
 
     /**
-     * SECURITY: Checks if the penguin has any food.
-     * Safe query method that doesn't expose internal state.
-     *
      * @return true if penguin has at least one food item
      */
     public boolean hasFood() {
@@ -378,10 +304,6 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
     }
 
     /**
-     * SECURITY: Gets a specific food item by index.
-     * Returns null if index is out of bounds (safe behavior).
-     * This allows controlled access to individual food items without exposing the entire list.
-     *
      * @param index The index of the food item
      * @return The Food at that index, or null if index is invalid
      */
@@ -394,8 +316,6 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
 
     /**
      * Returns a string representation of the penguin for debugging.
-     * Safe method - only returns formatted string with safe information.
-     *
      * @return String representation of the penguin
      */
     @Override
@@ -413,9 +333,6 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
     }
 
     /**
-     * SECURITY: Validates the penguin's state integrity.
-     * Useful for debugging and ensuring the penguin is in a valid state.
-     *
      * @return true if penguin state is valid, false if corrupted
      */
     public boolean validateState() {
@@ -435,9 +352,6 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
     }
 
     /**
-     * SECURITY: Creates a summary of the penguin's current state.
-     * Safe method that returns only safe, formatted information.
-     *
      * @return A formatted string with penguin statistics
      */
     public String getStateSummary() {

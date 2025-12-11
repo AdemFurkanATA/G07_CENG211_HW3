@@ -14,7 +14,6 @@ public class EmperorPenguin extends Penguin {
 
     /**
      * Constructor for EmperorPenguin.
-     *
      * @param name The name/identifier (P1, P2, P3)
      * @param position The starting position
      */
@@ -24,9 +23,6 @@ public class EmperorPenguin extends Penguin {
 
     /**
      * Uses the Emperor Penguin's special action.
-     * When activated, the penguin will stop at the 3rd square it slides into.
-     * If there are fewer than 3 squares available, the action is still consumed.
-     *
      * @return true if action is available to use, false if already used
      */
     @Override
@@ -40,7 +36,6 @@ public class EmperorPenguin extends Penguin {
 
     /**
      * Gets the square number where this penguin should stop when using special action.
-     *
      * @return 3 (the third square)
      */
     public int getStopSquare() {

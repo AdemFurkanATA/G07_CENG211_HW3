@@ -9,16 +9,6 @@ import java.util.List;
 
 /**
  * Represents the terrain grid for the Sliding Penguins game.
- * Manages a 2D grid structure using Lists and ArrayLists.
- * Demonstrates the use of Lists and ArrayLists as required in the homework.
- *
- * SECURITY ENHANCED VERSION:
- * - All position parameters are defensively copied
- * - Grid access is controlled and never exposes internal structure
- * - All list returns are deep copied and unmodifiable
- * - Comprehensive null safety checks
- * - Input validation on all methods
- * - No direct references to internal objects are ever returned
  */
 public class TerrainGrid {
 
@@ -28,7 +18,6 @@ public class TerrainGrid {
     /**
      * Constructor for TerrainGrid.
      * Uses final fields to prevent reassignment and ensure immutability of references.
-     *
      * @param size The size of the grid (e.g., 10 for a 10x10 grid)
      * @throws IllegalArgumentException if size is less than 1
      */
@@ -59,8 +48,6 @@ public class TerrainGrid {
 
     /**
      * Gets the size of the grid.
-     * Safe to return primitive value.
-     *
      * @return The grid size
      */
     public int getSize() {
@@ -69,8 +56,6 @@ public class TerrainGrid {
 
     /**
      * Places an object on the grid at the specified position.
-     * SECURITY: Position parameter is defensively copied to prevent external modification.
-     *
      * @param object The ITerrainObject to place (can be null to clear a cell)
      * @param position The position to place it at (must not be null)
      * @return true if placement was successful, false if position is invalid
@@ -81,22 +66,18 @@ public class TerrainGrid {
             throw new IllegalArgumentException("Position cannot be null");
         }
 
-        // Defensive copy - use the copied position for validation
         Position safeCopy = new Position(position);
 
         if (!isValidPosition(safeCopy)) {
             return false;
         }
 
-        // Place object using the validated copy
         grid.get(safeCopy.getRow()).set(safeCopy.getColumn(), object);
         return true;
     }
 
     /**
      * Removes an object from the grid at the specified position.
-     * SECURITY: Position parameter is defensively copied.
-     *
      * @param position The position to clear (must not be null)
      * @return The removed object, or null if position was empty or invalid
      * @throws IllegalArgumentException if position is null
@@ -106,7 +87,6 @@ public class TerrainGrid {
             throw new IllegalArgumentException("Position cannot be null");
         }
 
-        // Defensive copy
         Position safeCopy = new Position(position);
 
         if (!isValidPosition(safeCopy)) {
@@ -120,9 +100,6 @@ public class TerrainGrid {
 
     /**
      * Gets the object at the specified position.
-     * SECURITY: Position parameter is defensively copied.
-     * NOTE: Returns the actual object reference, but position is protected.
-     *
      * @param position The position to check (must not be null)
      * @return The ITerrainObject at that position, or null if empty or invalid
      * @throws IllegalArgumentException if position is null
@@ -132,7 +109,6 @@ public class TerrainGrid {
             throw new IllegalArgumentException("Position cannot be null");
         }
 
-        // Defensive copy
         Position safeCopy = new Position(position);
 
         if (!isValidPosition(safeCopy)) {
@@ -144,8 +120,6 @@ public class TerrainGrid {
 
     /**
      * Checks if a position is valid (within grid bounds).
-     * SECURITY: Position parameter is defensively copied.
-     *
      * @param position The position to check (must not be null)
      * @return true if position is valid, false otherwise
      * @throws IllegalArgumentException if position is null
@@ -162,8 +136,6 @@ public class TerrainGrid {
 
     /**
      * Checks if a position is empty (contains no object).
-     * SECURITY: Position parameter is defensively copied.
-     *
      * @param position The position to check (must not be null)
      * @return true if position is empty, false if occupied or invalid
      * @throws IllegalArgumentException if position is null
@@ -185,8 +157,6 @@ public class TerrainGrid {
 
     /**
      * Checks if a position is on the edge of the grid.
-     * SECURITY: Position parameter is defensively copied.
-     *
      * @param position The position to check (must not be null)
      * @return true if position is on an edge, false otherwise
      * @throws IllegalArgumentException if position is null
@@ -208,7 +178,6 @@ public class TerrainGrid {
 
     /**
      * Clears the entire grid, removing all objects.
-     * Safe operation as it only modifies internal state.
      */
     public void clear() {
         for (int i = 0; i < size; i++) {
@@ -219,16 +188,6 @@ public class TerrainGrid {
     }
 
     /**
-     * SECURITY CRITICAL: Gets a DEEP COPY of the grid structure.
-     * This is the most important security method in this class.
-     *
-     * WARNING: Even with this deep copy, the ITerrainObjects themselves are still
-     * the same references. This is intentional as we want to observe the game state,
-     * not create parallel universes. However, the List structure itself is completely
-     * isolated from external manipulation.
-     *
-     * DO NOT change this to return the internal grid directly!
-     *
      * @return An unmodifiable deep copy of the 2D grid structure
      */
     public List<List<ITerrainObject>> getGrid() {
@@ -240,21 +199,17 @@ public class TerrainGrid {
                 gridCopy.add(new ArrayList<>());
             } else {
                 // Create a new ArrayList with the same contents
-                // Objects themselves are same references (intentional for game state observation)
-                // but the List structure is completely new
                 gridCopy.add(new ArrayList<>(row));
             }
         }
 
         // Return as unmodifiable to prevent any modifications
-        // Even though it's a copy, we want to enforce read-only access
         return Collections.unmodifiableList(gridCopy);
     }
 
     /**
      * Displays the grid in a formatted manner.
      * Shows shorthand notation for each object.
-     * Safe to call - only reads internal state without exposing it.
      */
     public void display() {
         String separator = "-------------------------------------------------------------";
@@ -286,8 +241,6 @@ public class TerrainGrid {
 
     /**
      * Counts the number of objects currently on the grid.
-     * Safe operation - only reads internal state.
-     *
      * @return The total number of non-null objects on the grid
      */
     public int countObjects() {
@@ -304,8 +257,6 @@ public class TerrainGrid {
 
     /**
      * Finds all empty positions on the grid.
-     * SECURITY: Returns a new list with new Position objects (deep copy).
-     *
      * @return An unmodifiable list of empty Positions (all positions are new objects)
      */
     public List<Position> getEmptyPositions() {
@@ -326,8 +277,6 @@ public class TerrainGrid {
 
     /**
      * Finds all empty edge positions on the grid.
-     * SECURITY: Returns a new list with new Position objects (deep copy).
-     *
      * @return An unmodifiable list of empty edge Positions (all positions are new objects)
      */
     public List<Position> getEmptyEdgePositions() {
@@ -350,9 +299,6 @@ public class TerrainGrid {
     }
 
     /**
-     * SECURITY: Gets a defensive copy of all objects currently on the grid.
-     * Useful for iterating over all game objects without exposing positions.
-     *
      * @return An unmodifiable list of all non-null ITerrainObjects on the grid
      */
     public List<ITerrainObject> getAllObjects() {
@@ -372,9 +318,6 @@ public class TerrainGrid {
     }
 
     /**
-     * SECURITY: Validates grid integrity.
-     * Useful for debugging and ensuring the grid is in a valid state.
-     *
      * @return true if grid structure is valid, false if corrupted
      */
     public boolean validateGridIntegrity() {
@@ -397,8 +340,6 @@ public class TerrainGrid {
 
     /**
      * Returns a string representation of the grid for debugging.
-     * Safe method - only reads state without exposing internal structure.
-     *
      * @return String representation of grid dimensions and object count
      */
     @Override

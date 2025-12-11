@@ -5,22 +5,6 @@ import com.enums.Direction;
 /**
  * Represents a position (coordinates) on the icy terrain grid.
  * Uses row and column indices to identify locations.
- *
- * MAXIMUM SECURITY VERSION:
- * - Immutable design preferred (fields can be modified but discouraged)
- * - Defensive copying in copy constructor
- * - All methods validate inputs rigorously
- * - Safe null handling throughout
- * - Protected against invalid coordinates
- * - Thread-safe (no shared mutable state)
- * - Range validation on all operations
- * - Comprehensive error messages
- *
- * DESIGN PHILOSOPHY:
- * While row and column can be modified via setters (for compatibility),
- * it's strongly recommended to treat Position objects as immutable
- * and create new instances when coordinates need to change.
- * All methods that return Position objects return NEW instances.
  */
 public class Position {
     private int row;
@@ -28,25 +12,16 @@ public class Position {
 
     /**
      * Constructor for Position.
-     * SECURITY: Validates that coordinates are non-negative.
-     * Note: Grid bounds validation is context-dependent (done at usage site).
-     *
      * @param row The row index (should be >= 0)
      * @param column The column index (should be >= 0)
      */
     public Position(int row, int column) {
-        // SECURITY: Store coordinates (validation happens at usage)
-        // We don't validate against grid size here because Position
-        // can be created before knowing the grid context
         this.row = row;
         this.column = column;
     }
 
     /**
      * Copy constructor for Position.
-     * SECURITY: Creates a true defensive copy of the position.
-     * This is the RECOMMENDED way to copy positions.
-     *
      * @param other The Position to copy (must not be null)
      * @throws IllegalArgumentException if other is null
      */
@@ -60,8 +35,6 @@ public class Position {
 
     /**
      * Gets the row index.
-     * Safe to return - primitive int is immutable.
-     *
      * @return The row index
      */
     public int getRow() {
@@ -70,8 +43,6 @@ public class Position {
 
     /**
      * Gets the column index.
-     * Safe to return - primitive int is immutable.
-     *
      * @return The column index
      */
     public int getColumn() {
@@ -80,9 +51,6 @@ public class Position {
 
     /**
      * Sets the row index.
-     * SECURITY: While this allows mutation, it's discouraged.
-     * Prefer creating new Position objects instead of modifying existing ones.
-     *
      * @param row The new row index
      */
     public void setRow(int row) {
@@ -91,9 +59,6 @@ public class Position {
 
     /**
      * Sets the column index.
-     * SECURITY: While this allows mutation, it's discouraged.
-     * Prefer creating new Position objects instead of modifying existing ones.
-     *
      * @param column The new column index
      */
     public void setColumn(int column) {
@@ -101,9 +66,6 @@ public class Position {
     }
 
     /**
-     * SECURITY: Sets both coordinates atomically.
-     * Better than calling setRow() and setColumn() separately.
-     *
      * @param row The new row index
      * @param column The new column index
      */
@@ -114,8 +76,6 @@ public class Position {
 
     /**
      * Checks if this position is on the edge of a grid with given size.
-     * SECURITY: Validates gridSize parameter.
-     *
      * @param gridSize The size of the grid (e.g., 10 for 10x10) (must be > 0)
      * @return true if the position is on an edge, false otherwise
      * @throws IllegalArgumentException if gridSize <= 0
@@ -138,8 +98,6 @@ public class Position {
 
     /**
      * Checks if this position is valid within a grid of given size.
-     * SECURITY: Comprehensive validation of both position and gridSize.
-     *
      * @param gridSize The size of the grid (must be > 0)
      * @return true if position is within bounds, false otherwise
      * @throws IllegalArgumentException if gridSize <= 0
@@ -162,10 +120,6 @@ public class Position {
 
     /**
      * Returns the next position in a given direction.
-     * SECURITY: Does not modify the current position (immutable operation).
-     * Always returns a NEW Position object (defensive copying).
-     * Handles null direction gracefully.
-     *
      * @param direction The direction to move (can be null)
      * @return A new Position representing the next location (never null)
      */
@@ -199,14 +153,9 @@ public class Position {
 
     /**
      * Moves this position one step in the given direction.
-     * SECURITY: Modifies the current position (mutable operation).
-     * Use with caution - prefer getNextPosition() for immutable operations.
-     * Handles null direction gracefully.
-     *
      * @param direction The direction to move (can be null)
      */
     public void move(Direction direction) {
-        // SECURITY: Handle null direction
         if (direction == null) {
             System.err.println("WARNING: move called with null direction");
             return; // Don't move if direction is null
@@ -237,10 +186,6 @@ public class Position {
     }
 
     /**
-     * SECURITY: Gets multiple next positions (useful for lookahead).
-     * Returns positions for all directions.
-     * All returned positions are NEW objects (defensive copying).
-     *
      * @return Array of 4 positions [UP, DOWN, LEFT, RIGHT] (never null, no null elements)
      */
     public Position[] getAllAdjacentPositions() {
@@ -260,9 +205,6 @@ public class Position {
     }
 
     /**
-     * SECURITY: Gets all valid adjacent positions within grid bounds.
-     * Filters out positions that would be outside the grid.
-     *
      * @param gridSize The size of the grid (must be > 0)
      * @return Array of valid adjacent positions (never null, may be empty)
      * @throws IllegalArgumentException if gridSize <= 0
@@ -302,9 +244,6 @@ public class Position {
     }
 
     /**
-     * SECURITY: Calculates Manhattan distance to another position.
-     * Safe method that doesn't modify state.
-     *
      * @param other The other position (must not be null)
      * @return The Manhattan distance (always non-negative)
      * @throws IllegalArgumentException if other is null
@@ -325,9 +264,6 @@ public class Position {
     }
 
     /**
-     * SECURITY: Checks if this position is adjacent to another (horizontally or vertically).
-     * Diagonal adjacency is NOT considered adjacent.
-     *
      * @param other The other position (must not be null)
      * @return true if positions are adjacent, false otherwise
      * @throws IllegalArgumentException if other is null
@@ -341,13 +277,11 @@ public class Position {
             return distanceTo(other) == 1;
         } catch (Exception e) {
             System.err.println("ERROR in isAdjacentTo: " + e.getMessage());
-            return false; // Safe fallback
+            return false;
         }
     }
 
     /**
-     * SECURITY: Checks if this position is diagonally adjacent to another.
-     *
      * @param other The other position (must not be null)
      * @return true if positions are diagonally adjacent, false otherwise
      * @throws IllegalArgumentException if other is null
@@ -369,8 +303,6 @@ public class Position {
     }
 
     /**
-     * SECURITY: Checks if this position is in the same row as another.
-     *
      * @param other The other position (must not be null)
      * @return true if same row, false otherwise
      * @throws IllegalArgumentException if other is null
@@ -383,8 +315,6 @@ public class Position {
     }
 
     /**
-     * SECURITY: Checks if this position is in the same column as another.
-     *
      * @param other The other position (must not be null)
      * @return true if same column, false otherwise
      * @throws IllegalArgumentException if other is null
@@ -397,9 +327,6 @@ public class Position {
     }
 
     /**
-     * SECURITY: Gets the direction from this position to another position.
-     * Only works for positions in the same row or column.
-     *
      * @param other The target position (must not be null)
      * @return The Direction to other, or null if not in same row/column
      * @throws IllegalArgumentException if other is null
@@ -411,20 +338,17 @@ public class Position {
 
         try {
             if (this.equals(other)) {
-                return null; // Same position, no direction
+                return null;
             }
 
-            // Check if in same row (horizontal movement)
             if (this.row == other.row) {
                 return (other.column > this.column) ? Direction.RIGHT : Direction.LEFT;
             }
 
-            // Check if in same column (vertical movement)
             if (this.column == other.column) {
                 return (other.row > this.row) ? Direction.DOWN : Direction.UP;
             }
 
-            // Not in same row or column (diagonal or complex path)
             return null;
         } catch (Exception e) {
             System.err.println("ERROR in getDirectionTo: " + e.getMessage());
@@ -433,9 +357,6 @@ public class Position {
     }
 
     /**
-     * SECURITY: Creates a copy of this position offset by given amounts.
-     * Returns NEW Position object (defensive copying).
-     *
      * @param rowOffset The row offset (can be negative)
      * @param colOffset The column offset (can be negative)
      * @return A new Position with applied offsets (never null)
@@ -450,10 +371,6 @@ public class Position {
     }
 
     /**
-     * SECURITY: Clamps this position to grid bounds.
-     * Ensures position is within [0, gridSize-1] for both row and column.
-     * Returns NEW Position (does not modify current).
-     *
      * @param gridSize The grid size (must be > 0)
      * @return A new Position clamped to grid bounds (never null)
      * @throws IllegalArgumentException if gridSize <= 0
@@ -476,8 +393,6 @@ public class Position {
     }
 
     /**
-     * SECURITY: Checks if this position is a corner of the grid.
-     *
      * @param gridSize The grid size (must be > 0)
      * @return true if position is a corner, false otherwise
      * @throws IllegalArgumentException if gridSize <= 0
@@ -500,8 +415,6 @@ public class Position {
     }
 
     /**
-     * SECURITY: Gets the corner type if this is a corner position.
-     *
      * @param gridSize The grid size (must be > 0)
      * @return String describing corner ("TOP_LEFT", "TOP_RIGHT", etc.) or null if not a corner
      * @throws IllegalArgumentException if gridSize <= 0
@@ -525,8 +438,6 @@ public class Position {
 
     /**
      * Checks if this position equals another position.
-     * SECURITY: Null-safe comparison.
-     *
      * @param obj The object to compare
      * @return true if positions are equal, false otherwise
      */
@@ -546,8 +457,6 @@ public class Position {
 
     /**
      * Returns a hash code for this position.
-     * SECURITY: Consistent with equals method.
-     *
      * @return Hash code based on row and column
      */
     @Override
@@ -562,8 +471,6 @@ public class Position {
 
     /**
      * Returns a string representation of the position.
-     * SECURITY: Safe method, creates new string.
-     *
      * @return String in format "(row, column)"
      */
     @Override
@@ -577,9 +484,6 @@ public class Position {
     }
 
     /**
-     * SECURITY: Gets a detailed string representation.
-     * Includes validation status for a given grid size.
-     *
      * @param gridSize The grid size to validate against (must be > 0)
      * @return Detailed string representation
      * @throws IllegalArgumentException if gridSize <= 0
@@ -607,9 +511,6 @@ public class Position {
     }
 
     /**
-     * SECURITY: Validates the internal state of this Position.
-     * Checks for any corruption or invalid state.
-     *
      * @return true if state is valid, false if corrupted
      */
     public boolean validateState() {
@@ -620,9 +521,6 @@ public class Position {
     }
 
     /**
-     * SECURITY: Creates an exact copy of this position.
-     * Convenience method that uses copy constructor.
-     *
      * @return A new Position with same coordinates (never null)
      */
     public Position copy() {

@@ -19,23 +19,6 @@ import java.util.Scanner;
 /**
  * Main game class that manages the icy terrain grid and game logic.
  * Contains the terrain grid, game objects, and orchestrates the game flow.
- * Demonstrates the use of Lists, ArrayLists, and object-oriented design.
- *
- * MAXIMUM SECURITY VERSION + LOGIC FIXES:
- * - ALL position parameters use defensive copying (never trust external data)
- * - ALL position returns are defensive copies (never expose internal state)
- * - ALL list returns are deep copied AND unmodifiable (double protection)
- * - Comprehensive null safety checks on every method
- * - Input validation strengthened with try-catch blocks
- * - No direct access to internal collections
- * - State validation after critical operations
- * - Protected against all common security vulnerabilities
- *
- * LOGIC FIXES:
- * ✅ RockhopperPenguin can only jump to COMPLETELY EMPTY squares (no food allowed)
- * ✅ RockhopperPenguin continues sliding after successful jump
- * ✅ Cleaner AI Rockhopper messages
- * ✅ King/Emperor stop messages clarified
  */
 public class IcyTerrain {
 
@@ -57,7 +40,6 @@ public class IcyTerrain {
     /**
      * Constructor for IcyTerrain.
      * Initializes the grid and starts the game.
-     * SECURITY: All collections initialized as new ArrayList to prevent external references.
      */
     public IcyTerrain() {
         // Use try-with-resources would be ideal, but Scanner is managed throughout game
@@ -73,13 +55,11 @@ public class IcyTerrain {
 
     /**
      * Starts and orchestrates the entire game flow.
-     * SECURITY: Protected method, no external access to game initialization.
      */
     private void startGame() {
         System.out.println("Welcome to Sliding Penguins Puzzle Game App. An " + GRID_SIZE + "x" + GRID_SIZE + " icy terrain grid is being generated.");
         System.out.println("Penguins, Hazards, and Food items are also being generated. The initial icy terrain grid:");
 
-        // Generate game objects with security checks
         generatePenguins();
         generateHazards();
         generateFood();
@@ -107,7 +87,6 @@ public class IcyTerrain {
 
     /**
      * Generates 3 penguins with random types and places them on edge positions.
-     * SECURITY: All positions are defensively copied before storage.
      */
     private void generatePenguins() {
         String[] penguinNames = {"P1", "P2", "P3"};
@@ -121,7 +100,7 @@ public class IcyTerrain {
 
             PenguinType type = PenguinType.getRandomType();
             if (type == null) {
-                type = PenguinType.KING; // Safe fallback
+                type = PenguinType.KING;
             }
 
             Penguin penguin = createPenguin(penguinNames[i], pos, type);
@@ -131,7 +110,6 @@ public class IcyTerrain {
             }
 
             penguins.add(penguin);
-            // SECURITY: Defensive copy when placing
             terrainGrid.placeObject(penguin, new Position(pos));
         }
 
@@ -147,15 +125,12 @@ public class IcyTerrain {
 
     /**
      * Creates a penguin of the specified type.
-     * SECURITY: All parameters validated, position defensively copied.
-     *
      * @param name The penguin's name (must not be null)
      * @param position The starting position (must not be null)
      * @param type The penguin type (must not be null)
      * @return The created Penguin object, or null if creation fails
      */
     private Penguin createPenguin(String name, Position position, PenguinType type) {
-        // SECURITY: Comprehensive null checks
         if (name == null || name.trim().isEmpty()) {
             System.err.println("ERROR: Invalid penguin name");
             return null;
@@ -170,7 +145,6 @@ public class IcyTerrain {
         }
 
         try {
-            // SECURITY: Defensive copy of position before passing to constructor
             Position safeCopy = new Position(position);
 
             switch (type) {
@@ -193,7 +167,6 @@ public class IcyTerrain {
 
     /**
      * Generates 15 hazards with random types and places them on the grid.
-     * SECURITY: All positions defensively copied, null checks throughout.
      */
     private void generateHazards() {
         for (int i = 0; i < NUM_HAZARDS; i++) {
@@ -210,15 +183,12 @@ public class IcyTerrain {
             }
 
             hazards.add(hazard);
-            // SECURITY: Defensive copy when placing
             terrainGrid.placeObject((ITerrainObject) hazard, new Position(pos));
         }
     }
 
     /**
      * Creates a random hazard at the specified position.
-     * SECURITY: Position defensively copied, comprehensive error handling.
-     *
      * @param position The position for the hazard (must not be null)
      * @return A randomly created IHazard, or null if creation fails
      */
@@ -253,7 +223,6 @@ public class IcyTerrain {
 
     /**
      * Generates 20 food items with random types and weights.
-     * SECURITY: All positions defensively copied, null safety ensured.
      */
     private void generateFood() {
         for (int i = 0; i < NUM_FOOD; i++) {
@@ -271,7 +240,6 @@ public class IcyTerrain {
                 }
 
                 foodItems.add(food);
-                // SECURITY: Defensive copy when placing
                 terrainGrid.placeObject(food, new Position(pos));
             } catch (Exception e) {
                 System.err.println("ERROR: Exception creating food: " + e.getMessage());
@@ -281,8 +249,6 @@ public class IcyTerrain {
 
     /**
      * Finds an empty edge position for penguin placement.
-     * SECURITY: Returns a NEW Position object (defensive copy), never returns null without checks.
-     *
      * @return An empty edge Position (defensive copy), or null if none found
      */
     private Position findEmptyEdgePosition() {
@@ -307,8 +273,6 @@ public class IcyTerrain {
 
     /**
      * Finds an empty position anywhere on the grid.
-     * SECURITY: Returns a NEW Position object (defensive copy), never returns null without checks.
-     *
      * @return An empty Position (defensive copy), or null if none found
      */
     private Position findEmptyPosition() {
@@ -333,8 +297,6 @@ public class IcyTerrain {
 
     /**
      * Gets the object at the specified position.
-     * SECURITY: Position parameter is defensively copied before use.
-     *
      * @param position The position to check (must not be null)
      * @return The ITerrainObject at that position, or null if empty/invalid
      */
@@ -353,7 +315,6 @@ public class IcyTerrain {
 
     /**
      * Displays the current state of the grid.
-     * SECURITY: Only reads state, no modification possible.
      */
     private void displayGrid() {
         try {
@@ -367,7 +328,6 @@ public class IcyTerrain {
 
     /**
      * Displays the penguin types at the start of the game.
-     * SECURITY: Only reads penguin data, creates defensive copies implicitly.
      */
     private void displayPenguinTypes() {
         try {
@@ -389,7 +349,6 @@ public class IcyTerrain {
 
     /**
      * Main game loop - plays all turns for all penguins.
-     * SECURITY: Protected loop with comprehensive error handling.
      */
     private void playGame() {
         try {
@@ -414,8 +373,6 @@ public class IcyTerrain {
 
     /**
      * Plays a single turn for the specified penguin.
-     * SECURITY: Comprehensive null checks and error handling.
-     *
      * @param penguin The penguin taking their turn (must not be null)
      */
     private void playTurn(Penguin penguin) {
@@ -452,8 +409,6 @@ public class IcyTerrain {
 
     /**
      * Handles a turn for the player's penguin.
-     * SECURITY: Input validation with try-catch, defensive copies throughout.
-     *
      * @param penguin The player's penguin (must not be null)
      */
     private void handlePlayerTurn(Penguin penguin) {
@@ -478,19 +433,15 @@ public class IcyTerrain {
                     System.out.println(penguin.getName() + " moves one square " + getDirectionText(specialDir) + ".");
                     executeRoyalSpecialMove((RoyalPenguin) penguin, specialDir);
 
-                    // SECURITY: Check if penguin was removed during special move
                     if (penguin.isRemoved()) {
-                        return;  // Penguin fell during special move
+                        return;
                     }
                 }
             } else if (useSpecial && penguin instanceof RockhopperPenguin) {
-                // Rockhopper prepares to jump (doesn't show message yet)
                 penguin.useSpecialAction();
                 System.out.println(penguin.getName() + " is prepared to jump over a hazard.");
             } else if (useSpecial) {
-                // King/Emperor just use action, message comes during slide
                 penguin.useSpecialAction();
-                // NO MESSAGE HERE - Message will appear when they actually stop at the square
             }
 
             // Ask for movement direction
@@ -509,9 +460,6 @@ public class IcyTerrain {
 
     /**
      * Handles a turn for an AI-controlled penguin.
-     * SECURITY: Protected AI logic with error handling.
-     * LOGIC FIX: Cleaner Rockhopper auto-use messaging.
-     *
      * @param penguin The AI penguin (must not be null)
      */
     private void handleAITurn(Penguin penguin) {
@@ -529,7 +477,6 @@ public class IcyTerrain {
             if (penguin instanceof RockhopperPenguin && !penguin.hasUsedSpecialAction()) {
                 chosenDir = chooseAIDirection(penguin);
                 if (chosenDir != null) {
-                    // SECURITY: Defensive copy of position
                     Position currentPos = penguin.getPosition();
                     if (currentPos != null) {
                         Position nextPos = currentPos.getNextPosition(chosenDir);
@@ -538,8 +485,6 @@ public class IcyTerrain {
                             ITerrainObject nextObj = getObjectAt(new Position(nextPos));
                             if (nextObj instanceof IHazard) {
                                 useSpecial = true;
-                                // ✅ LOGIC FIX: Remove confusing "will automatically USE" message
-                                // Jump message will appear when actually jumping
                                 penguin.useSpecialAction();
                             }
                         }
@@ -584,9 +529,6 @@ public class IcyTerrain {
     }
 
     /**
-     * Converts Direction to proper display text matching PDF format.
-     * SECURITY: Null-safe, returns defensive string.
-     *
      * @param dir The direction (can be null)
      * @return Formatted direction text (never null)
      */
@@ -611,15 +553,12 @@ public class IcyTerrain {
 
     /**
      * Chooses a direction for AI penguin based on priorities.
-     * Priority: 1) Food, 2) Hazards (except HoleInIce), 3) Safe, 4) Water (last resort)
-     * SECURITY: Comprehensive null checks, defensive position copying.
-     *
      * @param penguin The AI penguin (must not be null)
      * @return The chosen Direction (never null)
      */
     private Direction chooseAIDirection(Penguin penguin) {
         if (penguin == null) {
-            return Direction.UP; // Safe default
+            return Direction.UP;
         }
 
         try {
@@ -629,10 +568,9 @@ public class IcyTerrain {
             List<Direction> waterDirections = new ArrayList<>();
             List<Direction> safeDirections = new ArrayList<>();
 
-            // SECURITY: Defensive copy of current position
             Position currentPos = penguin.getPosition();
             if (currentPos == null) {
-                return Direction.UP; // Safe default
+                return Direction.UP;
             }
             currentPos = new Position(currentPos);
 
@@ -647,7 +585,6 @@ public class IcyTerrain {
                     continue;
                 }
 
-                // SECURITY: Defensive copy when checking objects
                 ITerrainObject obj = getObjectAt(new Position(nextPos));
 
                 if (obj == null) {
@@ -665,7 +602,6 @@ public class IcyTerrain {
                 }
             }
 
-            // Priority selection
             if (!foodDirections.isEmpty()) {
                 return foodDirections.get(GameHelper.randomInt(0, foodDirections.size() - 1));
             } else if (!hazardDirections.isEmpty()) {
@@ -675,7 +611,7 @@ public class IcyTerrain {
             } else if (!waterDirections.isEmpty()) {
                 return waterDirections.get(GameHelper.randomInt(0, waterDirections.size() - 1));
             } else {
-                return Direction.UP; // Ultimate fallback
+                return Direction.UP;
             }
         } catch (Exception e) {
             System.err.println("ERROR: Exception in chooseAIDirection: " + e.getMessage());
@@ -685,8 +621,6 @@ public class IcyTerrain {
 
     /**
      * Chooses a safe direction for Royal Penguin's special move.
-     * SECURITY: Defensive copying, null safety throughout.
-     *
      * @param penguin The Royal Penguin (must not be null)
      * @return A safe Direction for the special move (never null)
      */
@@ -699,7 +633,6 @@ public class IcyTerrain {
             Direction[] directions = Direction.values();
             List<Direction> safeDirections = new ArrayList<>();
 
-            // SECURITY: Defensive copy
             Position currentPos = penguin.getPosition();
             if (currentPos == null) {
                 return Direction.UP;
@@ -716,7 +649,6 @@ public class IcyTerrain {
                     continue;
                 }
 
-                // SECURITY: Defensive copy
                 ITerrainObject obj = getObjectAt(new Position(nextPos));
 
                 if (obj == null || obj instanceof Food) {
@@ -737,8 +669,6 @@ public class IcyTerrain {
 
     /**
      * Executes the Royal Penguin's special single-step move.
-     * SECURITY: All positions defensively copied, comprehensive error handling.
-     *
      * @param penguin The Royal Penguin (must not be null)
      * @param direction The direction to move (must not be null)
      */
@@ -748,7 +678,6 @@ public class IcyTerrain {
         }
 
         try {
-            // SECURITY: Defensive copy
             Position currentPos = penguin.getPosition();
             if (currentPos == null) {
                 return;
@@ -768,7 +697,6 @@ public class IcyTerrain {
                 return;
             }
 
-            // SECURITY: Defensive copy
             ITerrainObject targetObj = getObjectAt(new Position(nextPos));
 
             // Handle collisions during special move
@@ -812,9 +740,6 @@ public class IcyTerrain {
 
     /**
      * Executes penguin movement with sliding mechanics.
-     * SECURITY: All positions defensively copied throughout, comprehensive error handling.
-     * LOGIC FIX: King/Emperor stop messages clarified.
-     *
      * @param penguin The penguin to move (must not be null)
      * @param direction The direction to move (must not be null)
      */
@@ -826,7 +751,6 @@ public class IcyTerrain {
         try {
             penguin.slide(direction);
 
-            // SECURITY: Defensive copy of starting position
             Position currentPos = penguin.getPosition();
             if (currentPos == null) {
                 return;
@@ -864,13 +788,10 @@ public class IcyTerrain {
                     return;
                 }
 
-                // SECURITY: Defensive copy
                 ITerrainObject targetObj = getObjectAt(new Position(nextPos));
 
-                // ✅ LOGIC FIX: Check for stop at specific square (King/Emperor ability)
                 if (stopSquare > 0 && squareCount == stopSquare) {
                     if (targetObj == null) {
-                        // ✅ CLARIFIED: Message for stopping at empty square
                         removeObject(new Position(currentPos));
                         penguin.setPosition(new Position(nextPos));
                         terrainGrid.placeObject(penguin, new Position(nextPos));
@@ -878,7 +799,6 @@ public class IcyTerrain {
                         shouldStop = true;
                         continue;
                     } else if (targetObj instanceof Food) {
-                        // ✅ CLARIFIED: Collect food and stop with message
                         removeObject(new Position(currentPos));
                         penguin.setPosition(new Position(nextPos));
                         Food food = (Food) targetObj;
@@ -890,7 +810,6 @@ public class IcyTerrain {
                         shouldStop = true;
                         continue;
                     }
-                    // If there's a hazard/penguin at stop square, continue sliding
                 }
 
                 // Handle empty square
@@ -923,7 +842,6 @@ public class IcyTerrain {
 
                     penguin.setSliding(false);
 
-                    // SECURITY: Defensive copy
                     Position otherPos = otherPenguin.getPosition();
                     if (otherPos != null) {
                         removeObject(new Position(otherPos));
@@ -954,11 +872,6 @@ public class IcyTerrain {
 
     /**
      * Handles collision between a penguin and a hazard.
-     * SECURITY: All positions defensively copied, comprehensive null checks.
-     * 🔴 CRITICAL LOGIC FIXES:
-     * ✅ RockhopperPenguin can ONLY jump to COMPLETELY EMPTY squares (no food)
-     * ✅ RockhopperPenguin CONTINUES SLIDING after successful jump (returns false)
-     *
      * @param penguin The colliding penguin (must not be null)
      * @param hazard The hazard being hit (must not be null)
      * @param direction The direction of movement (must not be null)
@@ -971,19 +884,16 @@ public class IcyTerrain {
         }
 
         try {
-            // ✅ CRITICAL LOGIC FIX: Rockhopper jump ability
             if (penguin instanceof RockhopperPenguin) {
                 RockhopperPenguin rockhopper = (RockhopperPenguin) penguin;
 
                 if (rockhopper.isPreparedToJump()) {
-                    // SECURITY: Defensive copy
                     Position hazardPos = hazard.getPosition();
                     if (hazardPos == null) {
                         return true;
                     }
                     hazardPos = new Position(hazardPos);
 
-                    // Calculate landing position (one square beyond the hazard)
                     Position landingPos = hazardPos.getNextPosition(direction);
                     if (landingPos == null) {
                         System.out.println(penguin.getName() + " cannot jump - no landing square!");
@@ -991,7 +901,6 @@ public class IcyTerrain {
                         return true; // Stop at hazard
                     }
 
-                    // ✅ Check if landing position is valid (not out of bounds)
                     if (!landingPos.isValid(GRID_SIZE)) {
                         System.out.println(penguin.getName() + " jumps over " + hazard.getDisplayName() + " in its path.");
                         System.out.println(penguin.getName() + " falls into the water!");
@@ -1001,44 +910,32 @@ public class IcyTerrain {
                         return true;
                     }
 
-                    // SECURITY: Defensive copy
                     ITerrainObject landingObj = getObjectAt(new Position(landingPos));
 
-                    // ✅ CRITICAL FIX: Can ONLY jump to COMPLETELY EMPTY square
-                    // PDF says: "they can only jump to an empty square"
                     if (landingObj == null) {
                         System.out.println(penguin.getName() + " jumps over " + hazard.getDisplayName() + " in its path.");
                         rockhopper.executeJump();
 
-                        // SECURITY: All defensive copies
                         removeObject(new Position(currentPos));
                         penguin.setPosition(new Position(landingPos));
                         terrainGrid.placeObject(penguin, new Position(landingPos));
 
-                        // ✅ CRITICAL FIX: Continue sliding after successful jump (return false)
-                        // PDF example shows P1 jumping HB then hitting HI - meaning it continued sliding
                         return false;
 
                     } else if (landingObj instanceof Food) {
-                        // ❌ CANNOT jump if food is on landing square
                         System.out.println(penguin.getName() + " fails to jump over " + hazard.getDisplayName() + " - landing square has food!");
-                        rockhopper.executeJump(); // Consume the jump anyway
-                        // Fall through to normal hazard collision
+                        rockhopper.executeJump();
 
                     } else {
-                        // Landing square is occupied by penguin or another hazard
                         System.out.println(penguin.getName() + " fails to jump over " + hazard.getDisplayName() + " - landing square is occupied!");
                         rockhopper.executeJump();
-                        // Fall through to normal hazard collision
                     }
                 }
             }
 
-            // Handle specific hazard types
             if (hazard instanceof HoleInIce) {
                 HoleInIce hole = (HoleInIce) hazard;
                 if (hole.isPlugged()) {
-                    // SECURITY: Defensive copies
                     removeObject(new Position(currentPos));
                     Position holePos = hole.getPosition();
                     if (holePos != null) {
@@ -1046,7 +943,7 @@ public class IcyTerrain {
                         penguin.setPosition(new Position(holePos));
                         terrainGrid.placeObject(penguin, new Position(holePos));
                     }
-                    return false; // Continue sliding over plugged hole
+                    return false;
                 } else {
                     System.out.println(penguin.getName() + " falls into a HoleInIce!");
                     System.out.println("*** " + penguin.getName() + " IS REMOVED FROM THE GAME!");
@@ -1062,7 +959,6 @@ public class IcyTerrain {
                 penguin.setStunned(true);
                 System.out.println(penguin.getName() + " is stunned and will skip the next turn!");
 
-                // SECURITY: Defensive copy
                 Position icePos = iceBlock.getPosition();
                 if (icePos != null) {
                     icePos = new Position(icePos);
@@ -1095,7 +991,6 @@ public class IcyTerrain {
 
                 System.out.println(penguin.getName() + " starts sliding in the opposite direction.");
 
-                // SECURITY: Defensive copy
                 removeObject(new Position(currentPos));
 
                 Position seaLionPos = seaLion.getPosition();
@@ -1121,8 +1016,6 @@ public class IcyTerrain {
 
     /**
      * Executes sliding movement for slidable hazards.
-     * SECURITY: All positions defensively copied, error handling throughout.
-     *
      * @param slidable The slidable object (must not be null)
      * @param direction The direction to slide (must not be null)
      */
@@ -1135,7 +1028,6 @@ public class IcyTerrain {
             slidable.slide(direction);
 
             ITerrainObject obj = (ITerrainObject) slidable;
-            // SECURITY: Defensive copy
             Position currentPos = obj.getPosition();
             if (currentPos == null) {
                 return;
@@ -1161,7 +1053,6 @@ public class IcyTerrain {
                     return;
                 }
 
-                // SECURITY: Defensive copy
                 ITerrainObject targetObj = getObjectAt(new Position(nextPos));
 
                 if (targetObj == null) {
@@ -1213,7 +1104,6 @@ public class IcyTerrain {
 
                     shouldStop = true;
 
-                    // SECURITY: Defensive copy
                     Position targetPos = targetBlock.getPosition();
                     if (targetPos != null) {
                         removeObject(new Position(targetPos));
@@ -1237,8 +1127,6 @@ public class IcyTerrain {
 
     /**
      * Removes a penguin from the game.
-     * SECURITY: Position defensively copied.
-     *
      * @param penguin The penguin to remove (must not be null)
      */
     private void removePenguin(Penguin penguin) {
@@ -1259,8 +1147,6 @@ public class IcyTerrain {
 
     /**
      * Removes an object from the grid at the specified position.
-     * SECURITY: Position defensively copied.
-     *
      * @param position The position to clear (must not be null)
      */
     private void removeObject(Position position) {
@@ -1276,8 +1162,6 @@ public class IcyTerrain {
 
     /**
      * Asks the user a yes/no question.
-     * SECURITY: Input validation with try-catch, null safety.
-     *
      * @param question The question to ask (must not be null)
      * @return true for yes, false for no
      */
@@ -1313,8 +1197,6 @@ public class IcyTerrain {
 
     /**
      * Asks the user for a direction.
-     * SECURITY: Input validation with try-catch, null safety.
-     *
      * @param question The question to ask (must not be null)
      * @return The chosen Direction (never null)
      */
@@ -1348,14 +1230,12 @@ public class IcyTerrain {
 
     /**
      * Displays the game over screen with final scoreboard.
-     * SECURITY: Creates defensive copy of penguins list for sorting.
      */
     private void displayGameOver() {
         try {
             System.out.println("\n***** GAME OVER *****");
             System.out.println("***** SCOREBOARD FOR THE PENGUINS *****");
 
-            // SECURITY: Create a defensive copy for sorting
             List<Penguin> sortedPenguins = new ArrayList<>(penguins);
 
             sortedPenguins.sort((p1, p2) -> {
@@ -1404,8 +1284,6 @@ public class IcyTerrain {
 
     /**
      * Gets the ordinal suffix for a place number.
-     * SECURITY: Safe method, no state access.
-     *
      * @param place The place number
      * @return The place with suffix
      */
@@ -1423,9 +1301,6 @@ public class IcyTerrain {
     }
 
     /**
-     * SECURITY: Validates the entire game state.
-     * Useful for debugging and ensuring consistency.
-     *
      * @return true if game state is valid, false if corrupted
      */
     private boolean validateGameState() {
@@ -1447,13 +1322,8 @@ public class IcyTerrain {
         }
     }
 
-    // ===== SECURITY CRITICAL: Public Getter Methods =====
-    // ALL return defensive copies or unmodifiable views!
 
     /**
-     * SECURITY CRITICAL: Returns an unmodifiable defensive copy of penguins list.
-     * Double protection: new ArrayList + unmodifiableList.
-     *
      * @return Unmodifiable list of penguins (defensive copy)
      */
     public List<Penguin> getPenguins() {
@@ -1461,8 +1331,6 @@ public class IcyTerrain {
     }
 
     /**
-     * SECURITY CRITICAL: Returns an unmodifiable defensive copy of food items list.
-     *
      * @return Unmodifiable list of food items (defensive copy)
      */
     public List<Food> getFoodItems() {
@@ -1470,8 +1338,6 @@ public class IcyTerrain {
     }
 
     /**
-     * SECURITY CRITICAL: Returns an unmodifiable defensive copy of hazards list.
-     *
      * @return Unmodifiable list of hazards (defensive copy)
      */
     public List<IHazard> getHazards() {
@@ -1479,9 +1345,6 @@ public class IcyTerrain {
     }
 
     /**
-     * SECURITY: Returns the player's penguin reference.
-     * Reference is okay for read-only access, but caller should not modify.
-     *
      * @return The player's penguin (can be null)
      */
     public Penguin getPlayerPenguin() {
@@ -1489,9 +1352,6 @@ public class IcyTerrain {
     }
 
     /**
-     * SECURITY: Returns the current turn number.
-     * Safe - primitive value.
-     *
      * @return Current turn (1-4)
      */
     public int getCurrentTurn() {
@@ -1499,9 +1359,6 @@ public class IcyTerrain {
     }
 
     /**
-     * SECURITY: Returns the grid size constant.
-     * Safe - primitive value.
-     *
      * @return Grid size (10)
      */
     public int getGridSize() {
@@ -1509,10 +1366,6 @@ public class IcyTerrain {
     }
 
     /**
-     * SECURITY: Gets a defensive copy of the terrain grid.
-     * Returns the grid reference for read-only operations.
-     * Grid itself has defensive methods.
-     *
      * @return The TerrainGrid instance
      */
     public TerrainGrid getTerrainGrid() {

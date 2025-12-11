@@ -7,20 +7,11 @@ import com.utils.Position;
  * Anything that collides with it stops immediately.
  * The colliding penguin loses their lightest food item as a penalty.
  * Cannot slide, so does not implement ISlidable.
- *
- * SECURITY ENHANCED VERSION:
- * - Position safety inherited from Hazard base class
- * - No mutable fields beyond parent
- * - Additional validation methods
- * - Enhanced null safety
- * - Comprehensive documentation
  */
 public class HeavyIceBlock extends Hazard {
 
     /**
      * Constructor for HeavyIceBlock.
-     * SECURITY: Position is defensively copied by parent Hazard constructor.
-     *
      * @param position The position of the ice block (must not be null)
      * @throws IllegalArgumentException if position is null (from parent)
      */
@@ -31,8 +22,6 @@ public class HeavyIceBlock extends Hazard {
     /**
      * Handles collision with a penguin.
      * The penguin stops and loses their lightest food item.
-     * SECURITY: Safe method - only returns String message with null safety.
-     *
      * @param penguinName The name of the colliding penguin
      * @return A message describing the collision
      */
@@ -46,8 +35,6 @@ public class HeavyIceBlock extends Hazard {
 
     /**
      * HeavyIceBlock cannot slide.
-     * Safe to return primitive boolean constant.
-     *
      * @return false
      */
     @Override
@@ -55,12 +42,8 @@ public class HeavyIceBlock extends Hazard {
         return false;
     }
 
-    // ===== Additional Security & Utility Methods =====
 
     /**
-     * SECURITY: Checks if this is an immovable obstacle.
-     * HeavyIceBlock is always immovable.
-     *
      * @return true (always immovable)
      */
     public boolean isImmovable() {
@@ -68,9 +51,6 @@ public class HeavyIceBlock extends Hazard {
     }
 
     /**
-     * SECURITY: Checks if this hazard causes food loss.
-     * HeavyIceBlock always causes food loss on collision.
-     *
      * @return true (always causes food loss)
      */
     public boolean causesFoodLoss() {
@@ -78,9 +58,6 @@ public class HeavyIceBlock extends Hazard {
     }
 
     /**
-     * SECURITY: Gets the penalty type for this hazard.
-     * Useful for game logic and UI display.
-     *
      * @return String describing the penalty
      */
     public String getPenaltyType() {
@@ -88,9 +65,6 @@ public class HeavyIceBlock extends Hazard {
     }
 
     /**
-     * SECURITY: Validates the state of the HeavyIceBlock.
-     * HeavyIceBlock has no additional state beyond parent, so just validates parent.
-     *
      * @return true if state is valid, false if corrupted
      */
     @Override
@@ -115,8 +89,6 @@ public class HeavyIceBlock extends Hazard {
 
     /**
      * Returns a string representation of the HeavyIceBlock for debugging.
-     * Safe method - returns formatted string with state information.
-     *
      * @return String representation
      */
     @Override
@@ -125,9 +97,6 @@ public class HeavyIceBlock extends Hazard {
     }
 
     /**
-     * SECURITY: Gets a detailed summary of the HeavyIceBlock's state.
-     * Safe method that provides read-only comprehensive information.
-     *
      * @return Formatted string with complete state details
      */
     @Override
@@ -138,9 +107,6 @@ public class HeavyIceBlock extends Hazard {
     }
 
     /**
-     * SECURITY: Gets detailed description including behavior information.
-     * Extends parent method with HeavyIceBlock-specific details.
-     *
      * @return Detailed string with all information
      */
     @Override
@@ -153,9 +119,6 @@ public class HeavyIceBlock extends Hazard {
     }
 
     /**
-     * SECURITY: Gets a user-friendly explanation of what happens on collision.
-     * Useful for tutorials or help text.
-     *
      * @return Human-readable collision explanation
      */
     public String getCollisionExplanation() {
@@ -167,9 +130,6 @@ public class HeavyIceBlock extends Hazard {
     }
 
     /**
-     * SECURITY: Compares two HeavyIceBlocks for equality.
-     * Uses parent equality since HeavyIceBlock has no additional fields.
-     *
      * @param obj The object to compare
      * @return true if equal, false otherwise
      */
@@ -179,19 +139,14 @@ public class HeavyIceBlock extends Hazard {
             return true;
         }
 
-        // Check if obj is a HeavyIceBlock
         if (!(obj instanceof HeavyIceBlock)) {
             return false;
         }
 
-        // Use parent equality (position, active state, etc.)
         return super.equals(obj);
     }
 
     /**
-     * SECURITY: Hash code for HeavyIceBlock.
-     * Uses parent hash code since no additional fields.
-     *
      * @return Hash code value
      */
     @Override
@@ -201,9 +156,6 @@ public class HeavyIceBlock extends Hazard {
     }
 
     /**
-     * SECURITY: Creates a copy of this HeavyIceBlock at a new position.
-     * Useful for testing or simulation scenarios.
-     *
      * @param newPosition The position for the copy (must not be null)
      * @return A new HeavyIceBlock at the specified position
      * @throws IllegalArgumentException if newPosition is null
@@ -216,9 +168,6 @@ public class HeavyIceBlock extends Hazard {
     }
 
     /**
-     * SECURITY: Checks if this hazard blocks all movement.
-     * HeavyIceBlock always blocks movement.
-     *
      * @return true (always blocks movement)
      */
     public boolean blocksMovement() {
@@ -226,9 +175,6 @@ public class HeavyIceBlock extends Hazard {
     }
 
     /**
-     * SECURITY: Gets the strength/weight category of this block.
-     * Useful for comparing with other ice blocks.
-     *
      * @return "HEAVY" as a category indicator
      */
     public String getWeightCategory() {
@@ -236,9 +182,6 @@ public class HeavyIceBlock extends Hazard {
     }
 
     /**
-     * SECURITY: Checks if this is heavier than a LightIceBlock.
-     * Useful for game logic comparisons.
-     *
      * @return true (always heavier than light blocks)
      */
     public boolean isHeavierThanLight() {

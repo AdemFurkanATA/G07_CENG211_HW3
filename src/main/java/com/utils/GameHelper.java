@@ -5,23 +5,6 @@ import java.util.Random;
 /**
  * Utility class providing helper methods for game operations.
  * Contains random number generation and other utility functions.
- *
- * MAXIMUM SECURITY VERSION:
- * - Thread-safe random number generation
- * - Comprehensive input validation on all methods
- * - Protected against edge cases and invalid inputs
- * - Defensive position copying on all returns
- * - Range validation with detailed error messages
- * - Null safety throughout
- * - No state mutation possible from outside
- * - Immutable design pattern where applicable
- *
- * DESIGN NOTES:
- * - All methods are static (utility class pattern)
- * - Random instance is private and final (encapsulation)
- * - All position returns are NEW objects (defensive copying)
- * - All numeric inputs are validated before use
- * - Edge cases handled gracefully with safe defaults
  */
 public class GameHelper {
 
@@ -30,7 +13,6 @@ public class GameHelper {
     private static final Random random = new Random();
 
     /**
-     * SECURITY: Private constructor prevents instantiation.
      * This is a utility class and should never be instantiated.
      * Throws exception if someone tries to use reflection.
      */
@@ -40,66 +22,50 @@ public class GameHelper {
 
     /**
      * Generates a random integer between min (inclusive) and max (inclusive).
-     * SECURITY: Comprehensive validation of input parameters.
-     * Handles edge cases where min > max, min == max, and negative values.
-     *
      * @param min The minimum value (inclusive)
      * @param max The maximum value (inclusive)
      * @return A random integer in the range [min, max]
      * @throws IllegalArgumentException if min > max
      */
     public static int randomInt(int min, int max) {
-        // SECURITY: Validate that min <= max
         if (min > max) {
             throw new IllegalArgumentException(
                     String.format("Invalid range: min (%d) cannot be greater than max (%d)", min, max)
             );
         }
 
-        // SECURITY: Handle edge case where min == max
         if (min == max) {
             return min;
         }
 
         try {
-            // SECURITY: Check for integer overflow in range calculation
-            // This prevents issues when (max - min + 1) overflows
             long range = (long) max - (long) min + 1;
 
             if (range > Integer.MAX_VALUE) {
-                // Fallback to safe method for very large ranges
                 return random.nextInt(Integer.MAX_VALUE) % (int) range + min;
             }
 
-            // Normal case: use standard random generation
             return random.nextInt((int) range) + min;
 
         } catch (Exception e) {
-            // SECURITY: Fallback on any unexpected error
             System.err.println("ERROR in randomInt: " + e.getMessage());
-            // Return the minimum value as safe fallback
             return min;
         }
     }
 
     /**
      * Returns a random boolean with the specified probability of being true.
-     * SECURITY: Validates probability is in valid range [0.0, 1.0].
-     * Handles edge cases and invalid probabilities gracefully.
-     *
      * @param probability The probability (0.0 to 1.0) of returning true
      * @return true with the given probability, false otherwise
      * @throws IllegalArgumentException if probability is not in [0.0, 1.0]
      */
     public static boolean randomChance(double probability) {
-        // SECURITY: Validate probability is in valid range
         if (probability < 0.0 || probability > 1.0) {
             throw new IllegalArgumentException(
                     String.format("Invalid probability: %.4f (must be between 0.0 and 1.0)", probability)
             );
         }
 
-        // SECURITY: Handle edge cases
         if (probability == 0.0) {
             return false;  // 0% chance always returns false
         }
@@ -108,12 +74,9 @@ public class GameHelper {
         }
 
         try {
-            // Normal case: generate random double and compare
             return random.nextDouble() < probability;
         } catch (Exception e) {
-            // SECURITY: Fallback on any unexpected error
             System.err.println("ERROR in randomChance: " + e.getMessage());
-            // Return false as safe fallback (safer to underestimate than overestimate)
             return false;
         }
     }
@@ -121,22 +84,17 @@ public class GameHelper {
     /**
      * Generates a random Position on the edge of a grid.
      * Edge positions are those where row or column is 0 or gridSize-1.
-     * SECURITY: Comprehensive validation, defensive copying, null safety.
-     * Always returns a NEW Position object.
-     *
      * @param gridSize The size of the grid (must be > 0)
      * @return A random edge Position (NEW object, never null)
      * @throws IllegalArgumentException if gridSize <= 0
      */
     public static Position randomEdgePosition(int gridSize) {
-        // SECURITY: Validate grid size
         if (gridSize <= 0) {
             throw new IllegalArgumentException(
                     String.format("Invalid grid size: %d (must be > 0)", gridSize)
             );
         }
 
-        // SECURITY: Handle edge case of 1x1 grid (only one position possible)
         if (gridSize == 1) {
             return new Position(0, 0);
         }
@@ -159,35 +117,27 @@ public class GameHelper {
                     return new Position(randomInt(0, gridSize - 1), gridSize - 1);
 
                 default:
-                    // SECURITY: Fallback to top-left corner
                     return new Position(0, 0);
             }
         } catch (Exception e) {
-            // SECURITY: Fallback on any unexpected error
             System.err.println("ERROR in randomEdgePosition: " + e.getMessage());
-            // Return top-left corner as safe fallback
             return new Position(0, 0);
         }
     }
 
     /**
      * Generates a random Position anywhere on the grid.
-     * SECURITY: Comprehensive validation, defensive copying, null safety.
-     * Always returns a NEW Position object.
-     *
      * @param gridSize The size of the grid (must be > 0)
      * @return A random Position (NEW object, never null)
      * @throws IllegalArgumentException if gridSize <= 0
      */
     public static Position randomPosition(int gridSize) {
-        // SECURITY: Validate grid size
         if (gridSize <= 0) {
             throw new IllegalArgumentException(
                     String.format("Invalid grid size: %d (must be > 0)", gridSize)
             );
         }
 
-        // SECURITY: Handle edge case of 1x1 grid
         if (gridSize == 1) {
             return new Position(0, 0);
         }
@@ -196,24 +146,17 @@ public class GameHelper {
             int row = randomInt(0, gridSize - 1);
             int column = randomInt(0, gridSize - 1);
 
-            // SECURITY: Always return NEW Position object
             return new Position(row, column);
 
         } catch (Exception e) {
-            // SECURITY: Fallback on any unexpected error
             System.err.println("ERROR in randomPosition: " + e.getMessage());
-            // Return center position as safe fallback
             int center = gridSize / 2;
             return new Position(center, center);
         }
     }
 
-    // ===== ADDITIONAL SECURITY & UTILITY METHODS =====
 
     /**
-     * SECURITY: Generates a random integer in range with guaranteed non-negative result.
-     * Useful for array indices and other scenarios where negative values are invalid.
-     *
      * @param max The maximum value (inclusive, must be >= 0)
      * @return A random integer in the range [0, max]
      * @throws IllegalArgumentException if max < 0
@@ -228,9 +171,6 @@ public class GameHelper {
     }
 
     /**
-     * SECURITY: Generates a random integer with a minimum guaranteed value.
-     * Ensures result is always at least minValue.
-     *
      * @param minValue The minimum guaranteed value
      * @param range The range above minimum (must be >= 0)
      * @return A random integer >= minValue
@@ -246,9 +186,6 @@ public class GameHelper {
     }
 
     /**
-     * SECURITY: Validates that a position is within grid bounds.
-     * Useful for checking positions before using them.
-     *
      * @param position The position to validate (must not be null)
      * @param gridSize The grid size (must be > 0)
      * @return true if position is valid, false otherwise
@@ -268,9 +205,6 @@ public class GameHelper {
     }
 
     /**
-     * SECURITY: Validates that a position is on the edge of the grid.
-     * Useful for penguin placement validation.
-     *
      * @param position The position to check (must not be null)
      * @param gridSize The grid size (must be > 0)
      * @return true if position is on an edge, false otherwise
@@ -290,9 +224,6 @@ public class GameHelper {
     }
 
     /**
-     * SECURITY: Clamps an integer value to a specified range.
-     * Ensures value stays within [min, max] bounds.
-     *
      * @param value The value to clamp
      * @param min The minimum allowed value
      * @param max The maximum allowed value
@@ -312,9 +243,6 @@ public class GameHelper {
     }
 
     /**
-     * SECURITY: Clamps a double value to a specified range.
-     * Ensures value stays within [min, max] bounds.
-     *
      * @param value The value to clamp
      * @param min The minimum allowed value
      * @param max The maximum allowed value
@@ -334,9 +262,6 @@ public class GameHelper {
     }
 
     /**
-     * SECURITY: Generates a random Position within a specific rectangular region.
-     * Useful for spawning objects in specific areas.
-     *
      * @param minRow Minimum row (inclusive)
      * @param maxRow Maximum row (inclusive)
      * @param minCol Minimum column (inclusive)
@@ -371,9 +296,6 @@ public class GameHelper {
     }
 
     /**
-     * SECURITY: Calculates the Manhattan distance between two positions.
-     * Useful for AI decision making and proximity checks.
-     *
      * @param pos1 First position (must not be null)
      * @param pos2 Second position (must not be null)
      * @return The Manhattan distance (always non-negative)
@@ -395,9 +317,6 @@ public class GameHelper {
     }
 
     /**
-     * SECURITY: Checks if two positions are adjacent (horizontally or vertically).
-     * Useful for Royal Penguin special move validation.
-     *
      * @param pos1 First position (must not be null)
      * @param pos2 Second position (must not be null)
      * @return true if positions are adjacent, false otherwise
@@ -417,9 +336,6 @@ public class GameHelper {
     }
 
     /**
-     * SECURITY: Generates a random double within a specified range.
-     * Useful for probability calculations and continuous distributions.
-     *
      * @param min Minimum value (inclusive)
      * @param max Maximum value (inclusive)
      * @return A random double in [min, max]
@@ -445,9 +361,6 @@ public class GameHelper {
     }
 
     /**
-     * SECURITY: Randomly shuffles an array in place using Fisher-Yates algorithm.
-     * Useful for randomizing game elements.
-     *
      * @param array The array to shuffle (must not be null)
      * @throws IllegalArgumentException if array is null
      */
@@ -476,9 +389,6 @@ public class GameHelper {
     }
 
     /**
-     * SECURITY: Returns a random element from an array.
-     * Useful for random selection operations.
-     *
      * @param array The array to select from (must not be null or empty)
      * @param <T> The type of elements in the array
      * @return A random element from the array
@@ -502,8 +412,6 @@ public class GameHelper {
     }
 
     /**
-     * SECURITY: Validates that a percentage value is in valid range [0, 100].
-     *
      * @param percentage The percentage to validate
      * @return true if valid, false otherwise
      */
@@ -512,8 +420,6 @@ public class GameHelper {
     }
 
     /**
-     * SECURITY: Converts a percentage (0-100) to a probability (0.0-1.0).
-     *
      * @param percentage The percentage value (must be in [0, 100])
      * @return The probability value
      * @throws IllegalArgumentException if percentage is invalid
@@ -528,9 +434,6 @@ public class GameHelper {
     }
 
     /**
-     * SECURITY: Gets information about the Random instance state.
-     * For debugging purposes only - does not expose the Random object itself.
-     *
      * @return A string describing the Random generator state
      */
     public static String getRandomGeneratorInfo() {

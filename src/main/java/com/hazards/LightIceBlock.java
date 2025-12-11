@@ -9,16 +9,6 @@ import com.utils.Position;
  * When a penguin or sliding hazard collides with it, it starts sliding.
  * The colliding object stops, and the penguin gets stunned (skips next turn).
  * Implements ISlidable because it can slide on ice.
- *
- * MAXIMUM SECURITY VERSION:
- * - All position parameters and returns use defensive copying
- * - Direction enum is immutable (safe to store/return)
- * - Primitive boolean fields (safe)
- * - Comprehensive validation and utility methods
- * - State consistency checks throughout
- * - Protected internal state from external manipulation
- * - Error handling in all critical methods
- * - Rollback mechanism for state transitions
  */
 public class LightIceBlock extends Hazard implements ISlidable {
 
@@ -27,8 +17,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
 
     /**
      * Constructor for LightIceBlock.
-     * SECURITY: Position is defensively copied by parent Hazard constructor.
-     *
      * @param position The position of the ice block (must not be null)
      * @throws IllegalArgumentException if position is null (from parent)
      */
@@ -41,8 +29,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     /**
      * Handles collision with a penguin.
      * The ice block starts sliding, and the penguin is stunned.
-     * SECURITY: Safe method - only returns String message with null safety.
-     *
      * @param penguinName The name of the colliding penguin
      * @return A message describing the collision
      */
@@ -56,8 +42,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
 
     /**
      * LightIceBlock can slide on ice.
-     * Safe to return primitive boolean constant.
-     *
      * @return true
      */
     @Override
@@ -65,13 +49,9 @@ public class LightIceBlock extends Hazard implements ISlidable {
         return true;
     }
 
-    // ===== ISlidable Methods =====
 
     /**
      * Initiates sliding in a direction.
-     * SECURITY: Direction enum is immutable, safe to store directly.
-     * Validates that direction is not null for safety.
-     *
      * @param direction The direction to slide (should not be null)
      */
     @Override
@@ -86,8 +66,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
 
     /**
      * Checks if the ice block is currently sliding.
-     * Safe to return primitive boolean.
-     *
      * @return true if currently sliding, false otherwise
      */
     @Override
@@ -97,9 +75,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
 
     /**
      * Sets the sliding state.
-     * Safe method - only modifies internal boolean.
-     * SECURITY: Clears direction when stopping for consistency.
-     *
      * @param sliding true to mark as sliding
      */
     @Override
@@ -113,8 +88,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
 
     /**
      * Gets the current sliding direction.
-     * Safe to return - Direction enum is immutable.
-     *
      * @return The Direction of current sliding, or null if not sliding
      */
     @Override
@@ -124,9 +97,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
 
     /**
      * Sets the sliding direction.
-     * SECURITY: Direction enum is immutable, safe to store directly.
-     * Validates consistency with sliding state.
-     *
      * @param direction The Direction to slide (can be null)
      */
     @Override
@@ -138,10 +108,8 @@ public class LightIceBlock extends Hazard implements ISlidable {
         }
     }
 
-    // ===== Additional Security & Utility Methods =====
 
     /**
-     * SECURITY: Stops the ice block from sliding.
      * Convenience method that clears both sliding state and direction.
      * Ensures consistent state transition.
      */
@@ -151,9 +119,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Validates the sliding state consistency.
-     * Ensures the ice block's sliding-related state makes sense.
-     *
      * @return true if state is valid, false if inconsistent
      */
     public boolean isSlidingStateValid() {
@@ -167,9 +132,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Checks if the ice block is actively sliding in a specific direction.
-     * More specific than just isSliding().
-     *
      * @param direction The direction to check (must not be null)
      * @return true if sliding in that direction, false otherwise
      */
@@ -181,9 +143,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Gets the current sliding status as a readable string.
-     * Safe method that doesn't expose mutable state.
-     *
      * @return String describing the current sliding status
      */
     public String getSlidingStatus() {
@@ -197,9 +156,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Checks if the ice block can cause stun.
-     * LightIceBlock always causes stun when hit by a penguin.
-     *
      * @return true (always causes stun)
      */
     public boolean causesStun() {
@@ -207,9 +163,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Gets the stun effect description.
-     * Useful for game logic and UI display.
-     *
      * @return String describing the stun effect
      */
     public String getStunEffect() {
@@ -217,9 +170,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Checks if the ice block is movable.
-     * LightIceBlock is always movable (that's its main feature).
-     *
      * @return true (always movable)
      */
     public boolean isMovable() {
@@ -227,9 +177,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Gets the weight category of this block.
-     * Useful for comparing with HeavyIceBlock.
-     *
      * @return "LIGHT" as a category indicator
      */
     public String getWeightCategory() {
@@ -237,9 +184,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Checks if this is lighter than a HeavyIceBlock.
-     * Useful for game logic comparisons.
-     *
      * @return true (always lighter than heavy blocks)
      */
     public boolean isLighterThanHeavy() {
@@ -247,9 +191,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Prepares the ice block to start sliding.
-     * Sets up the state for sliding in the given direction.
-     *
      * @param direction The direction to prepare for (must not be null)
      * @return true if preparation successful, false if invalid direction
      */
@@ -264,9 +205,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Validates the entire state of the LightIceBlock.
-     * Extends parent validation with sliding-specific checks.
-     *
      * @return true if state is valid, false if corrupted
      */
     @Override
@@ -295,9 +233,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * Returns a string representation of the LightIceBlock for debugging.
-     * Safe method - returns formatted string with state information.
-     *
      * @return String representation including sliding state
      */
     @Override
@@ -310,9 +245,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Gets a detailed summary of the LightIceBlock's state.
-     * Safe method that provides read-only comprehensive information.
-     *
      * @return Formatted string with complete state details
      */
     @Override
@@ -326,9 +258,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Gets detailed description including sliding information.
-     * Extends parent method with LightIceBlock-specific details.
-     *
      * @return Detailed string with all information
      */
     @Override
@@ -343,9 +272,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Gets a user-friendly explanation of what happens on collision.
-     * Useful for tutorials or help text.
-     *
      * @return Human-readable collision explanation
      */
     public String getCollisionExplanation() {
@@ -358,9 +284,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Gets the interaction type of this hazard.
-     * Useful for game logic categorization.
-     *
      * @return "SLIDE_AND_STUN" as the interaction type
      */
     public String getInteractionType() {
@@ -368,9 +291,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Checks if this hazard blocks movement permanently.
-     * LightIceBlock doesn't block permanently (it moves away).
-     *
      * @return false (moves when hit, doesn't permanently block)
      */
     public boolean blocksPermanently() {
@@ -378,9 +298,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Compares two LightIceBlocks for equality.
-     * Extends parent equality with sliding state comparison.
-     *
      * @param obj The object to compare
      * @return true if equal, false otherwise
      */
@@ -409,9 +326,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Hash code including sliding state.
-     * Consistent with equals method.
-     *
      * @return Hash code value
      */
     @Override
@@ -423,10 +337,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Creates a copy of this LightIceBlock at a new position.
-     * The new block will be stationary (not sliding).
-     * Useful for testing or simulation scenarios.
-     *
      * @param newPosition The position for the copy (must not be null)
      * @return A new LightIceBlock at the specified position
      * @throws IllegalArgumentException if newPosition is null
@@ -440,9 +350,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Creates a copy with the same sliding state at a new position.
-     * Useful for preserving state during complex operations.
-     *
      * @param newPosition The position for the copy (must not be null)
      * @return A new LightIceBlock with same sliding state at new position
      * @throws IllegalArgumentException if newPosition is null
@@ -458,7 +365,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Resets the ice block to initial stationary state.
      * Useful for testing or special game events.
      */
     public void resetToStationary() {
@@ -468,9 +374,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Checks if the ice block is in a valid operational state.
-     * More comprehensive than validateState().
-     *
      * @return true if ready for normal operations, false if needs reset
      */
     public boolean isOperational() {
@@ -487,9 +390,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Gets a status report for debugging.
-     * Combines multiple state checks into one report.
-     *
      * @return Formatted status report string
      */
     public String getStatusReport() {
@@ -509,9 +409,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Performs a safe state transition to sliding.
-     * Validates the transition before executing it.
-     *
      * @param direction The direction to slide (must not be null)
      * @return true if transition successful, false if invalid
      */
@@ -542,9 +439,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Performs a safe state transition to stationary.
-     * Validates the transition before executing it.
-     *
      * @return true if transition successful, false if validation fails
      */
     public boolean transitionToStationary() {
@@ -569,9 +463,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Checks if this block can be pushed by the given object type.
-     * LightIceBlock can be pushed by penguins and other sliding hazards.
-     *
      * @param objectType The type name of the object (e.g., "Penguin", "SeaLion")
      * @return true if object can push this block
      */
@@ -586,9 +477,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Gets the momentum transfer type.
-     * Describes how momentum is transferred during collision.
-     *
      * @return Description of momentum transfer
      */
     public String getMomentumTransferType() {
@@ -596,9 +484,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Validates that this block can safely slide in a direction.
-     * Checks if the direction is valid and state allows sliding.
-     *
      * @param direction The direction to validate (must not be null)
      * @return true if can safely slide, false otherwise
      */

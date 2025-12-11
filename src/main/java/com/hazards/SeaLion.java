@@ -6,18 +6,8 @@ import com.utils.Position;
 
 /**
  * SeaLion - A sea lion that causes penguins to bounce back.
- * When a penguin hits it, the penguin bounces in the opposite direction,
- * and the SeaLion starts sliding in the penguin's original direction.
+ * When a penguin hits it, the penguin bounces in the opposite direction, and the SeaLion starts sliding in the penguin's original direction.
  * Implements ISlidable because it can slide when hit.
- *
- * MAXIMUM SECURITY VERSION:
- * - All position parameters and returns use defensive copying
- * - Direction enum is immutable (safe to store/return)
- * - Primitive boolean fields (safe)
- * - Comprehensive validation and utility methods
- * - State consistency checks throughout
- * - Protected internal state from external manipulation
- * - Error handling in all critical methods
  */
 public class SeaLion extends Hazard implements ISlidable {
 
@@ -26,8 +16,6 @@ public class SeaLion extends Hazard implements ISlidable {
 
     /**
      * Constructor for SeaLion.
-     * SECURITY: Position is defensively copied by parent Hazard constructor.
-     *
      * @param position The position of the sea lion (must not be null)
      * @throws IllegalArgumentException if position is null (from parent)
      */
@@ -39,10 +27,7 @@ public class SeaLion extends Hazard implements ISlidable {
 
     /**
      * Handles collision with a penguin.
-     * The penguin bounces back in the opposite direction,
-     * and the SeaLion starts sliding in the penguin's original direction.
-     * SECURITY: Safe method - only returns String message with null safety.
-     *
+     * The penguin bounces back in the opposite direction, and the SeaLion starts sliding in the penguin's original direction.
      * @param penguinName The name of the colliding penguin
      * @return A message describing the collision
      */
@@ -56,8 +41,6 @@ public class SeaLion extends Hazard implements ISlidable {
 
     /**
      * SeaLion can slide when hit.
-     * Safe to return primitive boolean constant.
-     *
      * @return true
      */
     @Override
@@ -65,13 +48,8 @@ public class SeaLion extends Hazard implements ISlidable {
         return true;
     }
 
-    // ===== ISlidable Methods =====
-
     /**
      * Initiates sliding in a direction.
-     * SECURITY: Direction enum is immutable, safe to store directly.
-     * Validates that direction is not null for safety.
-     *
      * @param direction The direction to slide (should not be null)
      */
     @Override
@@ -86,8 +64,6 @@ public class SeaLion extends Hazard implements ISlidable {
 
     /**
      * Checks if the sea lion is currently sliding.
-     * Safe to return primitive boolean.
-     *
      * @return true if currently sliding, false otherwise
      */
     @Override
@@ -97,8 +73,6 @@ public class SeaLion extends Hazard implements ISlidable {
 
     /**
      * Sets the sliding state.
-     * Safe method - only modifies internal boolean.
-     *
      * @param sliding true to mark as sliding
      */
     @Override
@@ -112,8 +86,6 @@ public class SeaLion extends Hazard implements ISlidable {
 
     /**
      * Gets the current sliding direction.
-     * Safe to return - Direction enum is immutable.
-     *
      * @return The Direction of current sliding, or null if not sliding
      */
     @Override
@@ -123,9 +95,6 @@ public class SeaLion extends Hazard implements ISlidable {
 
     /**
      * Sets the sliding direction.
-     * SECURITY: Direction enum is immutable, safe to store directly.
-     * Validates consistency with sliding state.
-     *
      * @param direction The Direction to slide (can be null)
      */
     @Override
@@ -137,10 +106,8 @@ public class SeaLion extends Hazard implements ISlidable {
         }
     }
 
-    // ===== Additional Security & Utility Methods =====
 
     /**
-     * SECURITY: Stops the sea lion from sliding.
      * Convenience method that clears both sliding state and direction.
      * Ensures consistent state transition.
      */
@@ -150,9 +117,6 @@ public class SeaLion extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Validates the sliding state consistency.
-     * Ensures the sea lion's sliding-related state makes sense.
-     *
      * @return true if state is valid, false if inconsistent
      */
     public boolean isSlidingStateValid() {
@@ -166,9 +130,6 @@ public class SeaLion extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Checks if the sea lion is actively sliding in a specific direction.
-     * More specific than just isSliding().
-     *
      * @param direction The direction to check (must not be null)
      * @return true if sliding in that direction, false otherwise
      */
@@ -180,9 +141,6 @@ public class SeaLion extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Gets the current sliding status as a readable string.
-     * Safe method that doesn't expose mutable state.
-     *
      * @return String describing the current sliding status
      */
     public String getSlidingStatus() {
@@ -196,9 +154,6 @@ public class SeaLion extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Checks if the sea lion can bounce a penguin.
-     * SeaLion always causes bouncing when not already sliding.
-     *
      * @return true if can cause bounce, false if already sliding
      */
     public boolean canBounce() {
@@ -206,9 +161,6 @@ public class SeaLion extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Prepares the sea lion to start sliding after a bounce.
-     * Sets up the state for sliding in the given direction.
-     *
      * @param direction The direction to prepare for (must not be null)
      * @return true if preparation successful, false if invalid direction
      */
@@ -222,9 +174,6 @@ public class SeaLion extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Validates the entire state of the SeaLion.
-     * Extends parent validation with sliding-specific checks.
-     *
      * @return true if state is valid, false if corrupted
      */
     @Override
@@ -249,8 +198,6 @@ public class SeaLion extends Hazard implements ISlidable {
 
     /**
      * Returns a string representation of the SeaLion for debugging.
-     * Safe method - returns formatted string with state information.
-     *
      * @return String representation including sliding state
      */
     @Override
@@ -262,9 +209,6 @@ public class SeaLion extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Gets a detailed summary of the SeaLion's state.
-     * Safe method that provides read-only comprehensive information.
-     *
      * @return Formatted string with complete state details
      */
     @Override
@@ -278,9 +222,6 @@ public class SeaLion extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Gets detailed description including sliding and bounce information.
-     * Extends parent method with SeaLion-specific details.
-     *
      * @return Detailed string with all information
      */
     @Override
@@ -294,9 +235,6 @@ public class SeaLion extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Gets a user-friendly explanation of what happens on collision.
-     * Useful for tutorials or help text.
-     *
      * @return Human-readable collision explanation
      */
     public String getCollisionExplanation() {
@@ -309,9 +247,6 @@ public class SeaLion extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Gets the bounce behavior type.
-     * Useful for game logic categorization.
-     *
      * @return "BOUNCE" as the interaction type
      */
     public String getInteractionType() {
@@ -319,9 +254,6 @@ public class SeaLion extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Checks if this is a momentum-transferring hazard.
-     * SeaLion always transfers momentum.
-     *
      * @return true (always transfers momentum)
      */
     public boolean transfersMomentum() {
@@ -329,9 +261,6 @@ public class SeaLion extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Compares two SeaLions for equality.
-     * Extends parent equality with sliding state comparison.
-     *
      * @param obj The object to compare
      * @return true if equal, false otherwise
      */
@@ -360,9 +289,6 @@ public class SeaLion extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Hash code including sliding state.
-     * Consistent with equals method.
-     *
      * @return Hash code value
      */
     @Override
@@ -374,10 +300,6 @@ public class SeaLion extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Creates a copy of this SeaLion at a new position.
-     * The new SeaLion will be stationary (not sliding).
-     * Useful for testing or simulation scenarios.
-     *
      * @param newPosition The position for the copy (must not be null)
      * @return A new SeaLion at the specified position
      * @throws IllegalArgumentException if newPosition is null
@@ -391,9 +313,6 @@ public class SeaLion extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Creates a copy with the same sliding state at a new position.
-     * Useful for preserving state during complex operations.
-     *
      * @param newPosition The position for the copy (must not be null)
      * @return A new SeaLion with same sliding state at new position
      * @throws IllegalArgumentException if newPosition is null
@@ -409,7 +328,6 @@ public class SeaLion extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Resets the SeaLion to initial stationary state.
      * Useful for testing or special game events.
      */
     public void resetToStationary() {
@@ -419,9 +337,6 @@ public class SeaLion extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Checks if the SeaLion is in a valid operational state.
-     * More comprehensive than validateState().
-     *
      * @return true if ready for normal operations, false if needs reset
      */
     public boolean isOperational() {
@@ -438,9 +353,6 @@ public class SeaLion extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Gets a status report for debugging.
-     * Combines multiple state checks into one report.
-     *
      * @return Formatted status report string
      */
     public String getStatusReport() {
@@ -458,9 +370,6 @@ public class SeaLion extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Performs a safe state transition to sliding.
-     * Validates the transition before executing it.
-     *
      * @param direction The direction to slide (must not be null)
      * @return true if transition successful, false if invalid
      */
@@ -491,9 +400,6 @@ public class SeaLion extends Hazard implements ISlidable {
     }
 
     /**
-     * SECURITY: Performs a safe state transition to stationary.
-     * Validates the transition before executing it.
-     *
      * @return true if transition successful, false if validation fails
      */
     public boolean transitionToStationary() {
