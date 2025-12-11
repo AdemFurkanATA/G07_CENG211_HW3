@@ -496,14 +496,14 @@ public class Position {
         }
 
         try {
-            StringBuilder sb = new StringBuilder();
-            sb.append("Position[row=").append(row);
-            sb.append(", col=").append(column);
-            sb.append(", valid=").append(isValid(gridSize));
-            sb.append(", edge=").append(isEdge(gridSize));
-            sb.append(", corner=").append(isCorner(gridSize));
-            sb.append("]");
-            return sb.toString();
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Position[row=").append(row);
+            stringBuilder.append(", col=").append(column);
+            stringBuilder.append(", valid=").append(isValid(gridSize));
+            stringBuilder.append(", edge=").append(isEdge(gridSize));
+            stringBuilder.append(", corner=").append(isCorner(gridSize));
+            stringBuilder.append("]");
+            return stringBuilder.toString();
         } catch (Exception e) {
             System.err.println("ERROR in toDetailedString: " + e.getMessage());
             return toString(); // Fallback to simple toString
