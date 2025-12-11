@@ -514,8 +514,8 @@ public class IcyTerrain {
             }
 
             // Choose and execute movement
-            if (chosenDir == null) {
-                chosenDir = chooseAIDirection(penguin);
+            if (chosenDirection == null) {
+                chosenDirection = chooseAIDirection(penguin);
             }
 
             if (chosenDirection != null) {
