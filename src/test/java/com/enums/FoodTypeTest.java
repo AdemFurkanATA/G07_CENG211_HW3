@@ -9,8 +9,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * FoodType Enum Tests
- *
- * Location: src/test/java/com/enums/FoodTypeTest.java
  */
 @DisplayName("FoodType Enum Tests 🐟")
 class FoodTypeTest {
@@ -40,9 +38,6 @@ class FoodTypeTest {
         System.out.println("✓ All 5 food types exist");
     }
 
-    // ========================================
-    // getShorthand() TESTS
-    // ========================================
 
     @ParameterizedTest
     @DisplayName("Each FoodType should have a 2-letter shorthand")
@@ -88,9 +83,6 @@ class FoodTypeTest {
         assertFalse(shorthand.isBlank(), "Shorthand should not be blank");
     }
 
-    // ========================================
-    // getRandomType() TESTS
-    // ========================================
 
     @Test
     @DisplayName("getRandomType should return a valid FoodType")
@@ -153,10 +145,6 @@ class FoodTypeTest {
         System.out.println("✓ Saw all types in " + attempts + " attempts");
     }
 
-    // ========================================
-    // toString() TESTS
-    // ========================================
-
     @ParameterizedTest
     @DisplayName("toString should return capitalized food name")
     @CsvSource({
@@ -197,9 +185,6 @@ class FoodTypeTest {
         assertTrue(result.length() > 0);
     }
 
-    // ========================================
-    // INTEGRATION TESTS
-    // ========================================
 
     @Test
     @DisplayName("Integration: All FoodTypes should have unique shorthands")
@@ -259,9 +244,6 @@ class FoodTypeTest {
         System.out.println("✓ Distribution looks reasonable");
     }
 
-    // ========================================
-    // EDGE CASES
-    // ========================================
 
     @Test
     @DisplayName("Each FoodType should be unique")
@@ -300,9 +282,6 @@ class FoodTypeTest {
         });
     }
 
-    // ========================================
-    // HELPER METHODS
-    // ========================================
 
     private boolean isValidFoodType(FoodType type) {
         for (FoodType validType : FoodType.values()) {

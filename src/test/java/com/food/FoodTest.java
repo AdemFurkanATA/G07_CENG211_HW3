@@ -9,16 +9,9 @@ import org.junit.jupiter.params.provider.EnumSource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * DAHA İLERİ SEVİYE TEST YAZIMI - Food Sınıfı
- *
- * Bu test dosyası gösterir:
- * 1. Enum ile çalışma (@EnumSource)
- * 2. Random fonksiyonları test etme
- * 3. Defensive copying test etme (güvenlik)
- * 4. Business logic testing (iş mantığı)
- * 5. State validation testing
+ * Food Test
  */
-@DisplayName("Food Sınıfı Testleri 🐟")
+@DisplayName("Food Class Tests 🐟")
 class FoodTest {
 
     private Position testPosition;
@@ -28,12 +21,9 @@ class FoodTest {
         testPosition = new Position(5, 5);
     }
 
-    // ========================================
-    // CONSTRUCTOR TESTLER
-    // ========================================
 
     @Test
-    @DisplayName("Food nesnesi geçerli parametrelerle oluşturulabilmeli")
+    @DisplayName("Food object should be created with valid parameters")
     void testConstructor_ValidParameters() {
         // ARRANGE
         FoodType type = FoodType.KRILL;
@@ -43,58 +33,56 @@ class FoodTest {
         Food food = new Food(testPosition, type, weight);
 
         // ASSERT
-        assertNotNull(food, "Food nesnesi null olmamalı");
-        assertEquals(type, food.getType(), "FoodType doğru set edilmeli");
-        assertEquals(weight, food.getWeight(), "Weight doğru set edilmeli");
+        assertNotNull(food, "Food object should not be null");
+        assertEquals(type, food.getType(), "FoodType should be set correctly");
+        assertEquals(weight, food.getWeight(), "Weight should be set correctly");
 
-        // Position defensive copy kontrolü
         Position returnedPos = food.getPosition();
         assertNotSame(testPosition, returnedPos,
-                "Position defensive copy olmalı (farklı referans)");
+                "Position should be a defensive copy (different reference)");
         assertEquals(testPosition, returnedPos,
-                "Ama değer olarak eşit olmalı");
+                "But should be equal in value");
 
-        System.out.println("✓ Constructor testi başarılı: " + food);
+        System.out.println("✓ Constructor test successful: " + food);
     }
 
     @Test
-    @DisplayName("Null position ile Food oluşturulursa exception fırlatmalı")
+    @DisplayName("Creating Food with null position should throw exception")
     void testConstructor_NullPosition() {
         // ACT & ASSERT
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
                 () -> new Food(null, FoodType.KRILL, 3),
-                "Null position için exception fırlatılmalı"
+                "Exception should be thrown for null position"
         );
 
-        // Exception mesajını da kontrol edebiliriz
         assertTrue(exception.getMessage().contains("position"),
-                "Exception mesajında 'position' kelimesi olmalı");
+                "Exception message should contain 'position'");
 
-        System.out.println("✓ Exception mesajı: " + exception.getMessage());
+        System.out.println("✓ Exception message: " + exception.getMessage());
     }
 
     @Test
-    @DisplayName("Null FoodType ile Food oluşturulursa exception fırlatmalı")
+    @DisplayName("Creating Food with null FoodType should throw exception")
     void testConstructor_NullType() {
         // ACT & ASSERT
         assertThrows(IllegalArgumentException.class,
                 () -> new Food(testPosition, null, 3),
-                "Null type için exception fırlatılmalı");
+                "Exception should be thrown for null type");
     }
 
     @ParameterizedTest
-    @DisplayName("Geçersiz weight değerleri için exception")
+    @DisplayName("Exception for invalid weight values")
     @org.junit.jupiter.params.provider.ValueSource(ints = {0, -1, -5, 6, 10, 100})
     void testConstructor_InvalidWeight(int invalidWeight) {
         // ACT & ASSERT
         assertThrows(IllegalArgumentException.class,
                 () -> new Food(testPosition, FoodType.KRILL, invalidWeight),
-                "Weight " + invalidWeight + " için exception fırlatılmalı");
+                "Exception should be thrown for weight " + invalidWeight);
     }
 
     @ParameterizedTest
-    @DisplayName("Geçerli weight değerleri (1-5) ile Food oluşturulabilmeli")
+    @DisplayName("Food should be created with valid weight values (1-5)")
     @org.junit.jupiter.params.provider.ValueSource(ints = {1, 2, 3, 4, 5})
     void testConstructor_ValidWeights(int validWeight) {
         // ACT
@@ -104,32 +92,27 @@ class FoodTest {
         assertNotNull(food);
         assertEquals(validWeight, food.getWeight());
 
-        System.out.println("✓ Weight " + validWeight + " başarılı");
+        System.out.println("✓ Weight " + validWeight + " successful");
     }
 
-    // ========================================
-    // STATIC FACTORY METHOD TESTLER
-    // ========================================
 
     @Test
-    @DisplayName("createRandom metodu random bir Food oluşturmalı")
+    @DisplayName("createRandom method should create a random Food")
     void testCreateRandom() {
-        // ACT - Birden fazla random food oluştur
+        // ACT
         Food food1 = Food.createRandom(testPosition);
         Food food2 = Food.createRandom(testPosition);
         Food food3 = Food.createRandom(testPosition);
 
-        // ASSERT - Basic validation
+        // ASSERT
         assertNotNull(food1);
         assertNotNull(food2);
         assertNotNull(food3);
 
-        // Weight 1-5 arasında olmalı
         assertTrue(food1.getWeight() >= 1 && food1.getWeight() <= 5,
-                "Random weight 1-5 arasında olmalı");
+                "Random weight should be between 1-5");
 
-        // FoodType null olmamalı
-        assertNotNull(food1.getType(), "Random FoodType null olmamalı");
+        assertNotNull(food1.getType(), "Random FoodType should not be null");
 
         System.out.println("✓ Random food 1: " + food1);
         System.out.println("✓ Random food 2: " + food2);
@@ -137,9 +120,8 @@ class FoodTest {
     }
 
     @Test
-    @DisplayName("createRandom ile çoklu çağrıda çeşitlilik olmalı")
+    @DisplayName("Multiple calls to createRandom should show variety")
     void testCreateRandom_Variety() {
-        // ACT - 100 random food oluştur
         boolean foundDifferentTypes = false;
         boolean foundDifferentWeights = false;
 
@@ -160,17 +142,16 @@ class FoodTest {
             if (foundDifferentTypes && foundDifferentWeights) break;
         }
 
-        // ASSERT - 100 çağrıda farklı type ve weight görmüş olmalıyız
         assertTrue(foundDifferentTypes,
-                "100 random food'da farklı type'lar görülmeli");
+                "Different types should be seen in 100 random foods");
         assertTrue(foundDifferentWeights,
-                "100 random food'da farklı weight'ler görülmeli");
+                "Different weights should be seen in 100 random foods");
 
-        System.out.println("✓ Random çeşitlilik testi başarılı");
+        System.out.println("✓ Random variety test successful");
     }
 
     @Test
-    @DisplayName("create static metodu belirtilen parametrelerle Food oluşturmalı")
+    @DisplayName("create static method should create Food with specified parameters")
     void testCreateMethod() {
         // ACT
         Food food = Food.create(testPosition, FoodType.MACKEREL, 4);
@@ -180,15 +161,12 @@ class FoodTest {
         assertEquals(FoodType.MACKEREL, food.getType());
         assertEquals(4, food.getWeight());
 
-        System.out.println("✓ Static create metodu başarılı");
+        System.out.println("✓ Static create method successful");
     }
 
-    // ========================================
-    // GETTER METHOD TESTLER
-    // ========================================
 
     @ParameterizedTest
-    @DisplayName("Tüm FoodType'lar için getter metodları çalışmalı")
+    @DisplayName("Getter methods should work for all FoodTypes")
     @EnumSource(FoodType.class)
     void testGetters_AllFoodTypes(FoodType type) {
         // ACT
@@ -199,11 +177,11 @@ class FoodTest {
         assertEquals(type.getShorthand(), food.getShorthand());
         assertEquals(type.toString(), food.getDisplayName());
 
-        System.out.println("✓ " + type + " için getters başarılı");
+        System.out.println("✓ Getters successful for " + type);
     }
 
     @Test
-    @DisplayName("getPosition defensive copy döndürmeli")
+    @DisplayName("getPosition should return defensive copy")
     void testGetPosition_DefensiveCopy() {
         // ARRANGE
         Food food = new Food(testPosition, FoodType.ANCHOVY, 2);
@@ -213,22 +191,19 @@ class FoodTest {
         Position pos2 = food.getPosition();
 
         // ASSERT
-        // Her çağrıda yeni bir nesne dönmeli
         assertNotSame(pos1, pos2,
-                "Her getPosition çağrısı yeni bir nesne dönmeli");
+                "Each getPosition call should return a new object");
 
-        // Ama değerler aynı olmalı
-        assertEquals(pos1, pos2, "Değerler aynı olmalı");
+        assertEquals(pos1, pos2, "Values should be the same");
 
-        // Orijinal pozisyonla aynı değerde ama farklı nesne
         assertEquals(testPosition, pos1);
         assertNotSame(testPosition, pos1);
 
-        System.out.println("✓ Defensive copy testi başarılı");
+        System.out.println("✓ Defensive copy test successful");
     }
 
     @Test
-    @DisplayName("setPosition de defensive copy yapmalı")
+    @DisplayName("setPosition should also make defensive copy")
     void testSetPosition_DefensiveCopy() {
         // ARRANGE
         Food food = new Food(testPosition, FoodType.KRILL, 1);
@@ -239,24 +214,19 @@ class FoodTest {
         Position retrieved = food.getPosition();
 
         // ASSERT
-        // Değer olarak eşit ama referans olarak farklı
-        assertEquals(newPos, retrieved, "Yeni pozisyon set edilmeli");
-        assertNotSame(newPos, retrieved, "Defensive copy yapılmalı");
+        assertEquals(newPos, retrieved, "New position should be set");
+        assertNotSame(newPos, retrieved, "Defensive copy should be made");
 
-        // Orijinal position'ı değiştirmek Food'u etkilememeli
         newPos.setRow(999);
         assertNotEquals(999, retrieved.getRow(),
-                "External pozisyon değişikliği Food'u etkilememeli");
+                "External position change should not affect Food");
 
-        System.out.println("✓ SetPosition defensive copy testi başarılı");
+        System.out.println("✓ SetPosition defensive copy test successful");
     }
 
-    // ========================================
-    // HELPER METHOD TESTLER
-    // ========================================
 
     @Test
-    @DisplayName("isAtPosition metodu doğru pozisyonu kontrol etmeli")
+    @DisplayName("isAtPosition method should check correct position")
     void testIsAtPosition() {
         // ARRANGE
         Food food = new Food(testPosition, FoodType.CRUSTACEAN, 3);
@@ -265,45 +235,45 @@ class FoodTest {
 
         // ASSERT
         assertTrue(food.isAtPosition(samePos),
-                "Aynı koordinatlarda true dönmeli");
+                "Should return true for same coordinates");
         assertFalse(food.isAtPosition(differentPos),
-                "Farklı koordinatlarda false dönmeli");
+                "Should return false for different coordinates");
 
-        System.out.println("✓ isAtPosition testi başarılı");
+        System.out.println("✓ isAtPosition test successful");
     }
 
     @Test
-    @DisplayName("isType metodu doğru type kontrolü yapmalı")
+    @DisplayName("isType method should check type correctly")
     void testIsType() {
         // ARRANGE
         Food food = new Food(testPosition, FoodType.SQUID, 4);
 
         // ASSERT
-        assertTrue(food.isType(FoodType.SQUID), "Kendi type'ı için true");
-        assertFalse(food.isType(FoodType.KRILL), "Farklı type için false");
-        assertFalse(food.isType(null), "Null için false");
+        assertTrue(food.isType(FoodType.SQUID), "True for its own type");
+        assertFalse(food.isType(FoodType.KRILL), "False for different type");
+        assertFalse(food.isType(null), "False for null");
 
-        System.out.println("✓ isType testi başarılı");
+        System.out.println("✓ isType test successful");
     }
 
     @Test
-    @DisplayName("isWeightInRange metodu doğru aralık kontrolü yapmalı")
+    @DisplayName("isWeightInRange method should check range correctly")
     void testIsWeightInRange() {
         // ARRANGE
         Food food = new Food(testPosition, FoodType.MACKEREL, 3);
 
         // ASSERT
-        assertTrue(food.isWeightInRange(1, 5), "1-5 aralığında");
-        assertTrue(food.isWeightInRange(3, 3), "Tam 3'te");
-        assertTrue(food.isWeightInRange(2, 4), "2-4 aralığında");
-        assertFalse(food.isWeightInRange(4, 5), "4-5 aralığında değil");
-        assertFalse(food.isWeightInRange(1, 2), "1-2 aralığında değil");
+        assertTrue(food.isWeightInRange(1, 5), "In 1-5 range");
+        assertTrue(food.isWeightInRange(3, 3), "Exactly at 3");
+        assertTrue(food.isWeightInRange(2, 4), "In 2-4 range");
+        assertFalse(food.isWeightInRange(4, 5), "Not in 4-5 range");
+        assertFalse(food.isWeightInRange(1, 2), "Not in 1-2 range");
 
-        System.out.println("✓ Weight range testi başarılı");
+        System.out.println("✓ Weight range test successful");
     }
 
     @Test
-    @DisplayName("isLightweight metodu hafif yiyecekleri tespit etmeli")
+    @DisplayName("isLightweight method should detect light foods")
     void testIsLightweight() {
         // ARRANGE & ACT & ASSERT
         assertTrue(new Food(testPosition, FoodType.KRILL, 1).isLightweight());
@@ -312,11 +282,11 @@ class FoodTest {
         assertFalse(new Food(testPosition, FoodType.KRILL, 4).isLightweight());
         assertFalse(new Food(testPosition, FoodType.KRILL, 5).isLightweight());
 
-        System.out.println("✓ Lightweight testi başarılı");
+        System.out.println("✓ Lightweight test successful");
     }
 
     @Test
-    @DisplayName("isHeavyweight metodu ağır yiyecekleri tespit etmeli")
+    @DisplayName("isHeavyweight method should detect heavy foods")
     void testIsHeavyweight() {
         // ARRANGE & ACT & ASSERT
         assertFalse(new Food(testPosition, FoodType.SQUID, 1).isHeavyweight());
@@ -325,25 +295,22 @@ class FoodTest {
         assertTrue(new Food(testPosition, FoodType.SQUID, 4).isHeavyweight());
         assertTrue(new Food(testPosition, FoodType.SQUID, 5).isHeavyweight());
 
-        System.out.println("✓ Heavyweight testi başarılı");
+        System.out.println("✓ Heavyweight test successful");
     }
 
-    // ========================================
-    // STATE VALIDATION TESTLER
-    // ========================================
 
     @Test
-    @DisplayName("validateState metodu geçerli Food için true dönmeli")
+    @DisplayName("validateState method should return true for valid Food")
     void testValidateState_ValidFood() {
         // ARRANGE
         Food food = new Food(testPosition, FoodType.ANCHOVY, 3);
 
         // ACT & ASSERT
-        assertTrue(food.validateState(), "Geçerli Food state valid olmalı");
+        assertTrue(food.validateState(), "Valid Food state should be valid");
     }
 
     @Test
-    @DisplayName("getStateSummary ve getDetailedDescription metodları çalışmalı")
+    @DisplayName("getStateSummary and getDetailedDescription methods should work")
     void testDescriptionMethods() {
         // ARRANGE
         Food food = new Food(testPosition, FoodType.MACKEREL, 5);
@@ -354,58 +321,51 @@ class FoodTest {
         String toString = food.toString();
 
         // ASSERT
-        assertNotNull(summary, "Summary null olmamalı");
-        assertNotNull(detailed, "Detailed null olmamalı");
-        assertNotNull(toString, "toString null olmamalı");
+        assertNotNull(summary, "Summary should not be null");
+        assertNotNull(detailed, "Detailed should not be null");
+        assertNotNull(toString, "toString should not be null");
 
-        assertTrue(summary.contains("Mackerel"), "Summary type içermeli");
-        assertTrue(summary.contains("5"), "Summary weight içermeli");
-        assertTrue(detailed.contains("position"), "Detailed position içermeli");
+        assertTrue(summary.contains("Mackerel"), "Summary should contain type");
+        assertTrue(summary.contains("5"), "Summary should contain weight");
+        assertTrue(detailed.contains("position"), "Detailed should contain position");
 
         System.out.println("📋 Summary: " + summary);
         System.out.println("📋 Detailed: " + detailed);
         System.out.println("📋 toString: " + toString);
     }
 
-    // ========================================
-    // EQUALS VE HASHCODE TESTLER
-    // ========================================
 
     @Test
-    @DisplayName("equals metodu aynı özelliklere sahip Food'lar için true dönmeli")
+    @DisplayName("equals method should return true for Foods with same properties")
     void testEquals_SameProperties() {
         // ARRANGE
         Food food1 = new Food(testPosition, FoodType.KRILL, 2);
         Food food2 = new Food(new Position(5, 5), FoodType.KRILL, 2);
 
         // ASSERT
-        assertEquals(food1, food2, "Aynı özellikler eşit olmalı");
+        assertEquals(food1, food2, "Same properties should be equal");
         assertEquals(food1.hashCode(), food2.hashCode(),
-                "Eşit objeler aynı hashCode'a sahip olmalı");
+                "Equal objects should have same hashCode");
     }
 
     @Test
-    @DisplayName("equals metodu farklı özelliklere sahip Food'lar için false dönmeli")
+    @DisplayName("equals method should return false for Foods with different properties")
     void testEquals_DifferentProperties() {
         // ARRANGE
         Food food1 = new Food(testPosition, FoodType.KRILL, 2);
-        Food food2 = new Food(testPosition, FoodType.SQUID, 2);  // Farklı type
-        Food food3 = new Food(testPosition, FoodType.KRILL, 3);  // Farklı weight
-        Food food4 = new Food(new Position(7, 7), FoodType.KRILL, 2); // Farklı pos
+        Food food2 = new Food(testPosition, FoodType.SQUID, 2);  // Different type
+        Food food3 = new Food(testPosition, FoodType.KRILL, 3);  // Different weight
+        Food food4 = new Food(new Position(7, 7), FoodType.KRILL, 2); // Different pos
 
         // ASSERT
-        assertNotEquals(food1, food2, "Farklı type eşit olmamalı");
-        assertNotEquals(food1, food3, "Farklı weight eşit olmamalı");
-        assertNotEquals(food1, food4, "Farklı position eşit olmamalı");
-        assertNotEquals(food1, null, "Null ile eşit olmamalı");
+        assertNotEquals(food1, food2, "Different type should not be equal");
+        assertNotEquals(food1, food3, "Different weight should not be equal");
+        assertNotEquals(food1, food4, "Different position should not be equal");
+        assertNotEquals(food1, null, "Should not be equal to null");
     }
 
-    // ========================================
-    // COPY VE COMPARE TESTLER
-    // ========================================
-
     @Test
-    @DisplayName("copyAtPosition metodu yeni pozisyonda kopya oluşturmalı")
+    @DisplayName("copyAtPosition method should create copy at new position")
     void testCopyAtPosition() {
         // ARRANGE
         Food original = new Food(testPosition, FoodType.ANCHOVY, 4);
@@ -415,16 +375,16 @@ class FoodTest {
         Food copy = original.copyAtPosition(newPos);
 
         // ASSERT
-        assertNotSame(original, copy, "Farklı nesneler olmalı");
-        assertEquals(original.getType(), copy.getType(), "Type aynı olmalı");
-        assertEquals(original.getWeight(), copy.getWeight(), "Weight aynı olmalı");
-        assertEquals(newPos, copy.getPosition(), "Yeni position set edilmeli");
+        assertNotSame(original, copy, "Should be different objects");
+        assertEquals(original.getType(), copy.getType(), "Type should be same");
+        assertEquals(original.getWeight(), copy.getWeight(), "Weight should be same");
+        assertEquals(newPos, copy.getPosition(), "New position should be set");
         assertNotEquals(original.getPosition(), copy.getPosition(),
-                "Position farklı olmalı");
+                "Position should be different");
     }
 
     @Test
-    @DisplayName("compareByWeight metodu weight'e göre karşılaştırmalı")
+    @DisplayName("compareByWeight method should compare by weight")
     void testCompareByWeight() {
         // ARRANGE
         Food light = new Food(testPosition, FoodType.KRILL, 1);
@@ -433,84 +393,74 @@ class FoodTest {
 
         // ASSERT
         assertTrue(light.compareByWeight(medium) < 0,
-                "Hafif < Orta");
+                "Light < Medium");
         assertTrue(medium.compareByWeight(heavy) < 0,
-                "Orta < Ağır");
+                "Medium < Heavy");
         assertTrue(heavy.compareByWeight(light) > 0,
-                "Ağır > Hafif");
+                "Heavy > Light");
         assertEquals(0, medium.compareByWeight(
                         new Food(new Position(1, 1), FoodType.KRILL, 3)),
-                "Aynı weight = 0");
+                "Same weight = 0");
     }
 
-    // ========================================
-    // INTEGRATION TEST
-    // ========================================
 
     @Test
-    @DisplayName("Entegrasyon: Food yaşam döngüsü")
+    @DisplayName("Integration: Food lifecycle")
     void testIntegration_FoodLifecycle() {
-        System.out.println("\n=== Food Yaşam Döngüsü ===");
+        System.out.println("\n=== Food Lifecycle ===");
 
-        // 1. Random food oluşturma
         Food food = Food.createRandom(new Position(3, 4));
-        System.out.println("1️⃣ Oluşturuldu: " + food.getDetailedDescription());
-        assertTrue(food.validateState(), "State geçerli olmalı");
+        System.out.println("1️⃣ Created: " + food.getDetailedDescription());
+        assertTrue(food.validateState(), "State should be valid");
 
-        // 2. Pozisyon değiştirme
         Position newPos = new Position(7, 8);
         food.setPosition(newPos);
-        System.out.println("2️⃣ Taşındı: " + food.getPosition());
-        assertTrue(food.isAtPosition(newPos), "Yeni pozisyonda olmalı");
+        System.out.println("2️⃣ Moved: " + food.getPosition());
+        assertTrue(food.isAtPosition(newPos), "Should be at new position");
 
-        // 3. Özellik kontrolleri
         boolean isLight = food.isLightweight();
         boolean isHeavy = food.isHeavyweight();
         System.out.println("3️⃣ Lightweight: " + isLight + ", Heavyweight: " + isHeavy);
-        assertNotEquals(isLight, isHeavy, "Hem light hem heavy olamaz");
+        assertNotEquals(isLight, isHeavy, "Cannot be both light and heavy");
 
-        // 4. Kopya oluşturma
         Food copy = food.copyAtPosition(new Position(1, 1));
-        System.out.println("4️⃣ Kopya oluşturuldu: " + copy);
-        assertNotSame(food, copy, "Farklı nesneler");
-        assertEquals(food.getType(), copy.getType(), "Aynı özellikler");
+        System.out.println("4️⃣ Copy created: " + copy);
+        assertNotSame(food, copy, "Different objects");
+        assertEquals(food.getType(), copy.getType(), "Same properties");
 
-        System.out.println("✓ Food lifecycle testi başarılı");
+        System.out.println("✓ Food lifecycle test successful");
     }
 
-    // ========================================
-    // EDGE CASES
-    // ========================================
 
     @Test
-    @DisplayName("Edge case: Minimum ve maximum weight değerleri")
+    @DisplayName("Edge case: Minimum and maximum weight values")
     void testEdgeCase_MinMaxWeight() {
         // ARRANGE & ACT
         Food minFood = new Food(testPosition, FoodType.KRILL, 1);
         Food maxFood = new Food(testPosition, FoodType.MACKEREL, 5);
 
         // ASSERT
-        assertEquals(1, minFood.getWeight(), "Minimum weight 1");
-        assertEquals(5, maxFood.getWeight(), "Maximum weight 5");
-        assertTrue(minFood.isLightweight(), "Weight 1 lightweight");
-        assertTrue(maxFood.isHeavyweight(), "Weight 5 heavyweight");
+        assertEquals(1, minFood.getWeight(), "Minimum weight is 1");
+        assertEquals(5, maxFood.getWeight(), "Maximum weight is 5");
+        assertTrue(minFood.isLightweight(), "Weight 1 is lightweight");
+        assertTrue(maxFood.isHeavyweight(), "Weight 5 is heavyweight");
     }
 
     @Test
-    @DisplayName("Edge case: Tüm FoodType kombinasyonları oluşturulabilmeli")
+    @DisplayName("Edge case: All FoodType combinations should be creatable")
     void testEdgeCase_AllFoodTypeCombinations() {
         // ACT & ASSERT
         for (FoodType type : FoodType.values()) {
             for (int weight = 1; weight <= 5; weight++) {
                 Food food = new Food(testPosition, type, weight);
                 assertNotNull(food,
-                        "Food(" + type + ", " + weight + ") oluşturulabilmeli");
+                        "Food(" + type + ", " + weight + ") should be creatable");
                 assertEquals(type, food.getType());
                 assertEquals(weight, food.getWeight());
             }
         }
 
         System.out.println("✓ " + (FoodType.values().length * 5) +
-                " farklı kombinasyon test edildi");
+                " different combinations tested");
     }
 }

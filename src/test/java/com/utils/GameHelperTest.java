@@ -6,17 +6,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * GameHelper Utility Class Tests
- *
- * Location: src/test/java/com/utils/GameHelperTest.java
- *
- * Testing utility/helper classes with static methods
  */
 @DisplayName("GameHelper Utility Tests 🎲")
 class GameHelperTest {
-
-    // ========================================
-    // randomInt() TESTS
-    // ========================================
 
     @Test
     @DisplayName("randomInt should return value within range")
@@ -106,9 +98,6 @@ class GameHelperTest {
         System.out.println("✓ randomInt handles zero");
     }
 
-    // ========================================
-    // randomChance() TESTS
-    // ========================================
 
     @Test
     @DisplayName("randomChance with 0.0 should always return false")
@@ -168,9 +157,6 @@ class GameHelperTest {
         }, "Probability > 1.0 should throw exception");
     }
 
-    // ========================================
-    // randomPosition() TESTS
-    // ========================================
 
     @Test
     @DisplayName("randomPosition should return valid position")
@@ -236,9 +222,6 @@ class GameHelperTest {
                 "1x1 grid should only have (0,0)");
     }
 
-    // ========================================
-    // randomEdgePosition() TESTS
-    // ========================================
 
     @Test
     @DisplayName("randomEdgePosition should return edge position")
@@ -333,9 +316,6 @@ class GameHelperTest {
         System.out.println("✓ All edges covered");
     }
 
-    // ========================================
-    // MANHATTAN DISTANCE TESTS
-    // ========================================
 
     @Test
     @DisplayName("manhattanDistance should calculate correct distance")
@@ -396,9 +376,6 @@ class GameHelperTest {
         });
     }
 
-    // ========================================
-    // ADJACENT POSITIONS TESTS
-    // ========================================
 
     @Test
     @DisplayName("areAdjacent should detect adjacent positions")
@@ -424,9 +401,6 @@ class GameHelperTest {
                 new Position(0, 0), new Position(9, 9)), "Far apart");
     }
 
-    // ========================================
-    // INTEGRATION TESTS
-    // ========================================
 
     @Test
     @DisplayName("Integration: Random position generation workflow")
@@ -456,10 +430,6 @@ class GameHelperTest {
 
         System.out.println("✓ Random workflow complete");
     }
-
-    // ========================================
-    // CONSTRUCTOR TEST (Utility Class)
-    // ========================================
 
     @Test
     @DisplayName("GameHelper constructor should throw AssertionError")

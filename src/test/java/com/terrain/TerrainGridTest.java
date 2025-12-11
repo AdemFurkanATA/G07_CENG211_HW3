@@ -14,10 +14,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * TerrainGrid Class Tests
- *
- * Location: src/test/java/com/terrain/TerrainGridTest.java
- *
- * Testing grid operations and object placement
  */
 @DisplayName("TerrainGrid Tests 🗺️")
 class TerrainGridTest {
@@ -30,9 +26,6 @@ class TerrainGridTest {
         grid = new TerrainGrid(TEST_GRID_SIZE);
     }
 
-    // ========================================
-    // CONSTRUCTOR TESTS
-    // ========================================
 
     @Test
     @DisplayName("TerrainGrid should be created with correct size")
@@ -67,9 +60,6 @@ class TerrainGridTest {
         assertEquals(0, objectCount, "New grid should have no objects");
     }
 
-    // ========================================
-    // PLACE OBJECT TESTS
-    // ========================================
 
     @Test
     @DisplayName("placeObject should place object at valid position")
@@ -147,10 +137,6 @@ class TerrainGridTest {
         assertEquals(0, grid.countObjects());
     }
 
-    // ========================================
-    // GET OBJECT TESTS
-    // ========================================
-
     @Test
     @DisplayName("getObjectAt should return placed object")
     void testGetObjectAt_ExistingObject() {
@@ -202,9 +188,6 @@ class TerrainGridTest {
         });
     }
 
-    // ========================================
-    // REMOVE OBJECT TESTS
-    // ========================================
 
     @Test
     @DisplayName("removeObject should remove and return object")
@@ -245,9 +228,6 @@ class TerrainGridTest {
         });
     }
 
-    // ========================================
-    // VALIDATION TESTS
-    // ========================================
 
     @Test
     @DisplayName("isValidPosition should validate positions correctly")
@@ -291,9 +271,6 @@ class TerrainGridTest {
         assertFalse(grid.isEdge(new Position(5, 5)), "Center is not edge");
     }
 
-    // ========================================
-    // CLEAR TESTS
-    // ========================================
 
     @Test
     @DisplayName("clear should remove all objects")
@@ -314,9 +291,6 @@ class TerrainGridTest {
         assertTrue(grid.isEmpty(new Position(3, 3)));
     }
 
-    // ========================================
-    // COUNT OBJECTS TESTS
-    // ========================================
 
     @Test
     @DisplayName("countObjects should count correctly")
@@ -339,9 +313,6 @@ class TerrainGridTest {
         assertEquals(2, grid.countObjects());
     }
 
-    // ========================================
-    // GET EMPTY POSITIONS TESTS
-    // ========================================
 
     @Test
     @DisplayName("getEmptyPositions should return all empty positions")
@@ -382,9 +353,6 @@ class TerrainGridTest {
         assertEquals(list1.size(), list2.size());
     }
 
-    // ========================================
-    // GET EMPTY EDGE POSITIONS TESTS
-    // ========================================
 
     @Test
     @DisplayName("getEmptyEdgePositions should return only edge positions")
@@ -417,9 +385,6 @@ class TerrainGridTest {
                 "Should not contain occupied edge position");
     }
 
-    // ========================================
-    // GET ALL OBJECTS TESTS
-    // ========================================
 
     @Test
     @DisplayName("getAllObjects should return all placed objects")
@@ -455,9 +420,6 @@ class TerrainGridTest {
         });
     }
 
-    // ========================================
-    // VALIDATE GRID INTEGRITY TESTS
-    // ========================================
 
     @Test
     @DisplayName("validateGridIntegrity should return true for valid grid")
@@ -477,9 +439,6 @@ class TerrainGridTest {
         assertTrue(grid.validateGridIntegrity());
     }
 
-    // ========================================
-    // GET GRID TESTS (Defensive Copy)
-    // ========================================
 
     @Test
     @DisplayName("getGrid should return defensive copy")
@@ -505,9 +464,6 @@ class TerrainGridTest {
         }, "Outer list should be unmodifiable");
     }
 
-    // ========================================
-    // INTEGRATION TESTS
-    // ========================================
 
     @Test
     @DisplayName("Integration: Complete grid workflow")

@@ -9,8 +9,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * PenguinType Enum Tests
- * 
- * Location: src/test/java/com/enums/PenguinTypeTest.java
  */
 @DisplayName("PenguinType Enum Tests 🐧")
 class PenguinTypeTest {
@@ -39,9 +37,6 @@ class PenguinTypeTest {
         System.out.println("✓ All 4 penguin types exist");
     }
 
-    // ========================================
-    // getDisplayName() TESTS
-    // ========================================
 
     @ParameterizedTest
     @DisplayName("Each PenguinType should have correct display name")
@@ -86,9 +81,6 @@ class PenguinTypeTest {
             "Display name should contain 'Penguin': " + displayName);
     }
 
-    // ========================================
-    // getRandomType() TESTS
-    // ========================================
 
     @Test
     @DisplayName("getRandomType should return a valid PenguinType")
@@ -151,10 +143,6 @@ class PenguinTypeTest {
         System.out.println("✓ Saw all types in " + attempts + " attempts");
     }
 
-    // ========================================
-    // toString() TESTS
-    // ========================================
-
     @Test
     @DisplayName("toString should return display name")
     void testToString() {
@@ -177,10 +165,6 @@ class PenguinTypeTest {
         assertEquals(displayName, toString, 
             "toString should match getDisplayName");
     }
-
-    // ========================================
-    // INTEGRATION TESTS
-    // ========================================
 
     @Test
     @DisplayName("Integration: All PenguinTypes should have unique display names")
@@ -252,9 +236,6 @@ class PenguinTypeTest {
         System.out.println("✓ All types listed");
     }
 
-    // ========================================
-    // EDGE CASES
-    // ========================================
 
     @Test
     @DisplayName("Each PenguinType should be unique")
@@ -325,9 +306,6 @@ class PenguinTypeTest {
         System.out.println("✓ All required penguin types are present");
     }
 
-    // ========================================
-    // HELPER METHODS
-    // ========================================
 
     private boolean isValidPenguinType(PenguinType type) {
         for (PenguinType validType : PenguinType.values()) {

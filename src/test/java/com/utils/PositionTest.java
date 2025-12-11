@@ -9,21 +9,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * LEARNING TO WRITE TESTS - Position Class Test File
- *
- * Location: src/test/java/com/utils/PositionTest.java
- *
- * This file demonstrates all fundamental test concepts:
- * 1. @Test annotation - Basic test method
- * 2. Assertions (assertEquals, assertTrue, assertFalse, assertThrows)
- * 3. @BeforeEach / @AfterEach - Setup and cleanup before/after each test
- * 4. @ParameterizedTest - Running same test with different parameters
- * 5. Test naming conventions
- * 6. Edge case testing
- *
- * HOW TO RUN:
- * - IntelliJ: Right-click on this file → Run 'PositionTest'
- * - Terminal: mvn test
+ * Position Class Test File
  */
 @DisplayName("Position Class Tests 🎯")
 class PositionTest {
@@ -51,21 +37,9 @@ class PositionTest {
      */
     @AfterEach
     void tearDown() {
-        System.out.println("✅ Test completed!\n");
-        // Nothing to clean up in this example, but you would close
-        // database connections, files, etc. here
+        System.out.println("✓ Test completed!\n");
     }
 
-    // ========================================
-    // BASIC TESTS - Constructor and Getters/Setters
-    // ========================================
-
-    /**
-     * THE ANATOMY OF A TEST:
-     * 1. ARRANGE: Prepare test data
-     * 2. ACT: Execute the code being tested
-     * 3. ASSERT: Verify the result
-     */
     @Test
     @DisplayName("Constructor should create position with given coordinates")
     void testConstructor() {
@@ -98,7 +72,6 @@ class PositionTest {
         assertEquals(original.getRow(), copy.getRow());
         assertEquals(original.getColumn(), copy.getColumn());
 
-        // Verify they are different objects (deep copy)
         assertNotSame(original, copy,
                 "Copy constructor should create a new object (different reference)");
 
@@ -109,7 +82,6 @@ class PositionTest {
     @DisplayName("Copying null position should throw exception")
     void testCopyConstructorWithNull() {
         // ACT & ASSERT combined
-        // assertThrows: Verifies that a method throws an exception
         assertThrows(IllegalArgumentException.class, () -> {
             new Position(null);
         }, "Copying null position should throw IllegalArgumentException");
@@ -146,9 +118,6 @@ class PositionTest {
         System.out.println("✓ Setter tests passed");
     }
 
-    // ========================================
-    // FUNCTIONAL TESTS - Business Logic
-    // ========================================
 
     @Test
     @DisplayName("isValid should return true for positions inside grid")
@@ -275,9 +244,6 @@ class PositionTest {
         System.out.println("✓ Distance calculation test passed");
     }
 
-    // ========================================
-    // PARAMETERIZED TESTS - Multiple Scenarios
-    // ========================================
 
     /**
      * @ParameterizedTest - Runs the same test with different parameters
@@ -318,9 +284,6 @@ class PositionTest {
         }, "Invalid grid size should throw exception: " + invalidSize);
     }
 
-    // ========================================
-    // EDGE CASE TESTS - Boundary Conditions
-    // ========================================
 
     @Test
     @DisplayName("Same positions should be equal (equals)")
@@ -368,7 +331,6 @@ class PositionTest {
                 "Equal objects should have same hashCode");
 
         // Different objects should (usually) have different hashCode
-        // Note: This is not guaranteed but a good hash function provides this
         assertNotEquals(pos1.hashCode(), pos3.hashCode(),
                 "Different objects should have different hashCode (usually)");
 
@@ -392,9 +354,6 @@ class PositionTest {
         System.out.println("✓ Null parameter tests passed");
     }
 
-    // ========================================
-    // NESTED TESTS - Grouped Tests
-    // ========================================
 
     @Nested
     @DisplayName("Direction Related Tests 🧭")
@@ -445,9 +404,6 @@ class PositionTest {
         }
     }
 
-    // ========================================
-    // INTEGRATION TEST
-    // ========================================
 
     @Test
     @DisplayName("Integration: Penguin movement scenario")

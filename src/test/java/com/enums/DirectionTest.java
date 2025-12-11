@@ -7,10 +7,6 @@ import org.junit.jupiter.params.provider.EnumSource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Direction Enum Tests
- * 
- * Location: src/test/java/com/enums/DirectionTest.java
- * 
  * Testing an enum is simpler than testing classes.
  * We mainly test the custom methods and enum values.
  */
@@ -62,9 +58,6 @@ class DirectionTest {
         }, "Invalid name should throw IllegalArgumentException");
     }
 
-    // ========================================
-    // getOpposite() METHOD TESTS
-    // ========================================
 
     @Test
     @DisplayName("getOpposite should return correct opposite for UP")
@@ -132,10 +125,6 @@ class DirectionTest {
         System.out.println("✓ " + direction + " → " + opposite);
     }
 
-    // ========================================
-    // fromString() METHOD TESTS
-    // ========================================
-
     @Test
     @DisplayName("fromString should parse uppercase letters correctly")
     void testFromString_Uppercase() {
@@ -194,10 +183,6 @@ class DirectionTest {
         assertNull(result, "Null input should return null");
     }
 
-    // ========================================
-    // toString() METHOD TESTS
-    // ========================================
-
     @Test
     @DisplayName("toString should return uppercase direction name")
     void testToString() {
@@ -222,9 +207,6 @@ class DirectionTest {
         assertEquals(name, toString, "toString should match enum name");
     }
 
-    // ========================================
-    // INTEGRATION TESTS
-    // ========================================
 
     @Test
     @DisplayName("Integration: Round-trip from string to Direction and back")
@@ -267,10 +249,6 @@ class DirectionTest {
         System.out.println("✓ User input simulation complete");
     }
 
-    // ========================================
-    // EDGE CASES
-    // ========================================
-
     @Test
     @DisplayName("Edge case: Opposite relationships should be symmetric")
     void testEdgeCase_OppositeSymmetry() {
@@ -293,7 +271,6 @@ class DirectionTest {
     @DisplayName("Edge case: fromString with whitespace")
     void testEdgeCase_WhitespaceInInput() {
         // ACT & ASSERT
-        // fromString trims input via toUpperCase, so these should work
         assertEquals(Direction.UP, Direction.fromString("U "));
         assertEquals(Direction.DOWN, Direction.fromString(" D"));
         assertEquals(Direction.LEFT, Direction.fromString(" L "));

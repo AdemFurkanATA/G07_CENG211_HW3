@@ -16,19 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * IcyTerrain Comprehensive Test Suite
- *
- * Location: src/test/java/com/terrain/IcyTerrainTest.java
- *
- * Bu test dosyası oyunun ana sınıfını test eder:
- * - Game initialization
- * - Object generation (penguins, hazards, food)
- * - Movement mechanics
- * - Collision detection
- * - Special abilities
- * - Game state management
- *
- * NOT: IcyTerrain constructor'ı oyunu başlattığı için,
- * bu testler initialization logic'i test eder, tam oyun akışını değil.
  */
 @DisplayName("IcyTerrain Game Logic Tests 🎮")
 class IcyTerrainTest {
@@ -36,15 +23,6 @@ class IcyTerrainTest {
     private static final int GRID_SIZE = 10;
     private static final int NUM_PENGUINS = 3;
 
-    // ========================================
-    // HELPER METHODS - Test Utility Functions
-    // ========================================
-
-    /**
-     * IcyTerrain'in private metodlarını test etmek için
-     * public wrapper metodları kullanacağız veya
-     * reflection kullanabiliriz (gerekirse)
-     */
 
     /**
      * Test helper: Creates a test grid with specific objects
@@ -72,9 +50,6 @@ class IcyTerrainTest {
         grid.placeObject(penguin, pos3);
     }
 
-    // ========================================
-    // POSITION FINDING TESTS
-    // ========================================
 
     @Test
     @DisplayName("Grid should have empty positions available")
@@ -137,9 +112,6 @@ class IcyTerrainTest {
         System.out.println("✓ Empty positions: " + initialEmpty + " → " + afterPlacement);
     }
 
-    // ========================================
-    // PENGUIN CREATION TESTS
-    // ========================================
 
     @Test
     @DisplayName("Should create all penguin types")
@@ -177,9 +149,6 @@ class IcyTerrainTest {
         System.out.println("✓ All penguin types created successfully");
     }
 
-    // ========================================
-    // HAZARD CREATION TESTS
-    // ========================================
 
     @Test
     @DisplayName("Should create all hazard types")
@@ -216,10 +185,6 @@ class IcyTerrainTest {
         System.out.println("✓ All hazard types created successfully");
     }
 
-    // ========================================
-    // FOOD GENERATION TESTS
-    // ========================================
-
     @Test
     @DisplayName("Should create random food items")
     void testFoodGeneration() {
@@ -244,9 +209,6 @@ class IcyTerrainTest {
         System.out.println("✓ Created " + foodCount + " random food items");
     }
 
-    // ========================================
-    // MOVEMENT SIMULATION TESTS
-    // ========================================
 
     @Nested
     @DisplayName("Penguin Movement Simulation Tests 🐧")
@@ -333,9 +295,6 @@ class IcyTerrainTest {
         }
     }
 
-    // ========================================
-    // COLLISION SIMULATION TESTS
-    // ========================================
 
     @Nested
     @DisplayName("Collision Simulation Tests 💥")
@@ -450,9 +409,6 @@ class IcyTerrainTest {
         }
     }
 
-    // ========================================
-    // SPECIAL ABILITY TESTS
-    // ========================================
 
     @Nested
     @DisplayName("Special Ability Simulation Tests ⭐")
@@ -578,9 +534,6 @@ class IcyTerrainTest {
         }
     }
 
-    // ========================================
-    // FOOD COLLECTION TESTS
-    // ========================================
 
     @Test
     @DisplayName("Penguin should collect food and track weight")
@@ -613,9 +566,6 @@ class IcyTerrainTest {
         System.out.println("Total weight: " + penguin.getTotalFoodWeight());
     }
 
-    // ========================================
-    // GAME STATE TESTS
-    // ========================================
 
     @Test
     @DisplayName("Penguin state management")
@@ -645,9 +595,6 @@ class IcyTerrainTest {
         System.out.println("✓ Penguin state management works correctly");
     }
 
-    // ========================================
-    // INTEGRATION TESTS
-    // ========================================
 
     @Test
     @DisplayName("Integration: Complete game scenario")
@@ -740,9 +687,6 @@ class IcyTerrainTest {
         System.out.println("✓ Penguin collision logic verified");
     }
 
-    // ========================================
-    // EDGE CASE TESTS
-    // ========================================
 
     @Test
     @DisplayName("Edge case: Penguin at grid boundary")
@@ -836,9 +780,6 @@ class IcyTerrainTest {
         System.out.println("✓ Grid correctly handles all positions occupied");
     }
 
-    // ========================================
-    // DEFENSIVE COPY TESTS
-    // ========================================
 
     @Nested
     @DisplayName("Defensive Copy Security Tests 🔒")
@@ -946,9 +887,6 @@ class IcyTerrainTest {
         }
     }
 
-    // ========================================
-    // SLIDING HAZARD TESTS
-    // ========================================
 
     @Nested
     @DisplayName("Sliding Hazard Mechanics Tests 🧊")
@@ -1032,9 +970,6 @@ class IcyTerrainTest {
         }
     }
 
-    // ========================================
-    // HOLE IN ICE PLUGGING TESTS
-    // ========================================
 
     @Nested
     @DisplayName("Hole In Ice Plugging Tests 🕳️")
@@ -1119,9 +1054,6 @@ class IcyTerrainTest {
         }
     }
 
-    // ========================================
-    // DIRECTION AND MOVEMENT TESTS
-    // ========================================
 
     @Nested
     @DisplayName("Direction and Movement Logic Tests 🧭")
@@ -1183,9 +1115,6 @@ class IcyTerrainTest {
         }
     }
 
-    // ========================================
-    // SCOREBOARD SIMULATION TESTS
-    // ========================================
 
     @Test
     @DisplayName("Scoreboard: Penguins should be sorted by food weight")
@@ -1229,9 +1158,6 @@ class IcyTerrainTest {
         }
     }
 
-    // ========================================
-    // PERFORMANCE AND STRESS TESTS
-    // ========================================
 
     @Test
     @DisplayName("Performance: Large number of objects")
@@ -1295,9 +1221,6 @@ class IcyTerrainTest {
         System.out.println("✓ " + movementCount + " movements in " + duration + "ms");
     }
 
-    // ========================================
-    // SUMMARY REPORT TEST
-    // ========================================
 
     @Test
     @DisplayName("Summary: Complete game mechanics validation")

@@ -8,10 +8,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Hazard Classes Tests
- *
- * Location: src/test/java/com/hazards/HazardTest.java
- *
- * Testing all hazard types and their behaviors
  */
 @DisplayName("Hazard Classes Tests 🧊")
 class HazardTest {
@@ -23,9 +19,6 @@ class HazardTest {
         testPosition = new Position(5, 5);
     }
 
-    // ========================================
-    // LIGHT ICE BLOCK TESTS
-    // ========================================
 
     @Nested
     @DisplayName("LightIceBlock Tests")
@@ -134,9 +127,6 @@ class HazardTest {
         }
     }
 
-    // ========================================
-    // HEAVY ICE BLOCK TESTS
-    // ========================================
 
     @Nested
     @DisplayName("HeavyIceBlock Tests")
@@ -215,9 +205,6 @@ class HazardTest {
         }
     }
 
-    // ========================================
-    // SEA LION TESTS
-    // ========================================
 
     @Nested
     @DisplayName("SeaLion Tests")
@@ -324,9 +311,6 @@ class HazardTest {
         }
     }
 
-    // ========================================
-    // HOLE IN ICE TESTS
-    // ========================================
 
     @Nested
     @DisplayName("HoleInIce Tests")
@@ -494,10 +478,6 @@ class HazardTest {
             assertEquals(newPos, fresh.getPosition());
         }
     }
-
-    // ========================================
-    // INTEGRATION TESTS
-    // ========================================
 
     @Test
     @DisplayName("Integration: All hazard types should be creatable")

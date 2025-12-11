@@ -13,10 +13,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Penguin Class and Subclasses Tests
- *
- * Location: src/test/java/com/penguins/PenguinTest.java
- *
- * Testing abstract classes, inheritance, and polymorphism
  */
 @DisplayName("Penguin Classes Tests 🐧")
 class PenguinTest {
@@ -36,9 +32,6 @@ class PenguinTest {
         rockhopperPenguin = new RockhopperPenguin("P4", new Position(5, 5));
     }
 
-    // ========================================
-    // CONSTRUCTOR TESTS
-    // ========================================
 
     @Test
     @DisplayName("All penguin subclasses should be created successfully")
@@ -92,10 +85,6 @@ class PenguinTest {
         System.out.println("✓ Initial state is correct");
     }
 
-    // ========================================
-    // POSITION TESTS (Defensive Copy)
-    // ========================================
-
     @Test
     @DisplayName("getPosition should return defensive copy")
     void testGetPosition_DefensiveCopy() {
@@ -129,9 +118,6 @@ class PenguinTest {
         assertNotEquals(999, kingPenguin.getPosition().getRow());
     }
 
-    // ========================================
-    // FOOD COLLECTION TESTS
-    // ========================================
 
     @Test
     @DisplayName("Penguin should be able to collect food")
@@ -203,9 +189,6 @@ class PenguinTest {
         assertNull(removed);
     }
 
-    // ========================================
-    // SLIDING MECHANISM TESTS
-    // ========================================
 
     @Test
     @DisplayName("slide() should set sliding state")
@@ -244,9 +227,6 @@ class PenguinTest {
         assertEquals(Direction.UP, kingPenguin.getSlidingDirection());
     }
 
-    // ========================================
-    // STUN AND REMOVAL TESTS
-    // ========================================
 
     @Test
     @DisplayName("setStunned should update stunned state")
@@ -280,9 +260,6 @@ class PenguinTest {
         assertTrue(kingPenguin.isRemoved());
     }
 
-    // ========================================
-    // PLAYER PENGUIN TESTS
-    // ========================================
 
     @Test
     @DisplayName("setPlayerPenguin should mark as player penguin")
@@ -296,10 +273,6 @@ class PenguinTest {
         // ASSERT
         assertTrue(kingPenguin.isPlayerPenguin());
     }
-
-    // ========================================
-    // SPECIAL ACTION TESTS - KING PENGUIN
-    // ========================================
 
     @Test
     @DisplayName("KingPenguin special action should work once")
@@ -329,9 +302,6 @@ class PenguinTest {
         assertEquals(5, stopSquare, "King should stop at 5th square");
     }
 
-    // ========================================
-    // SPECIAL ACTION TESTS - EMPEROR PENGUIN
-    // ========================================
 
     @Test
     @DisplayName("EmperorPenguin special action should work once")
@@ -357,9 +327,6 @@ class PenguinTest {
         assertEquals(3, stopSquare, "Emperor should stop at 3rd square");
     }
 
-    // ========================================
-    // SPECIAL ACTION TESTS - ROYAL PENGUIN
-    // ========================================
 
     @Test
     @DisplayName("RoyalPenguin special action should work once")
@@ -404,9 +371,6 @@ class PenguinTest {
         assertTrue(royalPenguin.hasSpecialMoveDirection());
     }
 
-    // ========================================
-    // SPECIAL ACTION TESTS - ROCKHOPPER PENGUIN
-    // ========================================
 
     @Test
     @DisplayName("RockhopperPenguin special action should work once")
@@ -467,9 +431,6 @@ class PenguinTest {
         assertFalse(rockhopperPenguin.isPreparedToJump());
     }
 
-    // ========================================
-    // POLYMORPHISM TESTS
-    // ========================================
 
     @Test
     @DisplayName("All penguins should implement Penguin interface correctly")
@@ -494,9 +455,6 @@ class PenguinTest {
         System.out.println("✓ Polymorphism works correctly");
     }
 
-    // ========================================
-    // STATE VALIDATION TESTS
-    // ========================================
 
     @Test
     @DisplayName("validateState should return true for valid penguin")
@@ -522,9 +480,6 @@ class PenguinTest {
         System.out.println("State Summary:\n" + summary);
     }
 
-    // ========================================
-    // INTEGRATION TESTS
-    // ========================================
 
     @Test
     @DisplayName("Integration: Penguin lifecycle simulation")
