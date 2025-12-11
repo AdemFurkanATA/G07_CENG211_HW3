@@ -113,27 +113,27 @@ public class RockhopperPenguin extends Penguin {
      * @return Formatted string with special ability status
      */
     public String getSpecialAbilitySummary() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Rockhopper Penguin Special Ability:\n");
-        sb.append("  - Can jump over one hazard\n");
-        sb.append("  - Action Status: ");
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Rockhopper Penguin Special Ability:\n");
+        stringBuilder.append("  - Can jump over one hazard\n");
+        stringBuilder.append("  - Action Status: ");
 
         if (hasUsedSpecialAction) {
-            sb.append("USED");
+            stringBuilder.append("USED");
         } else {
-            sb.append("AVAILABLE");
+            stringBuilder.append("AVAILABLE");
         }
 
-        sb.append("\n  - Jump Prepared: ");
+        stringBuilder.append("\n  - Jump Prepared: ");
         if (preparedToJump) {
-            sb.append("YES (ready to jump)");
+            stringBuilder.append("YES (ready to jump)");
         } else {
-            sb.append("NO");
+            stringBuilder.append("NO");
         }
 
-        sb.append("\n  - Can Jump Now: ").append(canJump() ? "YES" : "NO");
+        stringBuilder.append("\n  - Can Jump Now: ").append(canJump() ? "YES" : "NO");
 
-        return sb.toString();
+        return stringBuilder.toString();
     }
 
     /**

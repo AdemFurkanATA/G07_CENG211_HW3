@@ -2,10 +2,6 @@ package com.main;
 
 import com.terrain.IcyTerrain;
 
-/**
- * Main application class for the Sliding Penguins Puzzle Game.
- * Entry point for the program - initializes the game by creating an IcyTerrain object.
- */
 public class SlidingPuzzleApp {
 
     /**

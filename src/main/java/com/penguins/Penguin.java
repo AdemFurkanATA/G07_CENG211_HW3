@@ -355,25 +355,25 @@ public abstract class Penguin implements ITerrainObject, ISlidable {
      * @return A formatted string with penguin statistics
      */
     public String getStateSummary() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(name).append(" (").append(type.getDisplayName()).append(")");
-        sb.append("\n  Position: ").append(position);
-        sb.append("\n  Food Items: ").append(collectedFood.size());
-        sb.append("\n  Total Weight: ").append(getTotalFoodWeight()).append(" units");
-        sb.append("\n  Status: ");
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(name).append(" (").append(type.getDisplayName()).append(")");
+        stringBuilder.append("\n  Position: ").append(position);
+        stringBuilder.append("\n  Food Items: ").append(collectedFood.size());
+        stringBuilder.append("\n  Total Weight: ").append(getTotalFoodWeight()).append(" units");
+        stringBuilder.append("\n  Status: ");
 
         if (isRemoved) {
-            sb.append("REMOVED");
+            stringBuilder.append("REMOVED");
         } else if (isStunned) {
-            sb.append("STUNNED");
+            stringBuilder.append("STUNNED");
         } else {
-            sb.append("Active");
+            stringBuilder.append("Active");
         }
 
         if (isPlayerPenguin) {
-            sb.append(" (YOUR PENGUIN)");
+            stringBuilder.append(" (YOUR PENGUIN)");
         }
 
-        return sb.toString();
+        return stringBuilder.toString();
     }
 }

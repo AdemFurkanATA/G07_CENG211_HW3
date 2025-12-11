@@ -226,12 +226,12 @@ public class SeaLion extends Hazard implements ISlidable {
      */
     @Override
     public String getDetailedDescription() {
-        StringBuilder sb = new StringBuilder(super.getDetailedDescription());
-        sb.append("\n  Sliding Status: ").append(getSlidingStatus());
-        sb.append("\n  Can Bounce Penguins: ").append(canBounce() ? "YES" : "NO (currently sliding)");
-        sb.append("\n  Behavior: Causes penguins to bounce in opposite direction");
-        sb.append("\n  When Hit: Starts sliding in penguin's original direction");
-        return sb.toString();
+        StringBuilder stringBuilder = new StringBuilder(super.getDetailedDescription());
+        stringBuilder.append("\n  Sliding Status: ").append(getSlidingStatus());
+        stringBuilder.append("\n  Can Bounce Penguins: ").append(canBounce() ? "YES" : "NO (currently sliding)");
+        stringBuilder.append("\n  Behavior: Causes penguins to bounce in opposite direction");
+        stringBuilder.append("\n  When Hit: Starts sliding in penguin's original direction");
+        return stringBuilder.toString();
     }
 
     /**
@@ -356,17 +356,17 @@ public class SeaLion extends Hazard implements ISlidable {
      * @return Formatted status report string
      */
     public String getStatusReport() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("=== SeaLion Status Report ===\n");
-        sb.append("Position: ").append(getPosition()).append("\n");
-        sb.append("Active: ").append(isActive() ? "YES" : "NO").append("\n");
-        sb.append("Sliding: ").append(isSliding ? "YES" : "NO").append("\n");
-        sb.append("Direction: ").append(slidingDirection != null ? slidingDirection : "N/A").append("\n");
-        sb.append("Can Bounce: ").append(canBounce() ? "YES" : "NO").append("\n");
-        sb.append("State Valid: ").append(validateState() ? "YES" : "NO").append("\n");
-        sb.append("Operational: ").append(isOperational() ? "YES" : "NO").append("\n");
-        sb.append("Shorthand: ").append(getShorthand()).append("\n");
-        return sb.toString();
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("=== SeaLion Status Report ===\n");
+        stringBuilder.append("Position: ").append(getPosition()).append("\n");
+        stringBuilder.append("Active: ").append(isActive() ? "YES" : "NO").append("\n");
+        stringBuilder.append("Sliding: ").append(isSliding ? "YES" : "NO").append("\n");
+        stringBuilder.append("Direction: ").append(slidingDirection != null ? slidingDirection : "N/A").append("\n");
+        stringBuilder.append("Can Bounce: ").append(canBounce() ? "YES" : "NO").append("\n");
+        stringBuilder.append("State Valid: ").append(validateState() ? "YES" : "NO").append("\n");
+        stringBuilder.append("Operational: ").append(isOperational() ? "YES" : "NO").append("\n");
+        stringBuilder.append("Shorthand: ").append(getShorthand()).append("\n");
+        return stringBuilder.toString();
     }
 
     /**
